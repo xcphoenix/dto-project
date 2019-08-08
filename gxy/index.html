@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+  .WxBookContent{
+	padding-top: 16px;
+}
+.WxBookContent .FormItemEdit {
+	background: #ffffff;
+	padding: 0px 16px;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+.WxBookContent .FormItemEdit:after {
+	content: " ";
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	border-bottom: 1px solid #d9d9d9;
+	color: #d9d9d9;
+	-webkit-transform-origin: 0 100%;
+	transform-origin: 0 100%;
+	-webkit-transform: scaleY(0.5);
+	transform: scaleY(0.5);
+	z-index: 5;
+}
+
+    </style>
+</head>
+<body>
+        <div class="WxBookContent">
+                <div class="FormItemEdit">
+                    <input type="text" class="TextBox" placeholder="请输入书名">
+                    <a href="javascript:void(0)" class="BtnClear"></a>
+                  </div>
+                  </div>
+</body>
+</html>

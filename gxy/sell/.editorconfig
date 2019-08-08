@@ -1,0 +1,14 @@
+root = true
+
+[*]
+charset = utf-8
+# 缩进风格
+indent_style = space
+# 缩进大小
+indent_size = 2
+# 换行符的风格
+end_of_line = lf
+# 创建文件创建新行
+insert_final_newline = true
+trim_trailing_whitespace = true
+# 编译器的配置
