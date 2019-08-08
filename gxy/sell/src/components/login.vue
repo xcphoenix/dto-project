@@ -5,6 +5,7 @@
       <div class="userid">
         <span>账号</span>
         <input type="text" />
+        <button>获取验证码</button>
       </div>
       <div class="userpassword">
         <span>密码</span>
@@ -15,6 +16,7 @@
         </router-link>
       <button class="loginbtn">登陆</button>
     </div>
+
     <div class="thirdsoftware">
         <span>微信</span>
         <span>QQ</span>
@@ -24,30 +26,10 @@
         <router-link to="/register">
           <span>注册</span>
         </router-link>
-    <!-- <div id="top">
-      <div class="userid">
-        <span>账号</span>
-        <input type="text" />
-      </div>
-      <div class="userpassword">
-        <span>密码</span>
-        <input type="password" />
-      </div>
-      <button class="loginbtn">登陆</button>
-      <div class="thirdsoftware">
-        <span>微信</span>
-        <span>QQ</span>
-        <span>微博</span>
-      </div>
-      <div>
-        <span>未有账号？</span>
-        <router-link to="/register">
-          <span>注册</span>
-        </router-link>
-      </div>
-    </div>
-    <div id="bottom"></div>-->
   </div>
+ 
+  
+  
 </template>
 <script>
 export default {
@@ -71,7 +53,7 @@ export default {
 }
 .main {
   border: 1px solid black;
-  width: 85%;
+  width: 98%;
   margin: 0 auto;
   margin-top: 20%;
 }
@@ -85,15 +67,15 @@ export default {
 }
 .main span {
   font-size: 35px;
-  margin-left: 30px;
-  margin-right: 20px;
+  margin-left: 20px;
+  margin-right: 15px;
 }
 .main input {
   border: 1px solid #ccc;
   padding: 10px 0px;
   border-radius: 3px;
   padding-left: 5px;
-  width: 70%;
+  width: 65%;
 }
 input:focus {
   border-color: #66afe9;
@@ -102,5 +84,15 @@ input:focus {
     0 0 8px rgba(102, 175, 233, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
     0 0 8px rgba(102, 175, 233, 0.6);
+}
+.userid button{
+  display: inline-block;
+  width: 16%;
+  font-size: 20px;
+  padding-top: 10px;
+  padding-bottom:10px;
+  padding-left: 5px;
+  padding-right: 5px;
+
 }
 </style>
