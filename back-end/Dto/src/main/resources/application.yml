@@ -1,7 +1,7 @@
 server:
   port: 8080
-  servlet:
-    context-path: /elmqx/
+#  servlet:
+#    context-path: /elmqx/
 
 spring:
   datasource:
@@ -52,3 +52,5 @@ mybatis:
   configuration:
     # 开启驼峰命名
     map-underscore-to-camel-case: true
+    
+debug: true

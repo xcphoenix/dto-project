@@ -34,6 +34,7 @@ public class User {
 
     @NotBlank(message = "密码不能为空")
     private String userPassword;
+    private Boolean isSetPasswd;
 
     private String wechatOpenid;
     private int userSex;
