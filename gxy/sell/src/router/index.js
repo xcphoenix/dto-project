@@ -10,6 +10,7 @@ import user from '@/components/user/user'
 import homepage from '@/components/homepage/homepage'
 import singlegood from '@/components/singlegood/singlegood'
 import register from '@/components/register'
+import findpass from '@/components/findpass'
 
 Vue.use(Router)
 
@@ -24,6 +25,10 @@ export default new Router({
       path:'/register',
       name:'register',
       component:register
+    },{
+      path:'/findpass',
+      name:'findpass',
+      component:findpass
     },
     {
       path:'/shouye',
