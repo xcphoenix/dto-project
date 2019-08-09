@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 拦截器 - 验证 token
@@ -66,8 +68,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 Date refreshTime;
                 try {
                     userId = Integer.parseInt(JWT.decode(token).getAudience().get(0)) ;
-                    expireTime = JWT.decode(token).getExpiresAt();
-                    refreshTime = (Date) JWT.decode(token).getClaim("refresh");
+                    expireTime = (Date) JWT.decode(token).getExpiresAt();
+                    refreshTime = JWT.decode(token).getClaim("refresh").asDate();
                 } catch (JWTDecodeException | ClassCastException | NumberFormatException ex) {
                     ex.printStackTrace();
                     throw new RuntimeException("token 解析错误");
@@ -81,14 +83,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         String newToken = tokenService.createToken(userId);
                         response.setContentType("application/json;charset=UTF-8");
                         PrintWriter out = response.getWriter();
-                        out.write(JSON.toJSONString(new Result(111, "token已刷新", newToken)));
+                        Map<String, Object> data = new HashMap<>(1);
+                        data.put("newToken", newToken);
+                        out.write(JSON.toJSONString(new Result(10011, "token已刷新", data)));
                         out.flush();
                         out.close();
                         return true;
                     }
+                } else {
+                    throw new RuntimeException("无效的 token");
                 }
-
-                return false;
+                return true;
             }
         }
         return true;

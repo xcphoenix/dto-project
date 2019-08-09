@@ -29,9 +29,9 @@ public class TokenService {
 
     private final String secret = "Let life be beautiful like summer flowers and death like autumn leaves...";
 
-    @Value("#{${token.expire.time} * 60 * 100 * (${token.time.unit.minute} ? 1 : 60)}")
+    @Value("#{${token.expire.time} * 60 * 1000 * (${token.time.unit.minute} ? 1 : 60)}")
     private long expireTime;
-    @Value("#{${token.refresh.time} * 60 * 100 * (${token.time.unit.minute} ? 1 : 60)}")
+    @Value("#{${token.refresh.time} * 60 * 1000 * (${token.time.unit.minute} ? 1 : 60)}")
     private long refreshTime;
 
     @Resource
@@ -87,6 +87,10 @@ public class TokenService {
             return !tmpToken.equals(token);
         }
         return true;
+    }
+
+    public Integer getUserId(String token) {
+        return Integer.parseInt(JWT.decode(token).getAudience().get(0)) ;
     }
 
 }
