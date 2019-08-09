@@ -1,7 +1,8 @@
 <template>
-<div id="register">
-    <div class="header">注册</div>
-     <div class="main">
+<div id="findpass">
+  <div class="header">找回密码</div>
+
+   <div class="main">
       <div class="login_cell">
         <div class="login_title">
           <div>
@@ -9,7 +10,7 @@
           </div>
         </div>
         <div class="login_value">
-          <input type="text" v-model="username" placeholder="请输入手机号" class="login_input" />
+          <input type="text" v-model="userPhone" placeholder="请输入手机号" class="login_input" />
         </div>
         <div class="login_code">
            <getcode :times='times'>
@@ -20,55 +21,60 @@
       <div class="login_cell">
         <div class="login_title">
           <div>
-            <span>密码</span>
+            <span>验证码</span>
           </div>
         </div>
         <div class="login_value">
-          <input type="password" v-model="userpassword" placeholder="请输入密码" class="login_input" />
+          <input type="password" v-model="Code" placeholder="请输入验证码" class="login_input" />
         </div>
       </div>
       <div>
         <router-link to="/">
-           <combtn @click.native="register">注册</combtn>
+          <combtn @click.native="findpass">找回密码</combtn>
         </router-link>
       </div>
     </div>
 </div>
 </template>
-
 <script>
 import combtn from './commonComponents/comBtn'
 import getcode from './commonComponents/getCode'
 export default{
-components:{
-  combtn,
-  getcode
-},
-data(){
+  data(){
     return{
-        username:'',
-        userpassword:'',
-        times:20,
+      userPhone:'',
+      Code:''
     }
-},
-methods:{
-  register(){
-      let json1 = {
-        userName: this.username,
-        userPassword: this.userpassword
+  },
+  methods:{
+    findpass(){
+        let json = {
+        userPhone: this.userPhone,
+        Code: this.Code
       };
-      json1 = JSON.stringify(json1)
+      json = JSON.stringify(json)
       if (this.username == " " || this.userpassword == " ") {
       }else{
 
       }
+    }
+  },
+  components:{
+    combtn,getcode
   }
 }
-}
 </script>
-
 <style>
-#register {
+.header {
+  width: 100%;
+  height: 95px;
+  background-color: rgb(149, 190, 94);
+  text-align: center;
+  font-size: 40px;
+  line-height: 95px;
+  color: white;
+}
+#findpass {
   background-color: rgb(248, 248, 248);
   height: 100%;
 }
