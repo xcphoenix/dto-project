@@ -4,9 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.service.UserService;
-import com.xcphoenix.dto.util.Result;
+import com.xcphoenix.dto.result.Result;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -40,11 +41,11 @@ public class UserController {
         String phone = jsonObject.getString("userPhone");
         String passwd = jsonObject.getString("userPassword");
         if (!userService.isExists(phone)) {
-            return new Result(10000, "手机号未注册", null);
+            return Result.error(ErrorCode.MOBILE_NOT_FOUND);
         }
         Integer userId = userService.loginByPhonePass(phone, passwd);
         if (userId == null) {
-            return new Result(10001, "密码错误", null);
+            return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
         String token = tokenService.createToken(userId);
         Map<String, Object> data = new HashMap<>(1);
@@ -59,11 +60,11 @@ public class UserController {
         String userName = jsonObject.getString("userName");
         String userPassword = jsonObject.getString("userPassword");
         if (!userService.isExists(userName)) {
-            return new Result(10000, "用户不存在", null);
+            return Result.error(ErrorCode.USER_NOT_FOUND);
         }
         Integer userId = userService.loginByName(userName, userPassword);
         if (userId == null) {
-            return new Result(10001, "密码错误", null);
+            return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
         String token = tokenService.createToken(userId);
         Map<String, Object> data = new HashMap<>(1);
@@ -78,7 +79,7 @@ public class UserController {
         user.setUserName(RandomStringUtils.randomAlphanumeric(2) + System.currentTimeMillis());
         Integer userId = userService.registerByPhonePass(user);
         if (userId == null) {
-            return new Result(10002, "手机号已注册", null);
+            return Result.error(ErrorCode.MOBILE_REGISTERED);
         }
         Map<String, Object> data = new HashMap<>(1);
         data.put("token", tokenService.createToken(userId));

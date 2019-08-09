@@ -5,8 +5,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
+import com.xcphoenix.dto.exception.ServiceLogicException;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.TokenService;
-import com.xcphoenix.dto.util.Result;
+import com.xcphoenix.dto.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -60,7 +63,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (userLoginToken.required()) {
                 // 执行认证
                 if (token == null) {
-                    throw new RuntimeException("找不到 token，请重新登录");
+                    throw new ServiceLogicException(ErrorCode.TOKEN_NOT_FOUND);
                 }
 
                 int userId;
@@ -72,11 +75,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     refreshTime = JWT.decode(token).getClaim("refresh").asDate();
                 } catch (JWTDecodeException | ClassCastException | NumberFormatException ex) {
                     ex.printStackTrace();
-                    throw new RuntimeException("token 解析错误");
+                    throw new ServiceLogicException(ErrorCode.TOKEN_DECODED_ERROR);
+                }
+
+                if (expireTime == null || refreshTime == null) {
+                    throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);
                 }
 
                 if (refreshTime.getTime() < System.currentTimeMillis()) {
-                    throw new RuntimeException("登录已过期，请重新登录");
+                    throw new ServiceLogicException(ErrorCode.TOKEN_TIME_EXPIRED);
                 } else if (tokenService.verifierToken(token) && tokenService.checkInBlacklist(userId, token)) {
                     if (expireTime.getTime() < System.currentTimeMillis()) {
                         // 创建新 token
@@ -85,13 +92,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         PrintWriter out = response.getWriter();
                         Map<String, Object> data = new HashMap<>(1);
                         data.put("newToken", newToken);
-                        out.write(JSON.toJSONString(new Result(10011, "token已刷新", data)));
+                        Result result = Result.error(ErrorCode.TOKEN_DECODED_REFRESH);
+                        result.setData(data);
+                        out.write(JSON.toJSONString(result));
                         out.flush();
                         out.close();
                         return true;
                     }
                 } else {
-                    throw new RuntimeException("无效的 token");
+                    throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);
                 }
                 return true;
             }

@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.xcphoenix.dto.exception.ServiceLogicException;
+import com.xcphoenix.dto.result.ErrorCode;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,11 +58,12 @@ public class TokenService {
     }
 
     public Boolean verifierToken(String token)  {
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secret)).build();
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secret))
+                .build();
         try {
             jwtVerifier.verify(token);
         } catch (JWTVerificationException jve) {
-            throw new RuntimeException("无效的token");
+            throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);
         }
         return true;
     }
