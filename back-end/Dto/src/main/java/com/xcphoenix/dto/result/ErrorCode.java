@@ -64,6 +64,6 @@ public class ErrorCode {
     public static final ErrorCode USER_NOT_FOUND = new ErrorCode(20002, "用户不存在");
     public static final ErrorCode LOGIN_PASSWD_ERROR = new ErrorCode(20003, "密码错误");
     public static final ErrorCode MOBILE_REGISTERED = new ErrorCode(20004, "手机号已注册");
-    public static final ErrorCode NAME_NOT_UNIQUE = new ErrorCode(20005, "用户已被占用");
+    public static final ErrorCode NAME_NOT_UNIQUE = new ErrorCode(20005, "用户名已被占用");
 
 }

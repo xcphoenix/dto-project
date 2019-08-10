@@ -41,6 +41,7 @@ spring:
         # 启用重置计数器
         reset-enable:   true
         enabled:        true
+        allow:
   
   # redis cache
   redis:
@@ -54,3 +55,13 @@ mybatis:
     map-underscore-to-camel-case: true
     
 debug: true
+
+# log
+logging.file: "logs/dto.log"
+logging:
+  file:
+    max-size: 10MB
+    max-history: 20
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%-40.40logger{39}){cyan}[line:%line] %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39}[lineno:%line]: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"

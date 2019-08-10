@@ -1,10 +1,13 @@
 package com.xcphoenix.dto.bean;
 
+import com.alibaba.fastjson.annotation.JSONType;
+import com.alibaba.fastjson.parser.Feature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.sql.Timestamp;
 
@@ -29,6 +32,7 @@ public class User {
 
     private String userAvatar;
 
+    @NotNull(message = "手机号不能为空")
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String userPhone;
 
