@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.service.UserService;
@@ -59,6 +60,7 @@ public class UserController {
     public Result loginByNamePass(@RequestBody JSONObject jsonObject) {
         String userName = jsonObject.getString("userName");
         String userPassword = jsonObject.getString("userPassword");
+
         if (!userService.isExists(userName)) {
             return Result.error(ErrorCode.USER_NOT_FOUND);
         }
