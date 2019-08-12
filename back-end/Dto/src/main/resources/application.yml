@@ -1,3 +1,5 @@
+debug: true
+
 server:
   port: 8080
 #  servlet:
@@ -47,6 +49,9 @@ spring:
   redis:
     host: localhost
     database: 1
+    
+  profiles:
+    active: local-dev
 
 # mybatis
 mybatis:
@@ -54,8 +59,6 @@ mybatis:
     # 开启驼峰命名
     map-underscore-to-camel-case: true
     
-debug: true
-
 # log
 logging.file: "logs/dto.log"
 logging:
@@ -65,3 +68,22 @@ logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%t]){faint} %clr(%-40.40logger{39}){cyan}[line:%line] %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39}[lineno:%line]: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+    
+    
+---
+
+upload:
+  url: "http://localhost:8080/images/"
+  path: "/home/xuanc/桌面/DtoProject/back-end/images/"
+
+spring:
+  profiles: local-dev
+  
+---
+
+upload:
+  url: "http://47.94.5.149:8080/images/"
+  path: "/root/project/springboot/dto/images/"
+
+spring:
+  profiles: server-dev

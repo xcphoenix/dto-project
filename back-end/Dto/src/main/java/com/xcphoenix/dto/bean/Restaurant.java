@@ -46,7 +46,7 @@ public class Restaurant {
      * tagArray = tags.split(",");
      */
     @JSONField(serialize = false)
-    @Length(max = 512, message = "标签超出范围")
+    @Length(max = 100, message = "标签超出范围")
     private String tag;
 
     @JSONField(deserialize = false)

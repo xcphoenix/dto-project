@@ -13,11 +13,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>dto</name>
 	<description>仿饿了么、美团...</description>
-
+	
 	<properties>
 		<java.version>12</java.version>
 	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -45,7 +45,7 @@
 			<artifactId>druid-spring-boot-starter</artifactId>
 			<version>1.1.17</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -66,6 +66,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
 		
 		<!-- fastjson -->
@@ -88,10 +92,23 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>
 		</dependency>
-	
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+		
+		<!-- for base64url -->
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
+		</dependency>
 	
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -102,6 +119,16 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
+		<!--<resources>-->
+		<!--	<resource>-->
+		<!--		<directory>src/main/resources</directory>-->
+		<!--	</resource>-->
+		<!--	<resource>-->
+		<!--		<directory>src/test/resources</directory>-->
+		<!--	</resource>-->
+		<!--</resources>-->
+	
 	</build>
 
 </project>

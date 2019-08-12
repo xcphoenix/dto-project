@@ -52,6 +52,7 @@ public class UserController {
         Map<String, Object> data = new HashMap<>(1);
         data.put("token", token);
         data.put("id", userId);
+        data.put("timestamp", System.currentTimeMillis());
         return new Result(200, "登录成功", data);
     }
 
@@ -72,6 +73,7 @@ public class UserController {
         Map<String, Object> data = new HashMap<>(1);
         data.put("token", token);
         data.put("id", userId);
+        data.put("timestamp", System.currentTimeMillis());
         return new Result(200, "登录成功", data);
     }
 

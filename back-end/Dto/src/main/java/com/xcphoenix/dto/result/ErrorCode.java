@@ -66,4 +66,10 @@ public class ErrorCode {
     public static final ErrorCode MOBILE_REGISTERED = new ErrorCode(20004, "手机号已注册");
     public static final ErrorCode NAME_NOT_UNIQUE = new ErrorCode(20005, "用户名已被占用");
 
+    /**
+     * 文件相关
+     */
+    public static final ErrorCode FILE_NOT_IMAGE = new ErrorCode(30001, "不是有效的图片文件");
+    public static final ErrorCode FILE_SIZE_OUT_OF_RANGE = new ErrorCode(30002, "图片文件大小超出范围");
+
 }

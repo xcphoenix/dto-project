@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
