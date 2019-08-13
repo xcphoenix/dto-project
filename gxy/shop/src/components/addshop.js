@@ -28,6 +28,10 @@ export default class jsdemo extends React.Component{
            delivery_price:'',
            min_price:''
        }
+       this.changeStoreImg = this.changeStoreImg.bind(this)
+       this.changeBannerImg = this.changeBannerImg.bind(this)
+       this.changeLogoImg = this.changeLogoImg.bind(this)
+       this.changeImg = this.changeImg.bind(this)
    }
    change_name=(e)=>{
     this.setState(
@@ -56,18 +60,18 @@ export default class jsdemo extends React.Component{
    }
    changebh_start = (e)=>{
        console.log(e.target.value)
-       this.setState({bh_start:e.target.value})
+       this.setState({bh_start:e.target.value+":00"})
    }
    changebh_end = (e)=>{
     console.log(e.target.value)
-    this.setState({bh_end:e.target.value})
+    this.setState({bh_end:e.target.value+":00"})
 }
 
    change_min = (e)=>{
-       this.setState({min_price:e.target.value})
+       this.setState({min_price:parseInt(e.target.value)})
    }
    change_deliver = (e)=>{
-       this.setState({delivery_price:e.target.value})
+       this.setState({delivery_price:parseFloat(e.target.value)})
    }
 
    change = (value)=>{
@@ -193,6 +197,7 @@ initQQMap = () => {
    if (!event || !window.FileReader) return; // 看支持不支持FileReader
    let reader = new FileReader();
    reader.readAsDataURL(files); // 这里是最关键的一步，转换就在这里
+   let _this = this;
    reader.onloadend = function () {
       
        console.log(this.result)
@@ -210,7 +215,7 @@ initQQMap = () => {
        Array.from(arr).forEach(function(item){
            arrImg.push(item.src)
        })
-       this.setState({instore_imgs:arrImg})
+       _this.setState({instore_imgs:arrImg})
 
    }
    }
@@ -221,10 +226,13 @@ initQQMap = () => {
      if (!event || !window.FileReader) return; // 看支持不支持FileReader
    let reader = new FileReader();
    reader.readAsDataURL(files); // 这里是最关键的一步，转换就在这里
+   console.log(this,999)
+   let _this = this;
    reader.onloadend = function () {
        store_img = this.result
        document.getElementById('storeImg').src = store_img
-       this.setState({store_img:store_img})
+    //    console.log(this)
+       _this.setState({store_img:store_img})
    }
 }
 changeLogoImg(event){
@@ -233,10 +241,11 @@ changeLogoImg(event){
      if (!event || !window.FileReader) return; // 看支持不支持FileReader
    let reader = new FileReader();
    reader.readAsDataURL(files); // 这里是最关键的一步，转换就在这里
+   let _this = this;
    reader.onloadend = function () {
        logo_img = this.result
        document.getElementById('logoImg').src = logo_img
-       this.setState({logo:logo_img})
+       _this.setState({logo:logo_img})
    }
 }
 changeBannerImg(event){
@@ -245,15 +254,18 @@ changeBannerImg(event){
      if (!event || !window.FileReader) return; // 看支持不支持FileReader
    let reader = new FileReader();
    reader.readAsDataURL(files); // 这里是最关键的一步，转换就在这里
+   let _this = this;
    reader.onloadend = function () {
        banner_img = this.result
        document.getElementById('bannerImg').src = banner_img
-       this.setState({banner_img:banner_img})
+       _this.setState({banner_img:banner_img})
    }
 }
 submit=()=>{
-    console.log('1')
+    // console.log('1')
    console.log(this.state)
+//    console.log(this.state.bh_start)
+ 
    this.axios.post(api.add_shop,this.state).then(res=>{
        console.log(res.data)
    },err=>{
