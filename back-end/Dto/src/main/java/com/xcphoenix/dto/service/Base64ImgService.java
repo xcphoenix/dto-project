@@ -14,6 +14,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -52,12 +53,12 @@ public class Base64ImgService {
      *
      * @param base64Str base64 编码字符串
      * @param filepath  文件路径
-     * @return 是否成功
+     * @return 成功后文件的相对路径
      */
-    public boolean base64TransToFile(String base64Str, String filepath) throws IOException {
+    public String base64TransToFile(String base64Str, String filepath) throws IOException {
 
         if (base64Str == null || filepath == null) {
-            return false;
+            return null;
         }
 
         // 去掉图片前缀，转码
@@ -77,9 +78,12 @@ public class Base64ImgService {
         }
 
         filepath += "." + suffix;
+        createFile(filepath);
         Files.write(Paths.get(filepath), baseImg, StandardOpenOption.CREATE);
 
-        return true;
+        logger.info("write file: " + filepath);
+
+        return filepath;
     }
 
     private String getImageSuffix(byte[] baseImg) throws IOException {
@@ -147,6 +151,14 @@ public class Base64ImgService {
         logger.info("picture size = " + size + "MB");
 
         return size <= imageSizeLimit;
+    }
+
+    private void createFile(String filepath) throws IOException {
+        File file = new File(filepath);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
     }
 
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.ProvinceMapper">
+
+	<resultMap id="provinceResult" type="com.xcphoenix.dto.bean.Province">
+		<id column="_id" property="id" />
+		<result column="name" property="name" />
+		<result column="province_id" property="provinceId" />
+		<collection property="cities" column="province_id"
+		            select="com.xcphoenix.dto.mapper.CityMapper.selectByProvinceId" />
+	</resultMap>
+	
+	<select id="selectProvinceAll" resultMap="provinceResult">
+		SELECT _id, name, province_id FROM province
+	</select>
+	
+</mapper>

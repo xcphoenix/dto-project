@@ -85,4 +85,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler(staticMapping).addResourceLocations(localDirectory);
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
+
 }
