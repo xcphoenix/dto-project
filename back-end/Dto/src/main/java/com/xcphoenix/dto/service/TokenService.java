@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import org.apache.commons.codec.binary.Hex;
@@ -42,18 +43,19 @@ public class TokenService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    public String createToken(int userId) {
+    public String createToken(User user) {
         String iss = "elmqx.xcphoenix.com";
         Date exp = new Date(System.currentTimeMillis() + expireTime);
         Date refresh = new Date(System.currentTimeMillis() + refreshTime);
         String tmpStr = UUID.randomUUID().toString().replace("-", "")
                 + new Random().nextLong();
         String jti = new String(Hex.encodeHex(DigestUtils.md5(tmpStr)));
-        return JWT.create().withAudience(String.valueOf(userId))
+        return JWT.create().withAudience(String.valueOf(user.getUserId()))
                 .withExpiresAt(exp)
                 .withJWTId(jti)
                 .withIssuer(iss)
                 .withClaim("refresh", refresh)
+                .withClaim("status", user.getStatus())
                 .sign(Algorithm.HMAC256(secret));
     }
 

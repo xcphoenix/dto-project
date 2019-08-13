@@ -5,10 +5,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
+import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.result.Result;
+import com.xcphoenix.dto.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,17 +68,21 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     throw new ServiceLogicException(ErrorCode.TOKEN_NOT_FOUND);
                 }
 
-                int userId;
+                int userId, userStatus;
                 Date expireTime;
                 Date refreshTime;
                 try {
                     userId = Integer.parseInt(JWT.decode(token).getAudience().get(0)) ;
-                    expireTime = (Date) JWT.decode(token).getExpiresAt();
+                    expireTime = JWT.decode(token).getExpiresAt();
                     refreshTime = JWT.decode(token).getClaim("refresh").asDate();
+                    userStatus = JWT.decode(token).getClaim("status").asInt();
                 } catch (JWTDecodeException | ClassCastException | NumberFormatException ex) {
                     ex.printStackTrace();
                     throw new ServiceLogicException(ErrorCode.TOKEN_DECODED_ERROR);
                 }
+
+                request.setAttribute("userId", userId);
+                request.setAttribute("userStatus", userStatus);
 
                 if (expireTime == null || refreshTime == null) {
                     throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);
@@ -86,8 +92,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     throw new ServiceLogicException(ErrorCode.TOKEN_TIME_EXPIRED);
                 } else if (tokenService.verifierToken(token) && tokenService.checkInBlacklist(userId, token)) {
                     if (expireTime.getTime() < System.currentTimeMillis()) {
+                        User userDetail = new User();
+                        userDetail.setUserId(userId);
+                        userDetail.setStatus(userStatus);
+
                         // 创建新 token
-                        String newToken = tokenService.createToken(userId);
+                        String newToken = tokenService.createToken(userDetail);
                         response.setContentType("application/json;charset=UTF-8");
                         PrintWriter out = response.getWriter();
                         Map<String, Object> data = new HashMap<>(1);

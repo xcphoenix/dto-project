@@ -55,10 +55,12 @@ spring:
 
 # mybatis
 mybatis:
-  configuration:
-    # 开启驼峰命名
-    map-underscore-to-camel-case: true
-    
+#  configuration:
+#    # 开启驼峰命名
+#    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+  
 # log
 logging.file: "logs/dto.log"
 logging:
