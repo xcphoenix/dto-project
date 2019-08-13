@@ -1,0 +1,56 @@
+server:
+  port: 8080
+#  servlet:
+#    context-path: /elmqx/
+
+spring:
+  datasource:
+    # 返回影响的行数，设置时区为【上海】
+    url:               jdbc:mysql://47.94.5.149:3306/elmqx?useAffectedRows=true&serverTimezone=Asia/Shanghai
+    username:          elmqx_dev
+    password:          elmpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type:              com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 连接池配置
+      initial-size:                              5
+      min-idle:                                  5
+      max-wait:                                  60000
+      max-active:                                20
+      timeBetweenEvictionRunsMillis:             60000
+      minEvictableIdleTimeMillis:                300000
+      validationQuery:                           SELECT 1 FROM DUAL
+      testWhileIdle:                             true
+      testOnBorrow:                              false
+      testOnReturn:                              false
+      poolPreparedStatements:                    true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat:                   true
+      # 监控配置
+      web-stat-filter:
+        enabled:        true
+        url-pattern:    /*
+        exclusions:     /druid/*,*.js,*.css,*.html,*.png,*.ico,*.gif,*.jpg
+        profile-enable: true
+      stat-view-servlet:
+        # 配置监控页面访问密码
+        login-password: druidAdmin
+        login-username: admin
+        # url
+        url-pattern:    /druid/*
+        # 启用重置计数器
+        reset-enable:   true
+        enabled:        true
+  
+  # redis cache
+  redis:
+    host: localhost
+    database: 1
+
+# mybatis
+mybatis:
+  configuration:
+    # 开启驼峰命名
+    map-underscore-to-camel-case: true
+    
+debug: true
