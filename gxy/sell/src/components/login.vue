@@ -1,5 +1,6 @@
 <template>
   <div id="login">
+    {{$store.state}}
     <div class="header">登陆</div>
     <div class="register">
       <span>未有账号？</span>
@@ -52,6 +53,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import api from "../router/httpConfig";
 import combtn from './commonComponents/comBtn'
 import getcode from './commonComponents/getCode'
+import {mapMutations} from 'vuex'
 export default {
   name: "login",
   components:{
@@ -66,7 +68,7 @@ export default {
   },
   methods: {
     login() {
-      console.log('123')
+      console.log(  localStorage)
       let reg = /^[0-9]+.?[0-9]*$/;
       let json1 = {
         userPhone: this.username,
@@ -76,11 +78,29 @@ export default {
         userName: this.username,
         userPassword: this.password
       };
-      json1 = JSON.stringify(json1)
-      json2 = JSON.stringify(json2)
       if (this.username == " " || this.password == " ") {
       } else if (reg.test(this.username[0])) {
-      } else {
+        console.log(json1)
+          this.$axios.post(api.login_phone,json1).then(res=>{
+          let token = res.data.data.token
+          //将token保存到vuex中
+          // this.$store.commit('setToken',res.data.data.token)
+          // 每次登陆的时候把token存到localStory中
+          localStorage.setItem('token',res.data.data.token)
+
+          console.log(res,'000')
+          this.$router.push({path:'/shouye'})
+
+        },err=>{
+          console.log(err)
+        })
+      } else { 
+         console.log(json2)
+        this.$axios.post(api.login_name,json2).then(res=>{
+          console.log(res.data)
+        },err=>{
+          console.log(err)
+        })
       }
     }
   }
