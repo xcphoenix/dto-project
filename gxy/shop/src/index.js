@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import App from './components/app';
+import axios from './configaxios'
 
-ReactDOM.render(<App />, document.getElementById('root'));
+React.Component.prototype.axios = axios
+
+ReactDOM.render(<App />,document.getElementById('root'));
 
 

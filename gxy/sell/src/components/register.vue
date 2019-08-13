@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="login_value">
-          <input type="text" v-model="username" placeholder="请输入手机号" class="login_input" />
+          <input type="text" v-model="userphone" placeholder="请输入手机号" class="login_input" />
         </div>
         <div class="login_code">
            <getcode :times='times'>
@@ -28,9 +28,9 @@
         </div>
       </div>
       <div>
-        <router-link to="/">
+        <!-- <router-link to="/"> -->
            <combtn @click.native="register">注册</combtn>
-        </router-link>
+        <!-- </router-link> -->
       </div>
     </div>
 </div>
@@ -39,6 +39,7 @@
 <script>
 import combtn from './commonComponents/comBtn'
 import getcode from './commonComponents/getCode'
+import api from '../router/httpConfig'
 export default{
 components:{
   combtn,
@@ -46,7 +47,7 @@ components:{
 },
 data(){
     return{
-        username:'',
+        userphone:'',
         userpassword:'',
         times:20,
     }
@@ -54,13 +55,23 @@ data(){
 methods:{
   register(){
       let json1 = {
-        userName: this.username,
+        userPhone: this.userphone,
         userPassword: this.userpassword
       };
-      json1 = JSON.stringify(json1)
+      // json1 = JSON.stringify(json1)
+      console.log(json1)
       if (this.username == " " || this.userpassword == " ") {
       }else{
-
+        this.$axios.post(api.register,json1).then(res=>{
+          console.log(res.data)
+          if(res.data.code == 10002){
+            alert('不能重复注册')
+          }else{
+            this.$router.push({path:'/'})
+          }
+        },err=>{
+          console.log(err)
+        })
       }
   }
 }

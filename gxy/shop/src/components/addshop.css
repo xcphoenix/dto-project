@@ -1,0 +1,121 @@
+@import '~antd/dist/antd.css';
+.ant-cascader-picker{
+    width: 100%;
+}
+body{
+    background-color: rgb(238, 238, 238);
+}
+.main{
+    background: #FFF;
+    border: 1px solid #EAEAEA;
+    box-shadow: 0 2px 4px 0 #EFF1FA;
+    border-radius: 2px;
+    padding: 10px 24px 1px 24px;
+    width: 70%;
+    margin: 0 auto;
+    height: 1400px;
+}
+.header{
+    border-bottom:rgb(50, 197, 210) solid;
+    width: 90%;
+    height: 38px;
+    margin:0 auto;
+    margin-bottom: 3%;
+}
+p{
+    margin:0px;
+    padding-top: 1%;
+}
+.contain{
+    width: 90%;
+    margin:0 auto;
+}
+.form_index{
+    display: flex;
+    margin-top: 5px;
+}
+.form_name{
+    display: inline-block;
+    width: 110px;
+    margin-bottom: 5px;
+    min-width: 80px;
+    padding-right: 20px;
+    line-height: 35px;
+    position: relative;
+    float: left;
+    text-align: right;
+}
+.form_input{
+    float: left;
+    width: 470px;
+    position: relative;
+}
+.form_input input{
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #222;
+    background-color: #fff;
+    border: 1px solid #b3cef9;
+    border-radius: 4px;
+}
+em{
+    color:red;
+}
+#mapcontainer{
+    width: 300px;
+    height: 300px;
+    display: inline-block;
+}
+.search{
+    display: inline-block;
+}
+.search input{
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #222;
+    background-color: #fff;
+    border: 1px solid #b3cef9;
+    border-radius: 4px;
+    line-height: 1.42857143;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+.add_search{
+    margin-left: 15px;
+    width: 91%;
+}
+.pic{
+    width:80px;
+    height: 80px;
+    border:1.5px dashed rgb(225, 225, 225);
+    /* margin-top: 10px; */
+    background-image: url("../img/timg.jpg");
+    background-size: 80px 80px;
+    background-repeat: no-repeat;
+}
+.pic input{
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+}
+.img1 input{
+    display: none;
+}
+img.instore_img{
+    width: 80px;
+    height: 80px;
+}
+
+.single_img{
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+    position: absolute;
+    top:0;
+    left:0;
+
+}
