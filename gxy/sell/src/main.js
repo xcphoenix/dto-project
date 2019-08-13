@@ -13,6 +13,7 @@ import 'lib-flexible/flexible'
 
 import './common/stylus/index.styl'
 import './assets/iconfont/iconfont.css'
+import './assets/iconfont1/iconfont.css'
 
 Vue.prototype.$axios = axios;
 
