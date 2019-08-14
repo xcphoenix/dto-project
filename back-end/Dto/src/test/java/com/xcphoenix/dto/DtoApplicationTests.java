@@ -1,10 +1,9 @@
 package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
-import com.xcphoenix.dto.bean.Province;
-import com.xcphoenix.dto.mapper.ProvinceMapper;
+import com.xcphoenix.dto.bean.area.Province;
+import com.xcphoenix.dto.mapper.area.ProvinceMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
-import org.assertj.core.error.ShouldBeInSameYear;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class DtoApplicationTests {
         String base64Str = String.valueOf(stringBuilder);
 
         String filepath = UUID.randomUUID().toString();
-        if (base64Img.base64TransToFile(base64Str, filepath) != null) {
+        if (base64Img.convertPicture(base64Str, filepath) != null) {
             System.out.println("success");
         } else {
             System.out.println("error");

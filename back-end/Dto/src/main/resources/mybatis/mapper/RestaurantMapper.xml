@@ -7,9 +7,46 @@
 		INSERT INTO restaurant(user_id, restaurant_name, restaurant_desc, restaurant_phone, contact_man, tag, bh_start,
 		                       bh_end, country_id, address, addr_lng, addr_lat, store_img, instore_img, logo,
 		                       banner_img, bulletin, delivery_price, min_price, gmt_create)
-		VALUES (#{userId} , #{restaurantName} , #{restaurantDesc} , #{restaurantPhone} , #{contactMan} , #{tag} , #{bhStart} , #{bhEnd}  ,
-		        #{countryId} , #{address}  , #{addrLng} , #{addrLat} , #{storeImg} , #{instoreImg} , #{logo} , #{bannerImg} , #{bulletin} ,
-		        #{deliveryPrice} , #{minPrice} , NOW())
+		VALUES (#{userId}, #{restaurantName}, #{restaurantDesc}, #{restaurantPhone}, #{contactMan}, #{tag}, #{bhStart},
+		        #{bhEnd},
+		        #{countryId}, #{address}, #{addrLng}, #{addrLat}, #{storeImg}, #{instoreImg}, #{logo}, #{bannerImg},
+		        #{bulletin},
+		        #{deliveryPrice}, #{minPrice}, NOW())
 	</insert>
+	
+	<select id="getRestaurantDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
+		SELECT `restaurant_id`,
+		       `user_id`,
+		       `restaurant_name`,
+		       `restaurant_desc`,
+		       `restaurant_phone`,
+		       `contact_man`,
+		       `tag`,
+		       `bh_start`,
+		       `bh_end`,
+		       `country_id`,
+		       `address`,
+		       `addr_lng`,
+		       `addr_lat`,
+		       `store_img`,
+		       `instore_img`,
+		       `logo`,
+		       `banner_img`,
+		       `delivery_time`,
+		       `score`,
+		       `delivery_score`,
+		       `food_score`,
+		       `package_score`,
+		       `bulletin`,
+		       `delivery_price`,
+		       `min_price`,
+		       `total_sale`,
+		       `month_sale`,
+		       `total_revenue`,
+		       `month_revenue`,
+		       `gmt_create`
+		FROM `restaurant`
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</select>
 
 </mapper>

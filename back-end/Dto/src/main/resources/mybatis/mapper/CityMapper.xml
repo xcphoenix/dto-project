@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xcphoenix.dto.mapper.CityMapper">
+<mapper namespace="com.xcphoenix.dto.mapper.area.CityMapper">
 
-	<resultMap id="cityResult" type="com.xcphoenix.dto.bean.City">
+	<resultMap id="cityResult" type="com.xcphoenix.dto.bean.area.City">
 		<id column="_id" property="id" />
 		<result column="name" property="name" />
 		<result column="city_id" property="cityId" />
 		<result column="province_id" property="provinceId" />
 		<collection property="countries" column="city_id"
-		            select="com.xcphoenix.dto.mapper.CountryMapper.selectByCityId"/>
+		            select="com.xcphoenix.dto.mapper.area.CountryMapper.selectByCityId"/>
 	</resultMap>
 	
 	<select id="selectByProvinceId" resultMap="cityResult" parameterType="string">

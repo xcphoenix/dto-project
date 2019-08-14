@@ -4,11 +4,14 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class TokenService {
 
     private final String secret = "Let life be beautiful like summer flowers and death like autumn leaves...";
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("#{${token.expire.time} * 60 * 1000 * (${token.time.unit.minute} ? 1 : 60)}")
     private long expireTime;
@@ -64,7 +68,11 @@ public class TokenService {
                 .build();
         try {
             jwtVerifier.verify(token);
+        } catch (TokenExpiredException jve) {
+            logger.warn("JWT 过期", jve);
+            throw new ServiceLogicException(ErrorCode.TOKEN_TIME_EXPIRED);
         } catch (JWTVerificationException jve) {
+            logger.warn("JWT 验证失败", jve);
             throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);
         }
         return true;

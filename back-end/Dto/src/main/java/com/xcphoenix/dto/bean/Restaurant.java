@@ -1,8 +1,6 @@
 package com.xcphoenix.dto.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.xcphoenix.dto.util.SqlTimeDeserializer;
-import com.xcphoenix.dto.util.SqlTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -59,9 +57,7 @@ public class Restaurant {
     /**
      * bhStart < bhEnd
      */
-    // @JSONField(deserializeUsing = SqlTimeDeserializer.class, serializeUsing = SqlTimeSerializer.class)
     private Time bhStart;
-    // @JSONField(deserializeUsing = SqlTimeDeserializer.class, serializeUsing = SqlTimeSerializer.class)
     private Time bhEnd;
 
     /**

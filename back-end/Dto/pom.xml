@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid-spring-boot-starter</artifactId>
-			<version>1.1.17</version>
+			<version>1.1.18</version>
 		</dependency>
 		
 		<dependency>
@@ -71,6 +71,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
 		
 		<!-- fastjson -->
 		<dependency>
@@ -84,6 +88,12 @@
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.4.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->

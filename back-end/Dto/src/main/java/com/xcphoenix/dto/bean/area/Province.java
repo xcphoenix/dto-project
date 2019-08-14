@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.area;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
@@ -9,13 +9,13 @@ import java.util.List;
 
 /**
  * @author      xuanc
- * @date        2019/8/12 下午5:14
+ * @date        2019/8/12 下午5:15
  * @version     1.0
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class City {
+public class Province {
 
     @JSONField(name = "value")
     int id;
@@ -24,12 +24,9 @@ public class City {
     String name;
 
     @JSONField(serialize = false)
-    String cityId;
-
-    @JSONField(serialize = false)
     String provinceId;
 
     @JSONField(name = "children")
-    List<Country> countries;
+    List<City> cities;
 
 }
