@@ -1,10 +1,14 @@
 package com.xcphoenix.dto.config;
 
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import com.alibaba.fastjson.util.TypeUtils;
+import com.xcphoenix.dto.util.SqlTimeDeserializer;
+import com.xcphoenix.dto.util.SqlTimeSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +43,14 @@ public class WebConfig implements WebMvcConfigurer {
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
         fastJsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // 自定义序列化 java.sql.Time 加入 ParserConfig, 使得全局生效
+        ParserConfig parserConfig = fastJsonConfig.getParserConfig();
+        parserConfig.putDeserializer(java.sql.Time.class, new SqlTimeDeserializer());
+        SerializeConfig serializeConfig = fastJsonConfig.getSerializeConfig();
+        serializeConfig.put(java.sql.Time.class, new SqlTimeSerializer());
+        fastJsonConfig.setParserConfig(parserConfig);
+
         List<MediaType> fastMediaTypes = new ArrayList<>();
         fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
         fastConverter.setSupportedMediaTypes(fastMediaTypes);

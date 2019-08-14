@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xcphoenix.dto.bean.Province;
 import com.xcphoenix.dto.mapper.ProvinceMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
+import org.assertj.core.error.ShouldBeInSameYear;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,6 @@ public class DtoApplicationTests {
 
     @Autowired
     private ProvinceMapper provinceMapper;
-
-    @Test
-    public void contextLoads() {
-    }
 
     @Test
     public void testBase64() throws IOException {
@@ -66,6 +63,15 @@ public class DtoApplicationTests {
             file.createNewFile();
         }
         System.out.println("success");
+    }
+
+    @Test
+    public void testSerialize() {
+        java.sql.Time time = new java.sql.Time(System.currentTimeMillis());
+        String serializeStr = JSON.toJSONString(time);
+        System.out.println(serializeStr);
+        java.sql.Time time1 = JSON.parseObject(serializeStr, java.sql.Time.class);
+        System.out.println(time1);
     }
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
+import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.TokenService;
@@ -11,12 +12,14 @@ import com.xcphoenix.dto.service.LoginService;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,14 +115,5 @@ public class LoginController {
         return new Result(200, "注销成功", null);
     }
 
-    /**
-     * test ...
-     */
-    @UserLoginToken
-    @GetMapping("/test")
-    public Result testToken(HttpServletRequest request) {
-        return new Result(200, "success",
-                Arrays.asList(request.getAttribute("userId"), request.getAttribute("userStatus")));
-    }
 
 }
