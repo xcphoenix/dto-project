@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xcphoenix.dto.mapper.CountryMapper">
+<mapper namespace="com.xcphoenix.dto.mapper.area.CountryMapper">
 	
-	<select id="selectByCityId" resultType="com.xcphoenix.dto.bean.Country" parameterType="string">
+	<select id="selectByCityId" resultType="com.xcphoenix.dto.bean.area.Country" parameterType="string">
 		SELECT _id, name, country_id, city_id FROM country WHERE city_id = #{cityId}
 	</select>
 	

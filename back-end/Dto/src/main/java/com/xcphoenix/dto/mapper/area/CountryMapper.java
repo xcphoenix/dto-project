@@ -1,6 +1,6 @@
-package com.xcphoenix.dto.mapper;
+package com.xcphoenix.dto.mapper.area;
 
-import com.xcphoenix.dto.bean.Country;
+import com.xcphoenix.dto.bean.area.Country;
 
 import java.util.List;
 

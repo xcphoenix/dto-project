@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util;
+package com.xcphoenix.dto.util.fastjson;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;

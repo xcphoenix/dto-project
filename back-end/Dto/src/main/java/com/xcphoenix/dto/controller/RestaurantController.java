@@ -45,7 +45,7 @@ public class RestaurantController {
         if (restaurantService.isNewShopper(userId)) {
             return Result.error(ErrorCode.USER_NOT_SHOPPER);
         }
-        return null;
+        return new Result("查询成功", restaurantService.getRestaurantDetail(userId));
     }
 
 }

@@ -22,6 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,16 +47,31 @@ public class Base64ImgService {
     @Value("${upload.picture.size.limit:1.0}")
     private double imageSizeLimit;
 
+    @Value("${upload.path}")
+    private String uploadPath;
+
+    @Value("${upload.url}")
+    private String uploadUrl;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * base64 转文件
-     *
-     * @param base64Str base64 编码字符串
-     * @param filepath  文件路径
-     * @return 成功后文件的相对路径
+     * base64 编码转图片
+     * @param base64Str base64 字符串
+     * @param directory 要存放的目录
+     * @return 转换图片后对应的 url
+     * @throws IOException IO 异常
      */
-    public String base64TransToFile(String base64Str, String filepath) throws IOException {
+    public String convertPicture(String base64Str, String directory) throws IOException {
+        String path = base64TransToFile(base64Str, uploadPath + directory + UUID.randomUUID());
+        logger.info(directory + ": " + path);
+        return uploadUrl + path.substring(path.indexOf(uploadPath) + uploadPath.length());
+    }
+
+    /**
+     * base64 转文件
+     */
+    private String base64TransToFile(String base64Str, String filepath) throws IOException {
 
         if (base64Str == null || filepath == null) {
             return null;

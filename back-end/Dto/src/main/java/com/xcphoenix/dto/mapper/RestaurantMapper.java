@@ -38,4 +38,12 @@ public interface RestaurantMapper {
      */
     void addRestaurant(Restaurant restaurant);
 
+    /**
+     * 获取用户的店铺所有细节
+     *
+     * @param userId 用户 id
+     * @return 店铺信息
+     */
+    Restaurant getRestaurantDetail(Integer userId);
+
 }
