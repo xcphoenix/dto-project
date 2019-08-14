@@ -76,5 +76,6 @@ public class ErrorCode {
      * 店铺相关
      */
     public static final ErrorCode USER_HAVE_SHOP = new ErrorCode(40001, "用户只能添加一个店铺");
+    public static final ErrorCode USER_NOT_SHOPPER = new ErrorCode(40002, "用户不是商家");
 
 }

@@ -2,14 +2,12 @@ package com.xcphoenix.dto.controller;
 
 import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -38,6 +36,16 @@ public class RestaurantController {
         restaurantService.addNewRestaurant(restaurant);
         restaurant.dataConvertToShow();
         return new Result("添加成功", restaurant);
+    }
+
+    @UserLoginToken
+    @GetMapping("/restaurant")
+    public Result getRestaurant(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        if (restaurantService.isNewShopper(userId)) {
+            return Result.error(ErrorCode.USER_NOT_SHOPPER);
+        }
+        return null;
     }
 
 }

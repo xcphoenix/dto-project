@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util.util;
+package com.xcphoenix.dto.util;
 
 import com.alibaba.fastjson.parser.DefaultJSONParser;
 import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;

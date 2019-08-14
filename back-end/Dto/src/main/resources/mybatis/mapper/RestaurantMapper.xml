@@ -3,7 +3,7 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.RestaurantMapper">
 	
-	<insert id="addRestaurant">
+	<insert id="addRestaurant" useGeneratedKeys="true" keyProperty="restaurantId">
 		INSERT INTO restaurant(user_id, restaurant_name, restaurant_desc, restaurant_phone, contact_man, tag, bh_start,
 		                       bh_end, country_id, address, addr_lng, addr_lat, store_img, instore_img, logo,
 		                       banner_img, bulletin, delivery_price, min_price, gmt_create)

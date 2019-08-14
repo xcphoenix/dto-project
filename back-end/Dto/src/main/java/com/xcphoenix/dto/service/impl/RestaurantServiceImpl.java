@@ -41,7 +41,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean isNewShop(Integer userId) {
+    public boolean isNewShopper(Integer userId) {
         return restaurantMapper.hasRestaurant(userId) == null;
     }
 
@@ -52,7 +52,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
-        if (!isNewShop(restaurant.getUserId())) {
+        if (!isNewShopper(restaurant.getUserId())) {
             throw new ServiceLogicException(ErrorCode.USER_HAVE_SHOP);
         }
         restaurant.setStoreImg(convertPicture(restaurant.getStoreImg(), "store/"));

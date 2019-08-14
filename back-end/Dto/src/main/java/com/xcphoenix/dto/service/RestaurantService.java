@@ -16,7 +16,7 @@ public interface RestaurantService {
      * @param userId 用户 id
      * @return true or false
      */
-    boolean isNewShop(Integer userId);
+    boolean isNewShopper(Integer userId);
 
     /**
      * 店铺名是否可用

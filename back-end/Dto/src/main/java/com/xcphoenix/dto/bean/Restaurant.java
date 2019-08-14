@@ -1,12 +1,12 @@
 package com.xcphoenix.dto.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.xcphoenix.dto.util.util.SqlTimeDeserializer;
+import com.xcphoenix.dto.util.SqlTimeDeserializer;
+import com.xcphoenix.dto.util.SqlTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -59,7 +59,9 @@ public class Restaurant {
     /**
      * bhStart < bhEnd
      */
+    // @JSONField(deserializeUsing = SqlTimeDeserializer.class, serializeUsing = SqlTimeSerializer.class)
     private Time bhStart;
+    // @JSONField(deserializeUsing = SqlTimeDeserializer.class, serializeUsing = SqlTimeSerializer.class)
     private Time bhEnd;
 
     /**
