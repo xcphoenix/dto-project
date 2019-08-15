@@ -40,4 +40,10 @@ public interface RestaurantService {
      */
     Restaurant getRestaurantDetail(Integer userId);
 
+    /**
+     * 获取店铺 id
+     * @return
+     */
+    public Integer getRestaurantId();
+
 }

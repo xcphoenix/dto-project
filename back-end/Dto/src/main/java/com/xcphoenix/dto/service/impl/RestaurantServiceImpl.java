@@ -5,7 +5,9 @@ import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.RestaurantService;
+import com.xcphoenix.dto.util.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,6 +22,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
     private final Base64ImgService base64ImgService;
+
+    @Value("${upload.image.directory.store}")
+    private String storeImgDire;
+    @Value("${upload.image.directory.instore}")
+    private String inShoreImgDire;
+    @Value("${upload.image.directory.logo}")
+    private String logoImgDire;
+    @Value("${upload.image.directory.banner}")
+    private String bannerImgDire;
 
     @Autowired
     public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
@@ -37,16 +48,15 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantMapper.sameNameRsId(name) == null;
     }
 
-    @ShopperCheck
     @Override
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
-        restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), "store/"));
-        restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), "logo/"));
-        restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), "banner/"));
+        restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
+        restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
+        restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
 
         StringBuilder builder = new StringBuilder();
         for (String instore : restaurant.getInstoreImgs()) {
-            String path = base64ImgService.convertPicture(instore, "instore/");
+            String path = base64ImgService.convertPicture(instore, inShoreImgDire);
             if (builder.length() != 0) {
                 builder.append(",");
             }
@@ -62,6 +72,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Restaurant getRestaurantDetail(Integer userId) {
         return restaurantMapper.getRestaurantDetail(userId);
+    }
+
+    @Override
+    public Integer getRestaurantId() {
+        Integer userId = (Integer) ContextHolderUtils.getRequest().getAttribute("userId");
+        return getUserRestaurantId(userId);
     }
 
 }

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import java.sql.Timestamp;
 
 /**
@@ -19,6 +21,7 @@ public class Food {
 
     private Integer foodId;
     private Integer restaurantId;
+    private Integer categoryId;
 
     @Length(max = 20, message = "食品名字超出范围")
     private String name;
@@ -27,14 +30,18 @@ public class Food {
 
     private String coverImg;
 
+    @DecimalMin(value = "0.0", message = "价格不能为负")
     private Float originalPrice;
+    @DecimalMin(value = "0.0", message = "价格不能为负")
     private Float sellingPrice;
     private Integer totalSale;
     private Integer monthSale;
 
     private Float favorableRate;
 
+    @Min(value = 0, message = "限购数量不能为负数")
     private Integer salesRestriction;
+    @Min(value = 0, message = "总量不能为负数")
     private Integer totalNumber;
     private Integer residualAmount;
 

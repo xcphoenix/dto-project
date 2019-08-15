@@ -18,7 +18,7 @@ import java.util.Map;
  * @version     1.0
  */
 @RestController
-@RequestMapping("/food")
+@RequestMapping("/shop/food")
 public class FoodCategoryController {
 
     private final FoodCategoryService foodCategoryService;
