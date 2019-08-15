@@ -28,18 +28,20 @@ public interface FoodCategoryMapper {
      * @param foodCategory 新的分类信息
      */
     @Update("UPDATE food_category " +
-            "SET restaurant_id = #{restaurantId}, name = #{name}, description = #{description} " +
-            "WHERE category_id = #{categoryId} ")
+            "SET name = #{name}, description = #{description} " +
+            "WHERE category_id = #{categoryId} AND restaurant_id = #{restaurantId}")
     void updateCategory(FoodCategory foodCategory);
 
     /**
      * 删除分类信息，引用此分类的其他食品标签都将被置空（数据库外键设置）
      *
-     * @param categoryId 分类 id
+     * @param categoryId   分类 id
+     * @param restaurantId 店铺 id
      * @return 影响的行数=> 0:分类不存在
      */
-    @Delete("DELETE FROM food_category WHERE category_id = #{categoryId}")
-    int deleteCategory(Integer categoryId);
+    @Delete("DELETE FROM food_category WHERE category_id = #{categoryId} " +
+            "AND restaurant_id = #{restaurantId}")
+    int deleteCategory(Integer categoryId, Integer restaurantId);
 
     /**
      * 获取所有的分类信息
@@ -50,5 +52,16 @@ public interface FoodCategoryMapper {
     @Select("SELECT category_id, restaurant_id, name, description FROM food_category " +
             "WHERE restaurant_id = #{restaurantId} ")
     List<FoodCategory> getCategories(Integer restaurantId);
+
+    /**
+     * 店铺是否有该分类
+     *
+     * @param categoryId 分类 id
+     * @param restaurantId 店铺 id
+     * @return ..
+     */
+    @Select("SELECT COUNT(*) FROM food_category " +
+            "WHERE category_id = #{categoryId} AND restaurant_id = #{restaurantId}")
+    Integer checkHaveCategories(Integer categoryId, Integer restaurantId);
 
 }

@@ -14,9 +14,9 @@ public interface RestaurantService {
     /**
      * 是否是新商家 - 即：有无开店记录
      * @param userId 用户 id
-     * @return true or false
+     * @return 店铺 id
      */
-    boolean isNewShopper(Integer userId);
+    Integer getUserRestaurantId(Integer userId);
 
     /**
      * 店铺名是否可用
