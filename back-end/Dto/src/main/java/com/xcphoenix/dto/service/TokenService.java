@@ -25,6 +25,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * TODO JWT 过期会被捕获
+ *
  * @author      xuanc
  * @date        2019/8/7 下午3:24
  * @version     1.0
@@ -70,7 +72,7 @@ public class TokenService {
             jwtVerifier.verify(token);
         } catch (TokenExpiredException jve) {
             logger.warn("JWT 过期", jve);
-            throw new ServiceLogicException(ErrorCode.TOKEN_TIME_EXPIRED);
+            return true;
         } catch (JWTVerificationException jve) {
             logger.warn("JWT 验证失败", jve);
             throw new ServiceLogicException(ErrorCode.TOKEN_INVALID);

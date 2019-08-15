@@ -7,7 +7,6 @@ import com.xcphoenix.dto.mapper.FoodCategoryMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.FoodCategoryService;
 import com.xcphoenix.dto.service.RestaurantService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     @ShopperCheck
     @Override
     public void addNewCategory(FoodCategory foodCategory) {
-        foodCategory.setRestaurantId(getRestaurantId());
+        foodCategory.setRestaurantId(restaurantService.getRestaurantId());
         try {
             foodCategoryMapper.addNewCategory(foodCategory);
         } catch (DuplicateKeyException dke) {
@@ -50,7 +49,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     @ShopperCheck
     @Override
     public void updateCategory(FoodCategory foodCategory) {
-        Integer restaurantId = getRestaurantId();
+        Integer restaurantId = restaurantService.getRestaurantId();
         foodCategory.setRestaurantId(restaurantId);
         if (foodCategory.getCategoryId() == null || foodCategoryMapper.checkHaveCategories(foodCategory.getCategoryId(), restaurantId) != 1) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
@@ -66,7 +65,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     @ShopperCheck
     @Override
     public void deleteCategory(Integer categoryId) {
-        if (foodCategoryMapper.deleteCategory(categoryId, getRestaurantId()) == 0) {
+        if (foodCategoryMapper.deleteCategory(categoryId, restaurantService.getRestaurantId()) == 0) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
         }
     }
@@ -74,11 +73,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     @ShopperCheck
     @Override
     public List<FoodCategory> getCategories() {
-        return foodCategoryMapper.getCategories(getRestaurantId());
+        return foodCategoryMapper.getCategories(restaurantService.getRestaurantId());
     }
 
-    private Integer getRestaurantId() {
-        Integer userId = (Integer) ContextHolderUtils.getRequest().getAttribute("userId");
-        return restaurantService.getUserRestaurantId(userId);
-    }
 }

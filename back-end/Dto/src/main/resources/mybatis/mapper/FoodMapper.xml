@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.FoodMapper">
+	
+	<insert id="addFood" useGeneratedKeys="true" keyProperty="foodId">
+		INSERT INTO food(restaurant_id, category_id, name,
+		<if test="description != null and description != ''">
+			description,
+		</if>
+		<if test="salesRestriction != null and salesRestriction != ''">
+			sales_restriction,
+		</if>
+		cover_img, original_price, selling_price, total_number, residual_amount, gmt_create)
+		VALUES (#{restaurantId}, #{categoryId}, #{name},
+		<if test="description != null and description != ''">
+			#{description},
+		</if>
+		<if test="salesRestriction != null and salesRestriction != ''">
+			#{salesRestriction},
+		</if>
+		#{coverImg}, #{originalPrice}, #{sellingPrice}, #{totalNumber}, #{residualAmount}, NOW())
+	</insert>
+	
+</mapper>

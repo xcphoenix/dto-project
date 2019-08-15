@@ -79,9 +79,12 @@ public class ErrorCode {
     public static final ErrorCode USER_NOT_SHOPPER = new ErrorCode(40002, "用户不是商家");
 
     /**
-     * 商品分类相关
+     * 商品相关
      */
     public static final ErrorCode CATEGORY_DUPLICATE = new ErrorCode(50001, "食品分类重复");
     public static final ErrorCode CATEGORY_NOT_FOUND = new ErrorCode(50002, "食品分类不存在");
+    public static final ErrorCode FOOD_NAME_DUPLICATE = new ErrorCode(50003, "食品名已被占用");
+
+
 
 }

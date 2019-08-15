@@ -1,0 +1,60 @@
+package com.xcphoenix.dto.service.impl;
+
+import com.xcphoenix.dto.annotation.ShopperCheck;
+import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.exception.ServiceLogicException;
+import com.xcphoenix.dto.mapper.FoodMapper;
+import com.xcphoenix.dto.result.ErrorCode;
+import com.xcphoenix.dto.service.Base64ImgService;
+import com.xcphoenix.dto.service.FoodService;
+import com.xcphoenix.dto.service.RestaurantService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+/**
+ * TODO 删除食品需要处理订单等约束..
+ *
+ * @author      xuanc
+ * @date        2019/8/15 下午3:10
+ * @version     1.0
+ */
+@Service
+public class FoodServiceImpl implements FoodService {
+
+    private FoodMapper foodMapper;
+    private RestaurantService restaurantService;
+    private Base64ImgService base64ImgService;
+
+    @Value("${upload.image.directory.food}")
+    private String foodCoverDire;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, Base64ImgService base64ImgService) {
+        this.foodMapper = foodMapper;
+        this.restaurantService = restaurantService;
+        this.base64ImgService = base64ImgService;
+    }
+
+    @ShopperCheck
+    @Override
+    public void addFood(Food food) throws IOException {
+        food.setRestaurantId(restaurantService.getRestaurantId());
+        food.setCoverImg(base64ImgService.convertPicture(food.getCoverImg(), foodCoverDire));
+        food.setResidualAmount(food.getTotalNumber());
+        try {
+            foodMapper.addFood(food);
+        } catch (DuplicateKeyException dke) {
+            logger.warn("食品信息冲突，触发主键唯一性约束", dke);
+            throw new ServiceLogicException(ErrorCode.FOOD_NAME_DUPLICATE);
+        }
+    }
+
+}
