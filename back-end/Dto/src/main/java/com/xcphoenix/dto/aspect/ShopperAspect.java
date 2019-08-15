@@ -49,7 +49,7 @@ public class ShopperAspect {
         if (shopperCheck == null || !shopperCheck.enable()) {
             return;
         }
-        if (!restaurantService.isNewShopper(userId)) {
+        if (restaurantService.getUserRestaurantId(userId) == null) {
             throw new ServiceLogicException(ErrorCode.USER_NOT_SHOPPER);
         }
     }

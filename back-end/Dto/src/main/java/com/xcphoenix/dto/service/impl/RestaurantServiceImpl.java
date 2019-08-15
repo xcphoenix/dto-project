@@ -28,8 +28,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public boolean isNewShopper(Integer userId) {
-        return restaurantMapper.hasRestaurant(userId) == null;
+    public Integer getUserRestaurantId(Integer userId) {
+        return restaurantMapper.hasRestaurant(userId);
     }
 
     @Override

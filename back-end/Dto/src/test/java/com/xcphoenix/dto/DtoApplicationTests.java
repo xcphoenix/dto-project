@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xcphoenix.dto.bean.area.Province;
 import com.xcphoenix.dto.mapper.area.ProvinceMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
+import com.xcphoenix.dto.service.FoodCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class DtoApplicationTests {
 
     @Autowired
     private ProvinceMapper provinceMapper;
+
+    @Autowired
+    private FoodCategoryService foodCategoryService;
 
     @Test
     public void testBase64() throws IOException {
@@ -71,6 +75,17 @@ public class DtoApplicationTests {
         System.out.println(serializeStr);
         java.sql.Time time1 = JSON.parseObject(serializeStr, java.sql.Time.class);
         System.out.println(time1);
+    }
+
+    @Test
+    public void testMybatisException() {
+        // FoodCategory foodCategory = new FoodCategory();
+        // foodCategory.setName("test");
+        // foodCategory.setDescription("test");
+        // foodCategory.setRestaurantId(10);
+        // foodCategoryService.addNewCategory(foodCategory);
+        // // throw exception...
+        // foodCategoryService.addNewCategory(foodCategory);
     }
 
 }

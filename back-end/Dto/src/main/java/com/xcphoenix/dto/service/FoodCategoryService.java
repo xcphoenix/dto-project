@@ -2,6 +2,8 @@ package com.xcphoenix.dto.service;
 
 import com.xcphoenix.dto.bean.FoodCategory;
 
+import java.util.List;
+
 /**
  * @author xuanc
  * @version 1.0
@@ -9,6 +11,32 @@ import com.xcphoenix.dto.bean.FoodCategory;
  */
 public interface FoodCategoryService {
 
+    /**
+     * 添加新的分类：会发生唯一性约束异常
+     *
+     * @param foodCategory 分类信息
+     */
     void addNewCategory(FoodCategory foodCategory);
+
+    /**
+     * 更新分类：会发生唯一性约束异常
+     *
+     * @param foodCategory 分类信息
+     */
+    void updateCategory(FoodCategory foodCategory);
+
+    /**
+     * 删除分类
+     *
+     * @param categoryId 分类id
+     */
+    void deleteCategory(Integer categoryId);
+
+    /**
+     * 获取店铺下的所有分类信息
+     *
+     * @return 分类信息
+     */
+    List<FoodCategory> getCategories();
 
 }
