@@ -2,6 +2,7 @@ package com.xcphoenix.dto.service.impl;
 
 import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.bean.Foods;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.FoodMapper;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -16,6 +17,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * TODO 删除食品需要处理订单等约束..
@@ -33,6 +35,9 @@ public class FoodServiceImpl implements FoodService {
 
     @Value("${upload.image.directory.food}")
     private String foodCoverDire;
+
+    @Value("${food.category.default.name:default}")
+    private String defaultCategoryName;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -57,4 +62,48 @@ public class FoodServiceImpl implements FoodService {
         }
     }
 
+    @ShopperCheck
+    @Override
+    public void updateFood(Food food) throws IOException {
+        food.setRestaurantId(restaurantService.getRestaurantId());
+        if (food.getCoverImg() != null) {
+            food.setCoverImg(base64ImgService.convertPicture(food.getCoverImg(), foodCoverDire));
+        }
+        try {
+            foodMapper.updateFood(food);
+        } catch (DuplicateKeyException dke) {
+            logger.warn("食品信息冲突，触发主键唯一性约束", dke);
+            throw new ServiceLogicException(ErrorCode.FOOD_NAME_DUPLICATE);
+        }
+    }
+
+    @ShopperCheck
+    @Override
+    public Food getFoodDetailById(Integer foodId) {
+        Food food = foodMapper.getFoodById(foodId, restaurantService.getRestaurantId());
+        if (food.getCategoryId() == null) {
+            food.setCategory(defaultCategoryName);
+        }
+        return food;
+    }
+
+    @ShopperCheck
+    @Override
+    public List<Foods> getAllFoods() {
+        Integer restaurantId = restaurantService.getRestaurantId();
+        List<Foods> foodsList = foodMapper.getAllFoods(restaurantId);
+        foodsList.add(new Foods(null, defaultCategoryName,
+                foodMapper.getFoodsCategoryNull(restaurantId)));
+        return foodsList;
+    }
+
+    @ShopperCheck
+    @Override
+    public List<Food> getFoodsByCategory(Integer categoryId) {
+        Integer restaurantId = restaurantService.getRestaurantId();
+        if (categoryId == null) {
+            return foodMapper.getFoodsCategoryNull(restaurantId);
+        }
+        return foodMapper.getFoodsByCategory(categoryId, restaurantId);
+    }
 }

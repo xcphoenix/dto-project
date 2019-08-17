@@ -1,10 +1,13 @@
 package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
-import com.xcphoenix.dto.bean.area.Province;
+import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.bean.Foods;
+import com.xcphoenix.dto.mapper.FoodMapper;
 import com.xcphoenix.dto.mapper.area.ProvinceMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.FoodCategoryService;
+import com.xcphoenix.dto.service.FoodService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ public class DtoApplicationTests {
 
     @Autowired
     private FoodCategoryService foodCategoryService;
+
+    @Autowired
+    private FoodService foodService;
+
+    @Autowired
+    private FoodMapper foodMapper;
 
     @Test
     public void testBase64() throws IOException {
@@ -54,8 +63,8 @@ public class DtoApplicationTests {
 
     @Test
     public void testProCityCountry() {
-        List<Province> provinces = provinceMapper.selectProvinceAll();
-        System.out.println(JSON.toJSON(provinces));
+        // List<Province> provinces = provinceMapper.selectProvinceAll();
+        // System.out.println(JSON.toJSON(provinces));
     }
 
     @Test
@@ -86,6 +95,25 @@ public class DtoApplicationTests {
         // foodCategoryService.addNewCategory(foodCategory);
         // // throw exception...
         // foodCategoryService.addNewCategory(foodCategory);
+    }
+
+    @Test
+    public void testUpdateFood() throws IOException {
+        // Food food = new Food();
+        // food.setTotalNumber(5000);
+        // food.setFoodId(1);
+        // food.setRestaurantId(21);
+        // foodService.updateFood(food);
+    }
+
+    @Test
+    public void testGetAllFoods() {
+        Food food = foodMapper.getFoodById(6, 22);
+        System.out.println(JSON.toJSON(food));
+        List<Foods> foodsList = foodMapper.getAllFoods(22);
+        foodsList.add(new Foods(null, "default",
+                foodMapper.getFoodsCategoryNull(22)));
+        System.out.println(JSON.toJSON(foodsList));
     }
 
 }

@@ -56,12 +56,20 @@ public interface FoodCategoryMapper {
     /**
      * 店铺是否有该分类
      *
-     * @param categoryId 分类 id
+     * @param categoryId   分类 id
      * @param restaurantId 店铺 id
      * @return ..
      */
     @Select("SELECT COUNT(*) FROM food_category " +
             "WHERE category_id = #{categoryId} AND restaurant_id = #{restaurantId}")
     Integer checkHaveCategories(Integer categoryId, Integer restaurantId);
+
+    /**
+     * 获取 id 对应的名称
+     * @param id 分类 id
+     * @return 名称
+     */
+    @Select("SELECT name FROM food_category WHERE category_id = #{id} ")
+    String getCategoryName(@Param("id") Integer id);
 
 }

@@ -3,6 +3,36 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.FoodMapper">
 	
+	<resultMap id="getFoodDetail" type="com.xcphoenix.dto.bean.Food" autoMapping="true">
+		<!--<id column="food_id" property="foodId" />-->
+		<!--<result column="restaurant_id" property="restaurantId" />-->
+		<!--<result column="category_id" property="categoryId" />-->
+		<!--<result column="name" property="name" />-->
+		<!--<result column="description" property="description" />-->
+		<!--<result column="cover_img" property="coverImg" />-->
+		<!--<result column="original_price" property="originalPrice" />-->
+		<!--<result column="selling_price" property="sellingPrice" />-->
+		<!--<result column="total_sale" property="totalSale" />-->
+		<!--<result column="month_sale" property="monthSale" />-->
+		<!--<result column="favorable_rate" property="favorableRate" />-->
+		<!--<result column="sales_restriction" property="salesRestriction" />-->
+		<!--<result column="residual_amount" property="residualAmount" />-->
+		<!--<result column="gmt_create" property="gmtCreate" />-->
+		
+		<association property="category" column="category_id"
+		             select="com.xcphoenix.dto.mapper.FoodCategoryMapper.getCategoryName" />
+	</resultMap>
+	
+	<resultMap id="getFoodsDetail" type="com.xcphoenix.dto.bean.Foods" autoMapping="true">
+		<!--<result property="categoryName" column="category"/>-->
+		<association property="categoryName" column="category_id"
+		             select="com.xcphoenix.dto.mapper.FoodCategoryMapper.getCategoryName" />
+		<collection property="foodsDetail" column="{categoryId=category_id, restaurantId=restaurant_id}"
+		            ofType="com.xcphoenix.dto.bean.Food" javaType="ArrayList"
+		            select="getFoodsByCategory" />
+	</resultMap>
+	
+	<!-- 上架 -->
 	<insert id="addFood" useGeneratedKeys="true" keyProperty="foodId">
 		INSERT INTO food(restaurant_id, category_id, name,
 		<if test="description != null and description != ''">
@@ -22,4 +52,87 @@
 		#{coverImg}, #{originalPrice}, #{sellingPrice}, #{totalNumber}, #{residualAmount}, NOW())
 	</insert>
 	
+	<!-- 更新 -->
+	<update id="updateFood" parameterType="com.xcphoenix.dto.bean.Food">
+		UPDATE food
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="categoryId != null and categoryId &lt; 0">
+				category_id = null,
+			</if>
+			<if test="categoryId != null and categoryId > 0">
+				category_id = #{categoryId},
+			</if>
+			<if test="description != null and description != ''">
+				description = #{description},
+			</if>
+			<if test="description == ''">
+				description = NULL,
+			</if>
+			<if test="coverImg != null and coverImg != ''">
+				cover_img = #{coverImg},
+			</if>
+			<if test="originalPrice != null">
+				original_price = #{originalPrice},
+			</if>
+			<if test="sellingPrice != null">
+				selling_price = #{sellingPrice},
+			</if>
+			<if test="salesRestriction != null">
+				sales_restriction = #{salesRestriction},
+			</if>
+			<if test="totalNumber != null">
+				residual_amount = GREATEST(residual_amount - total_number + #{totalNumber}, 0) , total_number =
+				#{totalNumber}
+			</if>
+		</set>
+		WHERE restaurant_id = #{restaurantId} AND food_id = #{foodId}
+	</update>
+	
+	<!-- 根据 id 获取信息 -->
+	<select id="getFoodById" resultMap="getFoodDetail">
+		SELECT <include refid="foodDetails" />
+		FROM food
+		WHERE food_id = #{foodId} AND restaurant_id = #{restaurantId}
+	</select>
+	
+	<!-- 获取店铺所有信息 -->
+	<select id="getAllFoods" resultMap="getFoodsDetail">
+		SELECT category_id, restaurant_id FROM food_category WHERE restaurant_id = #{restaurantId}
+	</select>
+	
+	<!-- 获取店铺的默认分类信息 -->
+	<select id="getFoodsCategoryNull" resultType="com.xcphoenix.dto.bean.Food">
+		SELECT <include refid="foodDetails" />
+		FROM food
+		WHERE restaurant_id = #{restaurantId} AND category_id IS NULL
+	</select>
+	
+	<!-- 获取店铺指定分类的商品信息 -->
+	<select id="getFoodsByCategory" resultMap="getFoodDetail">
+		SELECT <include refid="foodDetails" />
+		FROM food
+		WHERE restaurant_id = #{restaurantId} AND category_id = #{categoryId}
+	</select>
+	
+	<sql id="foodDetails">
+			food_id,
+			restaurant_id,
+			category_id,
+			name,
+			description,
+			cover_img,
+			original_price,
+			selling_price,
+			total_sale,
+			month_sale,
+			favorable_rate,
+			sales_restriction,
+			total_number,
+			residual_amount,
+			gmt_create
+	</sql>
+
 </mapper>

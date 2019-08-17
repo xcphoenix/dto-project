@@ -1,13 +1,17 @@
 package com.xcphoenix.dto.mapper;
 
 import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.bean.Foods;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * @author      xuanc
- * @date        2019/8/15 上午11:01
- * @version     1.0
- */ 
+ * @author xuanc
+ * @version 1.0
+ * @date 2019/8/15 上午11:01
+ */
 public interface FoodMapper {
 
     /**
@@ -21,7 +25,7 @@ public interface FoodMapper {
      * 下架食品
      *
      * @param restaurantId 店铺 id
-     * @param foodId 下架的食品 id
+     * @param foodId       下架的食品 id
      */
     @Delete("DELETE FROM food WHERE food_id = #{foodId} AND restaurant_id = #{restaurantId}")
     void delFood(Integer foodId, Integer restaurantId);
@@ -32,5 +36,39 @@ public interface FoodMapper {
      * @param food 要更新的食品信息
      */
     void updateFood(Food food);
+
+    /**
+     * 获取食品信息
+     *
+     * @param foodId       食品 id
+     * @param restaurantId 店铺 id
+     * @return 信息
+     */
+    Food getFoodById(@Param("foodId") Integer foodId, @Param("restaurantId") Integer restaurantId);
+
+    /**
+     * 获取店铺的所有食品信息
+     *
+     * @param restaurantId 店铺 id
+     * @return list
+     */
+    List<Foods> getAllFoods(@Param("restaurantId") Integer restaurantId);
+
+    /**
+     * 获取指定分类的所有食品
+     *
+     * @param categoryId   分类 id
+     * @param restaurantId 店铺 id
+     * @return 信息
+     */
+    List<Food> getFoodsByCategory(@Param("categoryId") Integer categoryId, @Param("restaurantId") Integer restaurantId);
+
+    /**
+     * 获取m默认分类的食品
+     *
+     * @param restaurantId 店铺 id
+     * @return 信息
+     */
+    List<Food> getFoodsCategoryNull(@Param("restaurantId") Integer restaurantId);
 
 }
