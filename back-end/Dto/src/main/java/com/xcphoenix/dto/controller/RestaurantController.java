@@ -34,14 +34,14 @@ public class RestaurantController {
         restaurant.setUserId(userId);
         restaurantService.addNewRestaurant(restaurant);
         restaurant.dataConvertToShow();
-        return new Result("添加成功", restaurant);
+        return new Result("添加成功").addMap("restaurant", restaurant);
     }
 
     @UserLoginToken
     @GetMapping("/restaurant")
     public Result getRestaurant(HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute("userId");
-        return new Result("查询成功", restaurantService.getRestaurantDetail(userId));
+        return new Result("查询成功").addMap("restaurant", restaurantService.getRestaurantDetail(userId));
     }
 
 }

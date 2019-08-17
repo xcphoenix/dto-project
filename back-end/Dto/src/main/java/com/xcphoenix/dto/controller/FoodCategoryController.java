@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author      xuanc
- * @date        2019/8/14 下午4:32
- * @version     1.0
+ * @author xuanc
+ * @version 1.0
+ * @date 2019/8/14 下午4:32
  */
 @RestController
 @RequestMapping("/shop/food")
@@ -32,9 +30,8 @@ public class FoodCategoryController {
     @UserLoginToken
     public Result addCategory(@Validated @RequestBody FoodCategory foodCategory) {
         foodCategoryService.addNewCategory(foodCategory);
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("category", foodCategory);
-        return new Result("添加成功", data);
+        return new Result("添加成功")
+                .addMap("category", foodCategory);
     }
 
     @PutMapping("/category")
@@ -55,9 +52,7 @@ public class FoodCategoryController {
     @UserLoginToken
     public Result getCategories() {
         List<FoodCategory> categories = foodCategoryService.getCategories();
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("categories", categories);
-        return new Result("查询成功", data);
+        return new Result("查询成功").addMap("categories", categories);
     }
 
 }

@@ -116,4 +116,8 @@ public class DtoApplicationTests {
         System.out.println(JSON.toJSON(foodsList));
     }
 
+    @Test
+    public void testNewResult() {
+    }
+
 }
