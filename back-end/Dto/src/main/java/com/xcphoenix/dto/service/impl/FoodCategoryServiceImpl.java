@@ -10,6 +10,7 @@ import com.xcphoenix.dto.service.RestaurantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,9 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     private RestaurantService restaurantService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("${food.category.default.name:default}")
+    private String defaultCategoryName;
+
     @Autowired
     public FoodCategoryServiceImpl(FoodCategoryMapper foodCategoryMapper, RestaurantService restaurantService) {
         this.foodCategoryMapper = foodCategoryMapper;
@@ -37,6 +41,9 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     @ShopperCheck
     @Override
     public void addNewCategory(FoodCategory foodCategory) {
+        if (defaultCategoryName.equals(foodCategory.getName())) {
+            throw new ServiceLogicException(ErrorCode.CATEGORY_NAME_CONFLICT);
+        }
         foodCategory.setRestaurantId(restaurantService.getRestaurantId());
         try {
             foodCategoryMapper.addNewCategory(foodCategory);
@@ -53,6 +60,9 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         foodCategory.setRestaurantId(restaurantId);
         if (foodCategory.getCategoryId() == null || foodCategoryMapper.checkHaveCategories(foodCategory.getCategoryId(), restaurantId) != 1) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+        if (foodCategory.getName() != null && defaultCategoryName.equals(foodCategory.getName())) {
+            throw new ServiceLogicException(ErrorCode.CATEGORY_NAME_CONFLICT);
         }
         try {
             foodCategoryMapper.updateCategory(foodCategory);

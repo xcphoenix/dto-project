@@ -1,5 +1,6 @@
 package com.xcphoenix.dto.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class Food {
     private Integer foodId;
     private Integer restaurantId;
     private Integer categoryId;
+
+    @JSONField(deserialize = false)
+    private String category;
 
     @Length(max = 20, message = "食品名字超出范围")
     private String name;
