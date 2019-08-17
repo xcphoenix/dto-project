@@ -8,9 +8,8 @@ import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
-import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.result.Result;
-import com.xcphoenix.dto.service.UserService;
+import com.xcphoenix.dto.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,11 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 拦截器 - 验证 token
@@ -100,10 +96,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         String newToken = tokenService.createToken(userDetail);
                         response.setContentType("application/json;charset=UTF-8");
                         PrintWriter out = response.getWriter();
-                        Map<String, Object> data = new HashMap<>(1);
-                        data.put("newToken", newToken);
-                        Result result = Result.error(ErrorCode.TOKEN_DECODED_REFRESH);
-                        result.setData(data);
+                        Result result = Result.error(ErrorCode.TOKEN_DECODED_REFRESH)
+                                .addMap("newToken", newToken);
                         out.write(JSON.toJSONString(result));
                         out.flush();
                         out.close();

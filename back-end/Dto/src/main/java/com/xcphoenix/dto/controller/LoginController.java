@@ -1,33 +1,28 @@
 package com.xcphoenix.dto.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.bean.User;
 import com.xcphoenix.dto.result.ErrorCode;
-import com.xcphoenix.dto.service.TokenService;
-import com.xcphoenix.dto.service.LoginService;
 import com.xcphoenix.dto.result.Result;
+import com.xcphoenix.dto.service.LoginService;
+import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Time;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * @author      xuanc
- * @date        2019/8/9 下午3:14
- * @version     1.0
+ * @author xuanc
+ * @version 1.0
+ * @date 2019/8/9 下午3:14
  */
 @RestController
 public class LoginController {
@@ -55,15 +50,13 @@ public class LoginController {
         if (userId == null) {
             return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
-
         User userDetail = userService.getUserDetail(userId);
-
         String token = tokenService.createToken(userDetail);
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("token", token);
-        data.put("id", userId);
-        data.put("timestamp", System.currentTimeMillis());
-        return new Result(200, "登录成功", data);
+
+        return new Result("登录成功")
+                .addMap("token", token)
+                .addMap("id", userId)
+                .addMap("timestamp", System.currentTimeMillis());
     }
 
     @PassToken
@@ -80,13 +73,12 @@ public class LoginController {
             return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
         User userDetail = userService.getUserDetail(userId);
-
         String token = tokenService.createToken(userDetail);
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("token", token);
-        data.put("id", userId);
-        data.put("timestamp", System.currentTimeMillis());
-        return new Result(200, "登录成功", data);
+
+        return new Result("登录成功")
+                .addMap("token", token)
+                .addMap("id", userId)
+                .addMap("timestamp", System.currentTimeMillis());
     }
 
     @PassToken
@@ -99,11 +91,10 @@ public class LoginController {
         }
         User userDetail = userService.getUserDetail(userId);
 
-        Map<String, Object> data = new HashMap<>(5);
-        data.put("token", tokenService.createToken(userDetail));
-        data.put("id", userId);
-        data.put("name", user.getUserName());
-        return new Result(200, "注册成功", data);
+        return new Result("登录成功")
+                .addMap("token", tokenService.createToken(userDetail))
+                .addMap("id", userId)
+                .addMap("timestamp", System.currentTimeMillis());
     }
 
     @UserLoginToken
@@ -112,7 +103,7 @@ public class LoginController {
         String token = request.getHeader("Authorization");
         Integer userId = tokenService.getUserId(token);
         tokenService.putBlacklist(userId, token);
-        return new Result(200, "注销成功", null);
+        return new Result("注销成功");
     }
 
 

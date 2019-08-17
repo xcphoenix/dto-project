@@ -11,8 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author      xuanc
@@ -34,18 +32,16 @@ public class FoodController {
     @PostMapping("/food")
     public Result addFood(@Validated @RequestBody Food food) throws IOException {
         foodService.addFood(food);
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("food", foodService.getFoodDetailById(food.getFoodId()));
-        return new Result("添加成功", data);
+        return new Result("添加成功")
+                .addMap("food", foodService.getFoodDetailById(food.getFoodId()));
     }
 
     @UserLoginToken
     @PutMapping("/food")
     public Result updateFood(@Validated @RequestBody Food food) throws IOException {
         foodService.updateFood(food);
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("food", foodService.getFoodDetailById(food.getFoodId()));
-        return new Result("更新成功", data);
+        return new Result("更新成功")
+                .addMap("food", foodService.getFoodDetailById(food.getFoodId()));
     }
 
     @UserLoginToken
@@ -55,24 +51,20 @@ public class FoodController {
         if (food == null) {
             throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
         }
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("food", food);
-        return new Result("查询成功", data);
+        return new Result("查询成功")
+                .addMap("food", food);
     }
 
     @UserLoginToken
     @GetMapping("/foods")
     public Result getAllFoods() {
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("foods", foodService.getAllFoods());
-        return new Result("查询成功", data);
+        return new Result("查询成功").addMap("foods", foodService.getAllFoods());
     }
 
     @UserLoginToken
     @GetMapping("/foods/category")
     public Result getFoodsByCategory(@RequestBody(required = false) Integer categoryId) {
-        Map<String, Object> data = new HashMap<>(1);
-        data.put("foods", foodService.getFoodsByCategory(categoryId));
-        return new Result("查询成功", data);
+        return new Result("查询成功")
+                .addMap("foods", foodService.getFoodsByCategory(categoryId));
     }
 }
