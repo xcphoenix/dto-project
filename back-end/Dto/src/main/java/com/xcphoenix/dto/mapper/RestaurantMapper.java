@@ -1,9 +1,7 @@
 package com.xcphoenix.dto.mapper;
 
 import com.xcphoenix.dto.bean.Restaurant;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.mybatis.spring.annotation.MapperScan;
 
 /**
  * @author xuanc
@@ -45,5 +43,12 @@ public interface RestaurantMapper {
      * @return 店铺信息
      */
     Restaurant getRestaurantDetail(Integer userId);
+
+    /**
+     * 更新店铺信息
+     *
+     * @param restaurant 店铺信息
+     */
+    void updateRestaurant(Restaurant restaurant);
 
 }

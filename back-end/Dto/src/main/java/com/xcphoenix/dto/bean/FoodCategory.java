@@ -1,12 +1,12 @@
 package com.xcphoenix.dto.bean;
 
+import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author      xuanc
@@ -22,12 +22,10 @@ public class FoodCategory {
     private Integer restaurantId;
 
     @Length(max = 25, message = "分类字数超出范围")
-    @NotNull(message = "分类名不能为空")
-    @NotBlank(message = "分类名不能为空")
+    @NotBlank(message = "分类名不能为空", groups = {ValidateGroup.addData.class})
     private String name;
 
-    @NotNull(message = "分类描述不能为空")
-    @NotBlank(message = "分类描述不能为空")
+    @NotBlank(message = "分类描述不能为空", groups = {ValidateGroup.addData.class})
     @Length(max = 25, message = "分类描述超出范围")
     private String description;
 

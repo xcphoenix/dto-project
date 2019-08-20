@@ -5,48 +5,117 @@
 	
 	<insert id="addRestaurant" useGeneratedKeys="true" keyProperty="restaurantId">
 		INSERT INTO restaurant(user_id, restaurant_name, restaurant_desc, restaurant_phone, contact_man, tag, bh_start,
-		                       bh_end, country_id, address, addr_lng, addr_lat, store_img, instore_img, logo,
-		                       banner_img, bulletin, delivery_price, min_price, gmt_create)
+		bh_end, country_id, address, addr_lng, addr_lat, store_img, instore_img, logo,
+		banner_img, bulletin, delivery_price, min_price, gmt_create)
 		VALUES (#{userId}, #{restaurantName}, #{restaurantDesc}, #{restaurantPhone}, #{contactMan}, #{tag}, #{bhStart},
-		        #{bhEnd},
-		        #{countryId}, #{address}, #{addrLng}, #{addrLat}, #{storeImg}, #{instoreImg}, #{logo}, #{bannerImg},
-		        #{bulletin},
-		        #{deliveryPrice}, #{minPrice}, NOW())
+		#{bhEnd}, #{countryId}, #{address}, #{addrLng}, #{addrLat}, #{storeImg}, #{instoreImg}, #{logo}, #{bannerImg},
+		#{bulletin}, #{deliveryPrice}, #{minPrice}, NOW())
 	</insert>
 	
 	<select id="getRestaurantDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
 		SELECT `restaurant_id`,
-		       `user_id`,
-		       `restaurant_name`,
-		       `restaurant_desc`,
-		       `restaurant_phone`,
-		       `contact_man`,
-		       `tag`,
-		       `bh_start`,
-		       `bh_end`,
-		       `country_id`,
-		       `address`,
-		       `addr_lng`,
-		       `addr_lat`,
-		       `store_img`,
-		       `instore_img`,
-		       `logo`,
-		       `banner_img`,
-		       `delivery_time`,
-		       `score`,
-		       `delivery_score`,
-		       `food_score`,
-		       `package_score`,
-		       `bulletin`,
-		       `delivery_price`,
-		       `min_price`,
-		       `total_sale`,
-		       `month_sale`,
-		       `total_revenue`,
-		       `month_revenue`,
-		       `gmt_create`
+		`user_id`,
+		`restaurant_name`,
+		`restaurant_desc`,
+		`restaurant_phone`,
+		`contact_man`,
+		`tag`,
+		`bh_start`,
+		`bh_end`,
+		`country_id`,
+		`address`,
+		`addr_lng`,
+		`addr_lat`,
+		`store_img`,
+		`instore_img`,
+		`logo`,
+		`banner_img`,
+		`delivery_time`,
+		`score`,
+		`delivery_score`,
+		`food_score`,
+		`package_score`,
+		`bulletin`,
+		`delivery_price`,
+		`min_price`,
+		`total_sale`,
+		`month_sale`,
+		`total_revenue`,
+		`month_revenue`,
+		`gmt_create`
 		FROM `restaurant`
 		WHERE user_id = #{userId,jdbcType=INTEGER}
 	</select>
+	
+	<update id="updateRestaurant">
+		UPDATE restaurant
+		<set>
+			<if test="restaurantName != null and restaurantName != ''">
+				restaurant_name = #{restaurantName} ,
+			</if>
+			<choose>
+				<when test="restaurantDesc == ''">
+					restaurant_desc = NULL,
+				</when>
+				<when test="restaurantDesc != null">
+					restaurant_desc = #{restaurantDesc},
+				</when>
+			</choose>
+			<if test="restaurantPhone != null and restaurantPhone != ''">
+				restaurant_phone = #{restaurantPhone},
+			</if>
+			<if test="contactMan != null and contactMan != ''">
+				contact_man = #{contactMan},
+			</if>
+			<if test="tag != null and tag != ''">
+				tag = #{tag},
+			</if>
+			<if test="bhStart != null">
+				bh_start = #{bhStart},
+			</if>
+			<if test="bhEnd != null">
+				bh_end = #{bhEnd},
+			</if>
+			<if test="countryId != null">
+				country_id = #{countryId},
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address},
+			</if>
+			<if test="addrLng != null">
+				addr_lng = #{addrLng},
+			</if>
+			<if test="addrLat != null">
+				addr_lat = #{addrLat},
+			</if>
+			<if test="storeImg != null and storeImg != ''">
+				store_img = #{storeImg},
+			</if>
+			<if test="instoreImg != null and instoreImg != ''">
+				instore_img = #{instoreImg},
+			</if>
+			<if test="logo != null and logo != ''">
+				logo = #{logo},
+			</if>
+			<if test="bannerImg != null and bannerImg != ''">
+				banner_img = #{bannerImg},
+			</if>
+			<choose>
+				<when test="bulletin == ''">
+					bulletin = NULL,
+				</when>
+				<when test="bulletin != null">
+					bulletin = #{bulletin},
+				</when>
+			</choose>
+			<if test="deliveryPrice != null">
+				delivery_price = #{deliveryPrice},
+			</if>
+			<if test="minPrice != null">
+				min_price = #{minPrice}
+			</if>
+		</set>
+		WHERE restaurant_id = #{restaurantId}
+	</update>
 
 </mapper>

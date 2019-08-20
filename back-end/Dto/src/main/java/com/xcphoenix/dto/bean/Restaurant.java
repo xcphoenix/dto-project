@@ -1,6 +1,7 @@
 package com.xcphoenix.dto.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,13 +30,13 @@ public class Restaurant {
     private Integer userId;
 
     @Length(max = 50, message = "店铺名称字数超出范围")
-    @NotBlank(message = "店铺名称不能为空")
+    @NotBlank(message = "店铺名称不能为空", groups = {ValidateGroup.addData.class})
     private String restaurantName;
-    @NotBlank(message = "联系人不能为空")
+    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
     private String contactMan;
 
     @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-    @NotBlank(message = "手机号码不能为空")
+    @NotBlank(message = "手机号码不能为空", groups = {ValidateGroup.addData.class})
     private String restaurantPhone;
 
     @Length(max = 256, message = "店铺描述字数超出范围")
@@ -63,7 +64,7 @@ public class Restaurant {
     /**
      * Table country 主键 _id
      */
-    private int countryId;
+    private Integer countryId;
 
     @Length(max = 200, message = "地址长度超出范围")
     private String address;

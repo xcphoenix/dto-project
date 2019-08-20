@@ -50,6 +50,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
+        restaurant.setUserId((Integer)ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
         restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
         restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
@@ -75,9 +76,37 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Integer getRestaurantId() {
+    public Integer getLoginShopperResId() {
         Integer userId = (Integer) ContextHolderUtils.getRequest().getAttribute("userId");
         return getUserRestaurantId(userId);
     }
 
+    @Override
+    public void updateRestaurant(Restaurant restaurant) throws IOException {
+        restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
+        restaurant.setRestaurantId(getLoginShopperResId());
+        if (restaurant.getStoreImg() != null) {
+            restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
+        }
+        if (restaurant.getLogo() != null) {
+            restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
+        }
+        if (restaurant.getBannerImg() != null) {
+            restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
+        }
+
+        if (restaurant.getInstoreImgs() != null) {
+            StringBuilder builder = new StringBuilder();
+            for (String instore : restaurant.getInstoreImgs()) {
+                String path = base64ImgService.convertPicture(instore, inShoreImgDire);
+                if (builder.length() != 0) {
+                    builder.append(",");
+                }
+                builder.append(path);
+            }
+            restaurant.setInstoreImg(builder.toString());
+        }
+
+        restaurantMapper.updateRestaurant(restaurant);
+    }
 }

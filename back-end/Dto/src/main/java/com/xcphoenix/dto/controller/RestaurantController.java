@@ -4,6 +4,7 @@ import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.RestaurantService;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,7 @@ public class RestaurantController {
 
     @UserLoginToken
     @PostMapping("/restaurant")
-    public Result addNewRestaurant(@Validated @RequestBody Restaurant restaurant, HttpServletRequest request) throws IOException {
-        Integer userId = (Integer) request.getAttribute("userId");
-        restaurant.setUserId(userId);
+    public Result addNewRestaurant(@Validated(ValidateGroup.addData.class) @RequestBody Restaurant restaurant) throws IOException {
         restaurantService.addNewRestaurant(restaurant);
         restaurant.dataConvertToShow();
         return new Result("添加成功").addMap("restaurant", restaurant);
@@ -42,6 +41,15 @@ public class RestaurantController {
     public Result getRestaurant(HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute("userId");
         return new Result("查询成功").addMap("restaurant", restaurantService.getRestaurantDetail(userId));
+    }
+
+    @UserLoginToken
+    @PutMapping("/restaurant")
+    public Result updateRestaurant(@Validated @RequestBody Restaurant restaurant) throws IOException {
+        restaurantService.updateRestaurant(restaurant);
+        restaurant = restaurantService.getRestaurantDetail(restaurant.getUserId());
+        restaurant.dataConvertToShow();
+        return new Result("更新成功").addMap("restaurant", restaurant);
     }
 
 }

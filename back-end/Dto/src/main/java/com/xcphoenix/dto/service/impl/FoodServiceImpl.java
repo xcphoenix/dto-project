@@ -7,6 +7,7 @@ import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.FoodMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
+import com.xcphoenix.dto.service.FoodCategoryService;
 import com.xcphoenix.dto.service.FoodService;
 import com.xcphoenix.dto.service.RestaurantService;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class FoodServiceImpl implements FoodService {
 
     private FoodMapper foodMapper;
     private RestaurantService restaurantService;
+    private FoodCategoryService foodCategoryService;
     private Base64ImgService base64ImgService;
 
     @Value("${upload.image.directory.food}")
@@ -42,18 +44,20 @@ public class FoodServiceImpl implements FoodService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, Base64ImgService base64ImgService) {
+    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, FoodCategoryService foodCategoryService, Base64ImgService base64ImgService) {
         this.foodMapper = foodMapper;
         this.restaurantService = restaurantService;
+        this.foodCategoryService = foodCategoryService;
         this.base64ImgService = base64ImgService;
     }
 
     @ShopperCheck
     @Override
     public void addFood(Food food) throws IOException {
-        food.setRestaurantId(restaurantService.getRestaurantId());
+        food.setRestaurantId(restaurantService.getLoginShopperResId());
         food.setCoverImg(base64ImgService.convertPicture(food.getCoverImg(), foodCoverDire));
         food.setResidualAmount(food.getTotalNumber());
+        foodCategoryService.assertBelongShop(food.getCategoryId());
         try {
             foodMapper.addFood(food);
         } catch (DuplicateKeyException dke) {
@@ -65,7 +69,8 @@ public class FoodServiceImpl implements FoodService {
     @ShopperCheck
     @Override
     public void updateFood(Food food) throws IOException {
-        food.setRestaurantId(restaurantService.getRestaurantId());
+        foodCategoryService.assertBelongShop(food.getCategoryId());
+        food.setRestaurantId(restaurantService.getLoginShopperResId());
         if (food.getCoverImg() != null) {
             food.setCoverImg(base64ImgService.convertPicture(food.getCoverImg(), foodCoverDire));
         }
@@ -80,7 +85,10 @@ public class FoodServiceImpl implements FoodService {
     @ShopperCheck
     @Override
     public Food getFoodDetailById(Integer foodId) {
-        Food food = foodMapper.getFoodById(foodId, restaurantService.getRestaurantId());
+        Food food = foodMapper.getFoodById(foodId, restaurantService.getLoginShopperResId());
+        if (food == null) {
+            throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
+        }
         if (food.getCategoryId() == null) {
             food.setCategory(defaultCategoryName);
         }
@@ -90,19 +98,20 @@ public class FoodServiceImpl implements FoodService {
     @ShopperCheck
     @Override
     public List<Foods> getAllFoods() {
-        Integer restaurantId = restaurantService.getRestaurantId();
+        Integer restaurantId = restaurantService.getLoginShopperResId();
         List<Foods> foodsList = foodMapper.getAllFoods(restaurantId);
         foodsList.add(new Foods(null, defaultCategoryName,
-                foodMapper.getFoodsCategoryNull(restaurantId)));
+                foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName)));
         return foodsList;
     }
 
     @ShopperCheck
     @Override
     public List<Food> getFoodsByCategory(Integer categoryId) {
-        Integer restaurantId = restaurantService.getRestaurantId();
+        Integer restaurantId = restaurantService.getLoginShopperResId();
+        foodCategoryService.assertBelongShop(categoryId);
         if (categoryId == null) {
-            return foodMapper.getFoodsCategoryNull(restaurantId);
+            return foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName);
         }
         return foodMapper.getFoodsByCategory(categoryId, restaurantId);
     }

@@ -67,8 +67,9 @@ public interface FoodMapper {
      * 获取m默认分类的食品
      *
      * @param restaurantId 店铺 id
+     * @param defaultCategory 默认分类名
      * @return 信息
      */
-    List<Food> getFoodsCategoryNull(@Param("restaurantId") Integer restaurantId);
+    List<Food> getFoodsCategoryNull(@Param("restaurantId") Integer restaurantId, @Param("defaultCategory") String defaultCategory);
 
 }

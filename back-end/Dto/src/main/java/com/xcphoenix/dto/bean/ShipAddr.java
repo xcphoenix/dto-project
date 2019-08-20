@@ -1,5 +1,6 @@
 package com.xcphoenix.dto.bean;
 
+import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,11 +26,10 @@ public class ShipAddr {
     private Integer shipAddrId;
     private Integer userId;
 
-    @NotBlank(message = "联系人不能为空")
-    @NotNull(message = "联系人不存在")
+    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
     private String contact;
 
-    @NotNull(message = "联系电话不存在")
+    @NotNull(message = "联系电话不存在", groups = {ValidateGroup.addData.class})
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String phone;
 
