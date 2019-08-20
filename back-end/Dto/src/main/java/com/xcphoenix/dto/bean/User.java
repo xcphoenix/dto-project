@@ -1,7 +1,6 @@
 package com.xcphoenix.dto.bean;
 
-import com.alibaba.fastjson.annotation.JSONType;
-import com.alibaba.fastjson.parser.Feature;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,11 +31,11 @@ public class User {
 
     private String userAvatar;
 
-    @NotNull(message = "手机号不能为空")
+    @NotNull(message = "手机号不能为空", groups = {ValidateGroup.addData.class})
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String userPhone;
 
-    @NotBlank(message = "密码不能为空")
+    @NotBlank(message = "密码不能为空", groups = {ValidateGroup.addData.class})
     private String userPassword;
     private Boolean isSetPasswd;
 

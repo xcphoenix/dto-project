@@ -13,6 +13,7 @@ public interface RestaurantService {
 
     /**
      * 是否是新商家 - 即：有无开店记录
+     *
      * @param userId 用户 id
      * @return 店铺 id
      */
@@ -20,6 +21,7 @@ public interface RestaurantService {
 
     /**
      * 店铺名是否可用
+     *
      * @param name 店铺名
      * @return 可用情况
      */
@@ -27,6 +29,7 @@ public interface RestaurantService {
 
     /**
      * 添加店铺
+     *
      * @param restaurant 店铺信息
      * @return 店铺信息
      * @throws IOException base64url -> picture 图片可能会发生 IO 错误
@@ -35,6 +38,7 @@ public interface RestaurantService {
 
     /**
      * 获取店铺的具体情况（商家端获取信息）
+     *
      * @param userId 用户 id
      * @return 店铺详情
      */
@@ -42,8 +46,16 @@ public interface RestaurantService {
 
     /**
      * 获取店铺 id
-     * @return
+     *
+     * @return 登录商家的店铺id
      */
-    public Integer getRestaurantId();
+    public Integer getLoginShopperResId();
+
+    /**
+     * 更新店铺信息
+     *
+     * @param restaurant 店铺信息
+     */
+    void updateRestaurant(Restaurant restaurant) throws IOException;
 
 }

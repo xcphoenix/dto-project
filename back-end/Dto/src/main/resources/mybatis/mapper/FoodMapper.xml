@@ -105,7 +105,7 @@
 	
 	<!-- 获取店铺的默认分类信息 -->
 	<select id="getFoodsCategoryNull" resultType="com.xcphoenix.dto.bean.Food">
-		SELECT <include refid="foodDetails" />
+		SELECT <include refid="foodDetails" />, #{defaultCategory} AS category
 		FROM food
 		WHERE restaurant_id = #{restaurantId} AND category_id IS NULL
 	</select>

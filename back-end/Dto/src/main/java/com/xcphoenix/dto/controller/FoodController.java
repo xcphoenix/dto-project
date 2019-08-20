@@ -1,9 +1,8 @@
 package com.xcphoenix.dto.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.Food;
-import com.xcphoenix.dto.exception.ServiceLogicException;
-import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +47,6 @@ public class FoodController {
     @GetMapping("/food/{foodId}")
     public Result getFoodDetail(@PathVariable Integer foodId) {
         Food food = foodService.getFoodDetailById(foodId);
-        if (food == null) {
-            throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
-        }
         return new Result("查询成功")
                 .addMap("food", food);
     }
@@ -63,7 +59,8 @@ public class FoodController {
 
     @UserLoginToken
     @GetMapping("/foods/category")
-    public Result getFoodsByCategory(@RequestBody(required = false) Integer categoryId) {
+    public Result getFoodsByCategory(@RequestBody(required = false) JSONObject jsonObject) {
+        Integer categoryId = jsonObject == null ? null : jsonObject.getInteger("categoryId");
         return new Result("查询成功")
                 .addMap("foods", foodService.getFoodsByCategory(categoryId));
     }

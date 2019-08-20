@@ -39,4 +39,10 @@ public interface FoodCategoryService {
      */
     List<FoodCategory> getCategories();
 
+    /**
+     * 断言指定的[分类（可为空）]为[商家]创立
+     *
+     * @param categoryId 分类 id
+     */
+    void assertBelongShop(Integer categoryId);
 }

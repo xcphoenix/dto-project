@@ -27,9 +27,6 @@ public interface FoodCategoryMapper {
      *
      * @param foodCategory 新的分类信息
      */
-    @Update("UPDATE food_category " +
-            "SET name = #{name}, description = #{description} " +
-            "WHERE category_id = #{categoryId} AND restaurant_id = #{restaurantId}")
     void updateCategory(FoodCategory foodCategory);
 
     /**
@@ -66,6 +63,7 @@ public interface FoodCategoryMapper {
 
     /**
      * 获取 id 对应的名称
+     *
      * @param id 分类 id
      * @return 名称
      */

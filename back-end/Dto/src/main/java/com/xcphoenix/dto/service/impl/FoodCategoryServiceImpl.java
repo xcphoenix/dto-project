@@ -38,13 +38,12 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         this.restaurantService = restaurantService;
     }
 
-    @ShopperCheck
     @Override
     public void addNewCategory(FoodCategory foodCategory) {
         if (defaultCategoryName.equals(foodCategory.getName())) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NAME_CONFLICT);
         }
-        foodCategory.setRestaurantId(restaurantService.getRestaurantId());
+        foodCategory.setRestaurantId(restaurantService.getLoginShopperResId());
         try {
             foodCategoryMapper.addNewCategory(foodCategory);
         } catch (DuplicateKeyException dke) {
@@ -53,10 +52,9 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         }
     }
 
-    @ShopperCheck
     @Override
     public void updateCategory(FoodCategory foodCategory) {
-        Integer restaurantId = restaurantService.getRestaurantId();
+        Integer restaurantId = restaurantService.getLoginShopperResId();
         foodCategory.setRestaurantId(restaurantId);
         if (foodCategory.getCategoryId() == null || foodCategoryMapper.checkHaveCategories(foodCategory.getCategoryId(), restaurantId) != 1) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
@@ -72,18 +70,24 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         }
     }
 
-    @ShopperCheck
     @Override
     public void deleteCategory(Integer categoryId) {
-        if (foodCategoryMapper.deleteCategory(categoryId, restaurantService.getRestaurantId()) == 0) {
+        if (foodCategoryMapper.deleteCategory(categoryId, restaurantService.getLoginShopperResId()) == 0) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 
-    @ShopperCheck
     @Override
     public List<FoodCategory> getCategories() {
-        return foodCategoryMapper.getCategories(restaurantService.getRestaurantId());
+        return foodCategoryMapper.getCategories(restaurantService.getLoginShopperResId());
+    }
+
+    @Override
+    public void assertBelongShop(Integer categoryId) {
+        if (categoryId != null &&
+                foodCategoryMapper.checkHaveCategories(categoryId, restaurantService.getLoginShopperResId()) != 1) {
+            throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
     }
 
 }

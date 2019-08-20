@@ -4,6 +4,7 @@ import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.FoodCategory;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.FoodCategoryService;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class FoodCategoryController {
 
     @PostMapping("/category")
     @UserLoginToken
-    public Result addCategory(@Validated @RequestBody FoodCategory foodCategory) {
+    public Result addCategory(@Validated(ValidateGroup.addData.class) @RequestBody FoodCategory foodCategory) {
         foodCategoryService.addNewCategory(foodCategory);
         return new Result("添加成功")
                 .addMap("category", foodCategory);

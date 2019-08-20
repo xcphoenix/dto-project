@@ -9,6 +9,7 @@ import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.LoginService;
 import com.xcphoenix.dto.service.TokenService;
 import com.xcphoenix.dto.service.UserService;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -83,7 +84,7 @@ public class LoginController {
 
     @PassToken
     @PostMapping("/register")
-    public Result registerTmpDev(@Validated @RequestBody User user) {
+    public Result registerTmpDev(@Validated(ValidateGroup.addData.class) @RequestBody User user) {
         user.setUserName(RandomStringUtils.randomAlphanumeric(2) + System.currentTimeMillis());
         Integer userId = loginService.registerByPhonePass(user);
         if (userId == null) {
