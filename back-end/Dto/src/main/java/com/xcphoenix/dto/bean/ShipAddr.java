@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -29,7 +28,7 @@ public class ShipAddr {
     @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
     private String contact;
 
-    @NotNull(message = "联系电话不存在", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "联系电话不存在", groups = {ValidateGroup.addData.class})
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String phone;
 

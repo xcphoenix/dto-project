@@ -19,5 +19,16 @@ public class ContextHolderUtils {
                 requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
     }
 
+    /**
+     * 获取登录用户 id
+     */
+    public static Integer getLoginUserId() {
+        Object object =  getRequest().getAttribute("userId");
+        if (!(object instanceof Integer)) {
+            throw new RuntimeException("用户id不存在");
+        }
+        return (Integer) object;
+    }
+
 }
 
