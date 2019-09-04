@@ -87,6 +87,10 @@ public class ErrorCode {
     public static final ErrorCode FOOD_NOT_FOUND = new ErrorCode(50004, "食品不存在");
     public static final ErrorCode CATEGORY_NAME_CONFLICT = new ErrorCode(50005, "不允许的分类名");
 
+    /**
+     * 收货地址
+     */
+    public static final ErrorCode ADDR_NOT_FOUND = new ErrorCode(60001, "收货地址不存在");
 
 
 }
