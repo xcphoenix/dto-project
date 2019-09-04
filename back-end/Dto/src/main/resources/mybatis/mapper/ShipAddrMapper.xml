@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.ShipAddrMapper">
+	
+	<insert id="addShipAddr" useGeneratedKeys="true" keyProperty="shipAddrId">
+		INSERT INTO ship_addr
+		<trim suffixOverrides="," suffix=")" prefix="(">
+			user_id, contact, phone, country_id, address, addr_lng, addr_lat, geohash,
+			<if test="addressDetail != null and addressDetail != ''">
+				address_detail,
+			</if>
+			<if test="tagType != null">
+				tag_type,
+			</if>
+			<if test="isDefault != null">
+				is_default,
+			</if>
+		</trim>
+		VALUES (
+		#{userId}, #{contact}, #{phone},
+		(SELECT _id FROM country WHERE country_id=#{countryCode}),
+		#{address}, #{addrLng}, #{addrLat}, #{geohash}
+		<trim prefix=", " suffix="" suffixOverrides=",">
+			<if test="addressDetail != null and addressDetail != ''">
+				#{addressDetail},
+			</if>
+			<if test="tagType != null">
+				#{tagType},
+			</if>
+			<if test="isDefault != null">
+				#{isDefault},
+			</if>
+		</trim>
+		)
+	</insert>
+	
+	<delete id="delShipAddr">
+		DELETE FROM ship_addr WHERE ship_addr_id = #{addrId} AND user_id = #{userId}
+	</delete>
+	
+	<update id="updateShipAddr">
+		UPDATE ship_addr
+		<set>
+			<if test="contact != null and contact != ''">
+				contact = #{contact},
+			</if>
+			<if test="phone != null and phone != ''">
+				phone = #{phone},
+			</if>
+			<if test="countryId != null">
+				country_id = (SELECT _id FROM country WHERE country_id=#{countryCode}),
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address},
+			</if>
+			<if test="addrLng != null">
+				addr_lng = #{addrLng},
+			</if>
+			<if test="addrLat != null">
+				addr_lat = #{addrLat},
+			</if>
+			<if test="geohash != null and geohash != ''">
+				geohash = #{geohash},
+			</if>
+			<if test="addressDetail != null and addressDetail != ''">
+				address_detail = #{addressDetail},
+			</if>
+			<if test="tagType != null">
+				tag_type = #{tagType},
+			</if>
+			<if test="isDefault != null">
+				is_default = #{isDefault}
+			</if>
+		</set>
+		WHERE ship_addr_id = #{shipAddrId} AND user_id = #{userId}
+	</update>
+	
+	<select id="getAddrByUserId" resultType="com.xcphoenix.dto.bean.ShipAddr">
+		SELECT ship_addr_id, user_id, contact, phone, country_id, address, addr_lng, addr_lat,
+		       geohash, address_detail, tag_type, is_default FROM ship_addr
+		WHERE user_id = #{userId}
+	</select>
+	
+	<select id="getAddrById" resultType="com.xcphoenix.dto.bean.ShipAddr">
+		SELECT ship_addr_id, user_id, contact, phone, country_id, address, addr_lng, addr_lat,
+		geohash, address_detail, tag_type, is_default FROM ship_addr
+		WHERE user_id = #{userId} AND ship_addr_id = #{shipAddrId}
+	</select>
+	
+</mapper>

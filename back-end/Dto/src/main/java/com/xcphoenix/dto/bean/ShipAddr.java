@@ -1,5 +1,6 @@
 package com.xcphoenix.dto.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,11 @@ public class ShipAddr {
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String phone;
 
+    @JSONField(deserialize = false)
     private Integer countryId;
+
+    @JSONField(serialize = false)
+    private String countryCode;
 
     @Length(max = 100, message = "地址长度超出范围")
     private String address;
@@ -40,12 +45,23 @@ public class ShipAddr {
     private BigDecimal addrLng;
     private BigDecimal addrLat;
 
-    @Length(max = 50, message = "门牌号长度超出范围")
-    private String houseNumber;
+    private String geohash;
+
+    @Length(max = 50, message = "地址详情长度超出范围")
+    private String addressDetail;
 
     @Size(max = 3, min = 0, message = "未知的类型")
-    private Integer kind;
+    private Integer tagType;
+
+    @JSONField(deserialize = false)
+    private String tagName;
 
     private Boolean isDefault;
+
+    public ShipAddr dataConvert() {
+        String[] typeNames = new String[] {null, "家庭", "公司", "学校"};
+        this.tagName = typeNames[this.tagType];
+        return this;
+    }
 
 }
