@@ -3,11 +3,11 @@
 	
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
 		</layout>
 	</appender>
 	
-	<logger name="com.your.package" level="DEBUG">
+	<logger name="com.xcphoenix.dto" level="INFO">
 		<appender-ref ref="CONSOLE"/>
 	</logger>
 	
@@ -31,7 +31,11 @@
 		<appender-ref ref="CONSOLE"/>
 	</logger>
 	
-	<root level="DEBUG">
+	<logger name="org.apache.ibatis" level="trace">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
+	
+	<root level="INFO">
 		<appender-ref ref="CONSOLE"/>
 	</root>
 

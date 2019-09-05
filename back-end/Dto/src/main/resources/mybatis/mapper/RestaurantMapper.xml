@@ -5,11 +5,11 @@
 	
 	<insert id="addRestaurant" useGeneratedKeys="true" keyProperty="restaurantId">
 		INSERT INTO restaurant(user_id, restaurant_name, restaurant_desc, restaurant_phone, contact_man, tag, bh_start,
-		bh_end, country_id, address, addr_lng, addr_lat, store_img, instore_img, logo,
+		bh_end, country_id, address, addr_lng, addr_lat, geohash, delivery_range, store_img, instore_img, logo,
 		banner_img, bulletin, delivery_price, min_price, gmt_create)
 		VALUES (#{userId}, #{restaurantName}, #{restaurantDesc}, #{restaurantPhone}, #{contactMan}, #{tag}, #{bhStart},
-		#{bhEnd}, #{countryId}, #{address}, #{addrLng}, #{addrLat}, #{storeImg}, #{instoreImg}, #{logo}, #{bannerImg},
-		#{bulletin}, #{deliveryPrice}, #{minPrice}, NOW())
+		#{bhEnd}, #{countryId}, #{address}, #{addrLng}, #{addrLat}, #{geohash}, #{deliveryRange}, #{storeImg},
+		#{instoreImg}, #{logo}, #{bannerImg}, #{bulletin}, #{deliveryPrice}, #{minPrice}, NOW())
 	</insert>
 	
 	<select id="getRestaurantDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
@@ -26,6 +26,8 @@
 		`address`,
 		`addr_lng`,
 		`addr_lat`,
+		`geohash`,
+		`delivery_range`,
 		`store_img`,
 		`instore_img`,
 		`logo`,
@@ -44,7 +46,7 @@
 		`month_revenue`,
 		`gmt_create`
 		FROM `restaurant`
-		WHERE user_id = #{userId,jdbcType=INTEGER}
+		WHERE user_id = #{userId}
 	</select>
 	
 	<update id="updateRestaurant">
@@ -87,6 +89,12 @@
 			</if>
 			<if test="addrLat != null">
 				addr_lat = #{addrLat},
+			</if>
+			<if test="geohash != null and geohash != ''">
+				geohash = #{geohash},
+			</if>
+			<if test="deliveryRange != null">
+				delivery_range = #{deliveryRange},
 			</if>
 			<if test="storeImg != null and storeImg != ''">
 				store_img = #{storeImg},
