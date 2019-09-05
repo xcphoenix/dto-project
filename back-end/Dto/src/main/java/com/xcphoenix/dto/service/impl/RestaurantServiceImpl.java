@@ -1,9 +1,11 @@
 package com.xcphoenix.dto.service.impl;
 
+import ch.hsr.geohash.GeoHash;
 import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.service.Base64ImgService;
+import com.xcphoenix.dto.service.GeoCoderService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Value("${upload.image.directory.banner}")
     private String bannerImgDire;
 
+    private final int precision = 12;
+
     @Autowired
-    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
+    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService, GeoCoderService geoCoderService) {
         this.restaurantMapper = restaurantMapper;
         this.base64ImgService = base64ImgService;
     }
@@ -65,6 +69,12 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
         restaurant.setInstoreImg(builder.toString());
 
+        GeoHash geoHash = GeoHash.withCharacterPrecision(
+                restaurant.getAddrLat().doubleValue(),
+                restaurant.getAddrLng().doubleValue(), precision
+        );
+        restaurant.setGeohash(geoHash.toBase32());
+
         restaurantMapper.addRestaurant(restaurant);
         return restaurant;
     }
@@ -85,6 +95,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void updateRestaurant(Restaurant restaurant) throws IOException {
         restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setRestaurantId(getLoginShopperResId());
+
+        // picture
         if (restaurant.getStoreImg() != null) {
             restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
         }
@@ -105,6 +117,15 @@ public class RestaurantServiceImpl implements RestaurantService {
                 builder.append(path);
             }
             restaurant.setInstoreImg(builder.toString());
+        }
+
+        // geohash
+        if (restaurant.getAddrLng() != null && restaurant.getAddrLat() != null) {
+            GeoHash geoHash = GeoHash.withCharacterPrecision(
+                    restaurant.getAddrLat().doubleValue(),
+                    restaurant.getAddrLng().doubleValue(), precision
+            );
+            restaurant.setGeohash(geoHash.toBase32());
         }
 
         restaurantMapper.updateRestaurant(restaurant);

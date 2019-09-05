@@ -71,6 +71,9 @@ public class Restaurant {
     private BigDecimal addrLng;
     private BigDecimal addrLat;
 
+    private String geohash;
+    private Float deliveryRange;
+
     /**
      * 只是存储在数据库中，不进行序列化和反序列化的操作
      */

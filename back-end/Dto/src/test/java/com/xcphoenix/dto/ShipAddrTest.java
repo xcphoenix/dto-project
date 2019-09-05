@@ -3,9 +3,12 @@ package com.xcphoenix.dto;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.ShipAddrService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +19,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author      xuanc
@@ -26,26 +29,40 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @version     1.0
  */
 @Slf4j
-@Transactional
-@Rollback
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@Transactional
+@Rollback
+@DisplayName("收货地址测试")
 class ShipAddrTest {
 
     @Autowired
     private ShipAddrService shipAddrService;
 
-    @DisplayName("添加收货地址")
+    private Object userId = null;
+    private ShipAddr shipAddr = new ShipAddr(
+            null, 2, "联系人", "18222222222", null, "110101", "xxx地址",
+            BigDecimal.valueOf(110.088280), BigDecimal.valueOf(34.567000), null, null, 1, null, false
+    );
+
+    @BeforeEach
+    void setUserId() {
+        // save
+        userId = ContextHolderUtils.getRequest().getAttribute("userId");
+        ContextHolderUtils.getRequest().setAttribute("userId", 2);
+    }
+
+    @AfterEach
+    void resetUserId() {
+        // reset
+        ContextHolderUtils.getRequest().setAttribute("userId", userId);
+    }
+
+    @DisplayName("添加")
     @Test
     void testAddShipAddr() {
-        // save
-        Object userId = ContextHolderUtils.getRequest().getAttribute("userId");
-        ContextHolderUtils.getRequest().setAttribute("userId", 2);
+        log.info("add");
 
-        ShipAddr shipAddr = new ShipAddr(
-                null, 2, "联系人", "18222222222", null, "110101", "xxx地址",
-                BigDecimal.valueOf(110.0882809986), BigDecimal.valueOf(34.5670002034), null, null, 1, null, false
-        );
         // test add
         shipAddrService.addShipAddr(shipAddr);
         assertNotNull(shipAddr.getShipAddrId());
@@ -56,9 +73,55 @@ class ShipAddrTest {
         ShipAddr newShipAddr = shipAddrService.getAddrMsgById(shipAddr.getShipAddrId());
         assertNotNull(newShipAddr);
         log.info(JSON.toJSON(newShipAddr).toString(), SerializerFeature.PrettyFormat);
+    }
 
-        // restore
-        ContextHolderUtils.getRequest().setAttribute("userId", userId);
+    @DisplayName("更新")
+    @Test
+    void testUpdateAddr() {
+        log.info("update");
+
+        // add again
+        shipAddrService.addShipAddr(shipAddr);
+
+        // update new address
+        shipAddrService.addShipAddr(shipAddr);
+        shipAddr.setAddress("update address");
+        shipAddr.setTagType(2);
+        shipAddr.setPhone("13512341234");
+        shipAddrService.updateShipAddr(shipAddr);
+
+        // check
+        ShipAddr newAddr = shipAddrService.getAddrMsgById(shipAddr.getShipAddrId());
+        assertEquals(shipAddr.getPhone(), "13512341234");
+        assertEquals(shipAddr.getAddress(), "update address");
+        assertEquals(shipAddr.getTagType(), Integer.valueOf(2));
+    }
+
+    @DisplayName("批量获取＆删除")
+    @Test
+    void testGetsDelAddr() {
+        log.info("get & del");
+
+        List<ShipAddr> shipAddrList = shipAddrService.getAddresses();
+        int beforeSize = shipAddrList.size();
+
+        shipAddrService.addShipAddr(shipAddr);
+        shipAddrService.addShipAddr(shipAddr);
+
+        shipAddrList = shipAddrService.getAddresses();
+        int afterSize = shipAddrList.size();
+
+        assertNotNull(shipAddrList);
+        assertEquals(afterSize - beforeSize, 2);
+
+        Integer firstShipAddrId = shipAddrList.get(0).getShipAddrId();
+
+        shipAddrService.delShipAddr(firstShipAddrId);
+
+        ServiceLogicException sle = assertThrows(ServiceLogicException.class,
+                () -> shipAddrService.getAddrMsgById(firstShipAddrId));
+        assertTrue(sle.getMessage().contains("收货地址不存在"));
+        assertEquals(afterSize - 1, shipAddrService.getAddresses().size());
     }
 
 }

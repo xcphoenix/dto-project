@@ -2,7 +2,6 @@ package com.xcphoenix.dto.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.service.GeoCoderService;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class GeoCoderServiceImpl implements GeoCoderService {
         map.put("get_poi", 1);
         map.put("key", key);
         String jsonStr = restTemplate.getForObject(url, String.class, map);
-        LoggerFactory.getLogger(this.getClass()).debug(jsonStr);
+        // LoggerFactory.getLogger(this.getClass()).debug(jsonStr);
         return JSONObject.parseObject(jsonStr);
     }
 
