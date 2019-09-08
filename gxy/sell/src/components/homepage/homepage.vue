@@ -2,22 +2,35 @@
   <div id="home">
     <div class="home_header">
       <div class="home_address">
-        <span>西安</span>
+        <p ref="city">{{city}}</p>
       </div>
       <div class="home_search">
         <i class="iconfont icon-sousuo"></i>
         <input type="text">
       </div>
-      <div class="home_plus">
+      <div class="home_plus" @click="showright=!showright">
         <i class="iconfont icon-jiahao"></i>
       </div>
+      <rightSideBar v-show="showright"></rightSideBar>
     </div>
+    <div class="home_sidebar">
+      <swiper></swiper>
+    </div>
+   
 
     <!-- <div @click="jinrushangpin">商品1</div> -->
   </div>
 </template>
 <script>
+import rightSideBar from '../commonComponents/rightSideBar'
+import swiper from '../commonComponents/swiper'
 export default {
+  data(){
+    return{
+      city:undefined,
+      showright:false
+    }
+  },
   methods: {
     jinrushangpin() {
       console.log("1");
@@ -29,10 +42,7 @@ export default {
                 geolocation.getIpLocation(this.showPosition, this.showErr);
             },
             showPosition(position) {
-                console.log(position);
-                this.latitude = position.lat;
-                this.longitude = position.lng;
-                this.city = position.city;
+                this.city = position.city
             },
             showErr() {
                 console.log("定位失败");
@@ -41,7 +51,8 @@ export default {
   },
   mounted(){
     this.getMyLocation()
-  }
+  },
+  components:{rightSideBar,swiper}
 };
 </script>
 
@@ -57,6 +68,12 @@ export default {
 .home_address{
 border:1px solid green;
 flex:0.2;
+text-align: center;
+height: 78px;
+line-height: 78px;
+}
+.home_address p {
+  font-size: 35px;
 }
 .home_search{
 position: relative;
