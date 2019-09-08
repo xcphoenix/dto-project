@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 
 /**
  * 店铺 - bean
@@ -72,6 +72,9 @@ public class Restaurant {
     private BigDecimal addrLat;
 
     private String geohash;
+
+    @NotNull(message = "配送距离不能为空", groups = {ValidateGroup.addData.class})
+    @DecimalMin(value = "0.0", message = "配送距离参数错误")
     private Float deliveryRange;
 
     /**
@@ -107,6 +110,15 @@ public class Restaurant {
     public void dataConvertToShow() {
         tags = tag.split(",");
         instoreImgs = instoreImg.split(",");
+    }
+
+    public void rangeFormat() {
+        if (this.deliveryRange == null) {
+            return;
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+        this.deliveryRange = Float.parseFloat(decimalFormat.format(this.deliveryRange));
     }
 
 }

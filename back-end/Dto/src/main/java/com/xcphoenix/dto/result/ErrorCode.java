@@ -71,6 +71,7 @@ public class ErrorCode {
      */
     public static final ErrorCode FILE_NOT_IMAGE = new ErrorCode(30001, "不是有效的图片文件");
     public static final ErrorCode FILE_SIZE_OUT_OF_RANGE = new ErrorCode(30002, "图片文件大小超出范围");
+    public static final ErrorCode BASE64_IS_NULL = new ErrorCode(30003, "图片参数不存在");
 
     /**
      * 店铺相关

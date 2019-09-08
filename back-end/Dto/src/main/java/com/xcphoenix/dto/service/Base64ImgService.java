@@ -74,7 +74,7 @@ public class Base64ImgService {
     private String base64TransToFile(String base64Str, String filepath) throws IOException {
 
         if (base64Str == null || filepath == null) {
-            return null;
+            throw new ServiceLogicException(ErrorCode.BASE64_IS_NULL);
         }
 
         // 去掉图片前缀，转码

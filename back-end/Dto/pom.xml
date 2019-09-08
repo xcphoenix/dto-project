@@ -153,6 +153,13 @@
 			<artifactId>geohash</artifactId>
 			<version>1.3.0</version>
 		</dependency>
+		
+		<!-- pageHelper -->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+			<version>5.1.9</version>
+		</dependency>
 	
 	</dependencies>
 	
