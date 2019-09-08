@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.controller;
+package com.xcphoenix.dto.controller.exception;
 
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Result globalExceptionHandler(Exception ex, HttpServletRequest request) {
-        logger.error("发生异常 >>\n",  ex);
+        // logger.error("发生异常 >>\n",  ex);
         if (ex instanceof ServiceLogicException) {
             return ((ServiceLogicException) ex).errorResult();
         } else if (ex instanceof MethodArgumentNotValidException) {

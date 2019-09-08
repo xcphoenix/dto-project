@@ -12,16 +12,9 @@ public class ServiceLogicException extends RuntimeException {
 
     private ErrorCode errorCode;
 
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    private String message;
-
     public ServiceLogicException(ErrorCode errorCode) {
+        super(errorCode.getMsg());
         this.errorCode = errorCode;
-        this.message = errorCode.getMsg();
     }
 
     public Result errorResult() {

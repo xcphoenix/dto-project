@@ -3,13 +3,16 @@ package com.xcphoenix.dto.service.impl;
 import ch.hsr.geohash.GeoHash;
 import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.GeoCoderService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -58,7 +61,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
         restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
         restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
+        restaurant.rangeFormat();
 
+        // pictures
         StringBuilder builder = new StringBuilder();
         for (String instore : restaurant.getInstoreImgs()) {
             String path = base64ImgService.convertPicture(instore, inShoreImgDire);
@@ -69,13 +74,18 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
         restaurant.setInstoreImg(builder.toString());
 
+        // geohash
         GeoHash geoHash = GeoHash.withCharacterPrecision(
                 restaurant.getAddrLat().doubleValue(),
                 restaurant.getAddrLng().doubleValue(), precision
         );
         restaurant.setGeohash(geoHash.toBase32());
 
-        restaurantMapper.addRestaurant(restaurant);
+        try {
+            restaurantMapper.addRestaurant(restaurant);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceLogicException(ErrorCode.USER_HAVE_SHOP);
+        }
         return restaurant;
     }
 
@@ -95,6 +105,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void updateRestaurant(Restaurant restaurant) throws IOException {
         restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setRestaurantId(getLoginShopperResId());
+        restaurant.rangeFormat();
 
         // picture
         if (restaurant.getStoreImg() != null) {
