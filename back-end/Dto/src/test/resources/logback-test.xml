@@ -7,33 +7,33 @@
 		</layout>
 	</appender>
 	
-	<logger name="com.xcphoenix.dto" level="INFO">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="com.xcphoenix.dto" level="INFO">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="org.springframework" level="WARN">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="org.springframework" level="WARN">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="org.hibernate" level="WARN">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="org.hibernate" level="WARN">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="org.eclipse" level="WARN">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="org.eclipse" level="WARN">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="jndi" level="WARN">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="jndi" level="WARN">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="org.apache.http.wire" level="WARN">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="org.apache.http.wire" level="WARN">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
-	<logger name="org.apache.ibatis" level="trace">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
+	<!--<logger name="org.apache.ibatis" level="trace">-->
+	<!--	<appender-ref ref="CONSOLE"/>-->
+	<!--</logger>-->
 	
 	<root level="INFO">
 		<appender-ref ref="CONSOLE"/>

@@ -7,7 +7,6 @@ import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
-import com.xcphoenix.dto.service.GeoCoderService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,8 @@ import java.io.IOException;
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
 
-    private final RestaurantMapper restaurantMapper;
-    private final Base64ImgService base64ImgService;
+    private RestaurantMapper restaurantMapper;
+    private Base64ImgService base64ImgService;
 
     @Value("${upload.image.directory.store}")
     private String storeImgDire;
@@ -40,7 +39,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final int precision = 12;
 
     @Autowired
-    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService, GeoCoderService geoCoderService) {
+    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
         this.restaurantMapper = restaurantMapper;
         this.base64ImgService = base64ImgService;
     }
@@ -141,4 +140,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         restaurantMapper.updateRestaurant(restaurant);
     }
+
+
+
 }

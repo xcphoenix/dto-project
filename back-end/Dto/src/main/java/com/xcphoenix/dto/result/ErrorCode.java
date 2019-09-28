@@ -36,9 +36,16 @@ public class ErrorCode {
      */
 
     /**
-     * JSR 参数错误
+     * 非法参数
      */
-    public static final ErrorCode BIND_EXCEPTION = new ErrorCode(4001, null);
+    public static ErrorCode illegalArgumentBuilder() {
+        String defaultMsg = "无效的参数";
+        return illegalArgumentBuilder(defaultMsg);
+    }
+    public static ErrorCode illegalArgumentBuilder(String msg) {
+        return new ErrorCode(4001, msg);
+    }
+
     /**
      * 默认异常
      */

@@ -23,7 +23,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Boolean isExists(String str) {
         if (str == null) {
-            throw new ServiceLogicException(ErrorCode.BIND_EXCEPTION.setErrorMsg("缺少必要的参数"));
+            throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("缺少必要的参数"));
         }
         char firstCh = str.charAt(0);
         if (Character.isDigit(firstCh)) {
@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Integer loginByPhonePass(String phone, String password) {
         if (phone == null || password == null) {
-            throw new ServiceLogicException(ErrorCode.BIND_EXCEPTION.setErrorMsg("缺少必要的参数"));
+            throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("缺少必要的参数"));
         }
         return loginMapper.loginByPhonePass(phone, password);
     }
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Integer loginByName(String username, String password) {
         if (username == null || password == null) {
-            throw new ServiceLogicException(ErrorCode.BIND_EXCEPTION.setErrorMsg("缺少必要的参数"));
+            throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("缺少必要的参数"));
         }
         return loginMapper.loginByName(username, password);
     }

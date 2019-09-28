@@ -34,14 +34,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Result globalExceptionHandler(Exception ex, HttpServletRequest request) {
-        // logger.error("发生异常 >>\n",  ex);
         if (ex instanceof ServiceLogicException) {
             return ((ServiceLogicException) ex).errorResult();
         } else if (ex instanceof MethodArgumentNotValidException) {
             // JSR 303 错误
             BindingResult bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
             final List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            Result result = Result.error(ErrorCode.BIND_EXCEPTION);
+            Result result = Result.error(ErrorCode.illegalArgumentBuilder());
             Map<String, Object> data = new HashMap<>(1);
             List<String> errorList = new LinkedList<>();
             for (FieldError fieldError : fieldErrors) {
@@ -55,7 +54,7 @@ public class GlobalExceptionHandler {
             List<ObjectError> errors = bindException.getAllErrors();
             ObjectError error = errors.get(0);
             String errorMsg = error.getDefaultMessage();
-            return Result.error(ErrorCode.BIND_EXCEPTION.setErrorMsg(errorMsg));
+            return Result.error(ErrorCode.illegalArgumentBuilder(errorMsg));
         } else {
             return Result.error(ErrorCode.SERVER_EXCEPTION);
         }
