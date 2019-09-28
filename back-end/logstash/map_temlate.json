@@ -1,0 +1,16 @@
+{
+	"template": "shop",
+	"order": 1,
+	"settings": {
+		"number_of_shards": 1
+	},
+	"mappings": {
+		"shop" : {
+			"properties" : {
+				"location" : { 
+					"type" : "geo_point" 
+				} 
+			}
+		}
+	}
+}

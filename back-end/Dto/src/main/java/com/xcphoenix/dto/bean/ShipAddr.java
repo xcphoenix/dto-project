@@ -42,7 +42,11 @@ public class ShipAddr {
     @Length(max = 100, message = "地址长度超出范围")
     private String address;
 
+    @Pattern(regexp = "^[\\-+]?(0?\\d{1,2}|0?\\d{1,2}\\.\\d{1,15}|1[0-7]?\\d|1[0-7]?\\d\\.\\d{1,15}|180|180\\.0{1,15})$",
+            message = "无效的经度")
     private BigDecimal addrLng;
+    @Pattern(regexp = "^[\\-+]?([0-8]?\\d|[0-8]?\\d\\.\\d{1,15}|90|90\\.0{1,15})$",
+            message = "无效的纬度")
     private BigDecimal addrLat;
 
     private String geohash;

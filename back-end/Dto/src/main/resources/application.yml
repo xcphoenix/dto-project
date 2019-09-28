@@ -60,7 +60,12 @@ spring:
   redis:
     host: localhost
     database: 1
-    
+
+  # elasticsearch
+  elasticsearch:
+    jest:
+      uris: http://47.94.5.149:9200
+      
   profiles:
     active: local-dev
 
@@ -81,7 +86,6 @@ logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} :: %clr(%-40.40logger{39}){cyan} {N:%line} %clr(>>){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } > [%t] %-40.40logger{39}[lineno:%line]: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
-    
     
 ---
 
