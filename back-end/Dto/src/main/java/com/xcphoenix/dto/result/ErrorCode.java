@@ -72,6 +72,7 @@ public class ErrorCode {
     public static final ErrorCode LOGIN_PASSWD_ERROR = new ErrorCode(20003, "密码错误");
     public static final ErrorCode MOBILE_REGISTERED = new ErrorCode(20004, "手机号已注册");
     public static final ErrorCode NAME_NOT_UNIQUE = new ErrorCode(20005, "用户名已被占用");
+    public static final ErrorCode USER_NOT_LOGIN = new ErrorCode(20006, "未登录");
 
     /**
      * 文件相关
@@ -85,6 +86,7 @@ public class ErrorCode {
      */
     public static final ErrorCode USER_HAVE_SHOP = new ErrorCode(40001, "用户只能添加一个店铺");
     public static final ErrorCode USER_NOT_SHOPPER = new ErrorCode(40002, "用户不是商家");
+    public static final ErrorCode SHOP_NOT_FOUND = new ErrorCode(40003, "店铺不存在");
 
     /**
      * 商品相关
@@ -100,5 +102,10 @@ public class ErrorCode {
      */
     public static final ErrorCode ADDR_NOT_FOUND = new ErrorCode(60001, "收货地址不存在");
 
+    /**
+     * 收藏相关
+     */
+    public static final ErrorCode SHOP_HAVE_COLLECTED = new ErrorCode(70001, "店铺已经收藏过了");
+    public static final ErrorCode SHOP_NOT_COLLECTED = new ErrorCode(70002, "未收藏该店铺");
 
 }

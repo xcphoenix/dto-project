@@ -1,7 +1,10 @@
 package com.xcphoenix.dto.service.impl;
 
 import ch.hsr.geohash.GeoHash;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.ShopperCheck;
+import com.xcphoenix.dto.bean.Location;
 import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
@@ -9,18 +12,31 @@ import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Header;
+import org.apache.http.HttpHost;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuanc
  * @version 1.0
  * @date 2019/8/13 上午9:03
  */
+@Slf4j
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
 
@@ -37,6 +53,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private String bannerImgDire;
 
     private final int precision = 12;
+    private static final double NEARBY_DISTANCE = 10;
 
     @Autowired
     public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
@@ -91,7 +108,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @ShopperCheck
     @Override
     public Restaurant getRestaurantDetail(Integer userId) {
-        return restaurantMapper.getRestaurantDetail(userId);
+        return restaurantMapper.getUserShopDetail(userId);
     }
 
     @Override
@@ -141,6 +158,108 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurantMapper.updateRestaurant(restaurant);
     }
 
+    @Override
+    public List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
+                                                          Integer offset, Integer limit) throws IOException {
+        Location userLoc = new Location(lon, lat);
+
+        // 规范分页参数
+        offset = (offset == null || offset < 0) ? 0 : offset;
+        limit = (limit == null || limit < 0 || limit > 50) ? 50 : limit;
+
+        RestClientBuilder clientBuilder = RestClient.builder(
+                new HttpHost("47.94.5.149", 9200, "http"));
+        Header[] defaultHeaders = new Header[]{new BasicHeader("ContentType", "application/json")};
+        clientBuilder.setDefaultHeaders(defaultHeaders);
+        RestClient restClient = clientBuilder.build();
+
+        Request request = new Request(
+                "GET",
+                "/restaurant/_search"
+        );
+        // 设置参数
+        request.addParameter("size", String.valueOf(limit));
+        request.addParameter("from", String.valueOf(offset));
+        request.setJsonEntity(setPara(NEARBY_DISTANCE, userLoc.getLat().doubleValue(), userLoc.getLon().doubleValue()));
+
+        Response response = restClient.performRequest(request);
+        restClient.close();
+
+        JSONArray responseBody = JSONObject.parseObject(EntityUtils.toString(response.getEntity()))
+                .getJSONObject("hits")
+                .getJSONArray("hits");
+
+        int resArraySize = responseBody.size();
+        List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
+
+        for (int i = 0; i < resArraySize; i++) {
+            JSONObject jsonResData = responseBody.getJSONObject(i);
+            Map<String, Object> resMap = jsonResData.getJSONObject("_source").getInnerMap();
+            Double distance = jsonResData.getJSONArray("sort").getDouble(0);
+            resMap.put("distance", distance);
+            resMap.put("is_valid", Double.parseDouble(resMap.get("delivery_range").toString()) > distance);
+            restaurantList.add(resMap);
+        }
+
+        return restaurantList;
+    }
+
+    private String setPara(double kl, double lat, double lon) {
+        String reqBody = "{\n" +
+                "    \"_source\": {\n" +
+                "        \"excludes\": [ \"@*\", \"type\", \"gmt_create\", \"addr*\", \"*revenue\"]\n" +
+                "    },\n" +
+                "    \"query\": {\n" +
+                "        \"bool\" : {\n" +
+                "            \"must\" : {\n" +
+                "                \"match_all\" : {}\n" +
+                "            },\n" +
+                "            \"filter\" : {\n" +
+                "                \"geo_distance\" : {\n" +
+                "                    \"distance\" : \"0km\",\n" +
+                "                    \"location\" : {\n" +
+                "                        \"lat\" : 0.0,\n" +
+                "                        \"lon\" : 0.0\n" +
+                "                    }\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"sort\": [{\n" +
+                "        \"_geo_distance\": {\n" +
+                "          \"location\": { \n" +
+                "            \"lat\": 0,\n" +
+                "            \"lon\": 0\n" +
+                "          },\n" +
+                "          \"order\":         \"asc\",\n" +
+                "          \"unit\":          \"km\", \n" +
+                "          \"distance_type\": \"plane\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    ]\n" +
+                "}\n";
+        JSONObject reqBodyJson = JSONObject.parseObject(reqBody);
+        JSONObject geoDistance = reqBodyJson
+                .getJSONObject("query")
+                .getJSONObject("bool")
+                .getJSONObject("filter")
+                .getJSONObject("geo_distance");
+        JSONObject sortSetting = reqBodyJson
+                .getJSONArray("sort")
+                .getJSONObject(0)
+                .getJSONObject("_geo_distance")
+                .getJSONObject("location");
+        geoDistance.put("distance", kl + "km");
+        JSONObject qLocation = geoDistance.getJSONObject("location");
+        qLocation.put("lat", lat);
+        qLocation.put("lon", lon);
+        sortSetting.put("lat", lat);
+        sortSetting.put("lon", lon);
+
+        log.info("requestJson is : " +  reqBodyJson.toJSONString());
+
+        return reqBodyJson.toJSONString();
+    }
 
 
 }
