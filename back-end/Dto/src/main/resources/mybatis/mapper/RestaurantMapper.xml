@@ -12,39 +12,8 @@
 		#{instoreImg}, #{logo}, #{bannerImg}, #{bulletin}, #{deliveryPrice}, #{minPrice}, NOW())
 	</insert>
 	
-	<select id="getRestaurantDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
-		SELECT `restaurant_id`,
-		`user_id`,
-		`restaurant_name`,
-		`restaurant_desc`,
-		`restaurant_phone`,
-		`contact_man`,
-		`tag`,
-		`bh_start`,
-		`bh_end`,
-		`country_id`,
-		`address`,
-		`addr_lng`,
-		`addr_lat`,
-		`geohash`,
-		`delivery_range`,
-		`store_img`,
-		`instore_img`,
-		`logo`,
-		`banner_img`,
-		`delivery_time`,
-		`score`,
-		`delivery_score`,
-		`food_score`,
-		`package_score`,
-		`bulletin`,
-		`delivery_price`,
-		`min_price`,
-		`total_sale`,
-		`month_sale`,
-		`total_revenue`,
-		`month_revenue`,
-		`gmt_create`
+	<select id="getUserShopDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
+		SELECT <include refid="resAllFields" />
 		FROM `restaurant`
 		WHERE user_id = #{userId}
 	</select>
@@ -125,5 +94,49 @@
 		</set>
 		WHERE restaurant_id = #{restaurantId}
 	</update>
+	
+	<select id="getShopDetailById" resultType="com.xcphoenix.dto.bean.Restaurant">
+		SELECT <include refid="resBaseFields" />
+		FROM `restaurant`
+		WHERE restaurant_id = #{shopId}
+	</select>
+	
+	<sql id="resBaseFields">
+			`restaurant_id`,
+			`user_id`,
+			`restaurant_name`,
+			`restaurant_desc`,
+			`restaurant_phone`,
+			`contact_man`,
+			`tag`,
+			`bh_start`,
+			`bh_end`,
+			`country_id`,
+			`address`,
+			`addr_lng`,
+			`addr_lat`,
+			`geohash`,
+			`delivery_range`,
+			`store_img`,
+			`instore_img`,
+			`logo`,
+			`banner_img`,
+			`delivery_time`,
+			`score`,
+			`delivery_score`,
+			`food_score`,
+			`package_score`,
+			`bulletin`,
+			`delivery_price`,
+			`min_price`,
+			`total_sale`,
+			`month_sale`,
+			`gmt_create`
+	</sql>
+	<sql id="resAllFields">
+		<include refid="resBaseFields" />,
+		`total_revenue`,
+		`month_revenue`
+     </sql>
 
 </mapper>

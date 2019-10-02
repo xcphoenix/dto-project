@@ -42,7 +42,7 @@ public interface RestaurantMapper {
      * @param userId 用户 id
      * @return 店铺信息
      */
-    Restaurant getRestaurantDetail(Integer userId);
+    Restaurant getUserShopDetail(Integer userId);
 
     /**
      * 更新店铺信息
@@ -50,5 +50,22 @@ public interface RestaurantMapper {
      * @param restaurant 店铺信息
      */
     void updateRestaurant(Restaurant restaurant);
+
+    /**
+     * 获取店铺信息
+     *
+     * @param shopId 店铺id
+     * @return 店铺信息
+     */
+    Restaurant getShopDetailById(Integer shopId);
+
+    /**
+     * 店铺是否存在
+     *
+     * @param shopId 店铺id
+     * @return 店铺存在否
+     */
+    @Select("SELECT COUNT(*) FROM restaurant WHERE restaurant_id = #{shopId} ")
+    Integer isShopExists(Integer shopId);
 
 }

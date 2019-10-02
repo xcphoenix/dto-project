@@ -3,6 +3,8 @@ package com.xcphoenix.dto.service;
 import com.xcphoenix.dto.bean.Restaurant;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuanc
@@ -55,7 +57,20 @@ public interface RestaurantService {
      * 更新店铺信息
      *
      * @param restaurant 店铺信息
+     * @throws IOException io
      */
     void updateRestaurant(Restaurant restaurant) throws IOException;
 
+    /**
+     * 获取附近的店铺信息，包括距离以及是否在配送范围
+     *
+     * @param lon 经度
+     * @param lat 纬度
+     * @param offset 分页偏移量
+     * @param limit 分页数量
+     * @return map
+     * @throws IOException call restful api
+     */
+    List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
+                                                   Integer offset, Integer limit) throws IOException;
 }

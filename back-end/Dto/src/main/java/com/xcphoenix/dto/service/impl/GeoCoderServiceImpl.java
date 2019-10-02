@@ -37,7 +37,6 @@ public class GeoCoderServiceImpl implements GeoCoderService {
         map.put("get_poi", 1);
         map.put("key", key);
         String jsonStr = restTemplate.getForObject(url, String.class, map);
-        // LoggerFactory.getLogger(this.getClass()).debug(jsonStr);
         return JSONObject.parseObject(jsonStr);
     }
 

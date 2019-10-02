@@ -1,5 +1,7 @@
 package com.xcphoenix.dto.util;
 
+import com.xcphoenix.dto.exception.ServiceLogicException;
+import com.xcphoenix.dto.result.ErrorCode;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -25,7 +27,7 @@ public class ContextHolderUtils {
     public static Integer getLoginUserId() {
         Object object =  getRequest().getAttribute("userId");
         if (!(object instanceof Integer)) {
-            throw new RuntimeException("用户id不存在");
+            throw new ServiceLogicException(ErrorCode.USER_NOT_LOGIN);
         }
         return (Integer) object;
     }

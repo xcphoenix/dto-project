@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.CollectionMapper">
+	
+	<select id="getCollectedShops" resultType="com.xcphoenix.dto.bean.Restaurant">
+		SELECT <include refid="com.xcphoenix.dto.mapper.RestaurantMapper.resBaseFields" />
+		from restaurant
+		WHERE restaurant_id
+		IN (
+			SELECT restaurant_id
+			FROM collection
+			WHERE user_id = #{userId}
+		)
+	</select>
+
+</mapper>
