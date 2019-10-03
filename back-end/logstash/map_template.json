@@ -1,0 +1,59 @@
+{
+  "template": "*",
+  "index_patterns": [
+    "restaurant",
+    "shop*"
+  ],
+  "order": 3,
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "analysis": {
+        "analyzer": {
+          "ik_pinyin_analyzer": {
+            "type": "custom",
+            "tokenizer": "ik_smart",
+            "filter": [
+              "my_pinyin"
+            ]
+          },
+          "onlyOne_analyzer": {
+            "tokenizer": "onlyOne_pinyin"
+          }
+        },
+        "tokenizer": {
+          "onlyOne_pinyin": {
+            "type": "pinyin",
+            "keep_separate_first_letter": "true",
+            "keep_full_pinyin": "false"
+          }
+        },
+        "filter": {
+          "my_pinyin": {
+            "type": "pinyin",
+            "keep_joined_full_pinyin": true,
+            "keep_separate_first_letter": true,
+            "none_chinese_pinyin_tokenize": true
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "location": {
+        "type": "geo_point"
+      },
+      "foods": {
+        "type": "text",
+        "analyzer": "ik_pinyin_analyzer",
+        "search_analyzer": "ik_pinyin_analyzer"
+      },
+      "restaurant_name": {
+        "type": "text",
+        "analyzer": "ik_pinyin_analyzer",
+        "search_analyzer": "ik_pinyin_analyzer"
+      }
+    }
+  }
+}

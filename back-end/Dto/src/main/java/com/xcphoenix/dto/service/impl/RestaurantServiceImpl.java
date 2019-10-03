@@ -207,7 +207,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private String setPara(double kl, double lat, double lon) {
         String reqBody = "{\n" +
                 "    \"_source\": {\n" +
-                "        \"excludes\": [ \"@*\", \"type\", \"gmt_create\", \"addr*\", \"*revenue\"]\n" +
+                "        \"excludes\": [ \"@*\", \"type\", \"gmt_create\", \"addr*\", \"*revenue\", \"foods\"]\n" +
                 "    },\n" +
                 "    \"query\": {\n" +
                 "        \"bool\" : {\n" +
