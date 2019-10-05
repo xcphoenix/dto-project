@@ -85,10 +85,10 @@ public class ElemeProcessor implements PageProcessor {
 
     private Integer makeTmpRst(JSONObject rst) throws ParseException {
         log.info("创建店铺...");
-        log.info("rst => " + rst.toJSONString());
+        // log.info("rst => " + rst.toJSONString());
         Restaurant tmpRst = new Restaurant();
         tmpRst.setUserId(createRUser());
-        tmpRst.setRestaurantPhone("18112341234");
+        tmpRst.setRestaurantPhone(getTel());
         tmpRst.setContactMan("testMan");
         Double lat = rst.getDouble("latitude");
         Double lng = rst.getDouble("longitude");
@@ -135,23 +135,23 @@ public class ElemeProcessor implements PageProcessor {
 
     private void makeTmpFood(JSONObject food, FoodCategory category) throws ParseException {
         log.info("创建商品信息...");
-        log.info("food => " + food.toJSONString());
+        // log.info("food => " + food.toJSONString());
 
         Food tmpFood = new Food();
         tmpFood.setRestaurantId(category.getRestaurantId());
         tmpFood.setCategoryId(category.getCategoryId());
         tmpFood.setName(food.getString("name"));
         tmpFood.setDescription(food.getString("description"));
-        tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
+        tmpFood.setSellingPrice(food.getFloat("lowest_price"));
 
         JSONArray specFoods = food.getJSONArray("specfoods");
         if (specFoods == null) {
-            tmpFood.setSellingPrice(food.getFloat("lowest_price"));
+            tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
         } else {
-            tmpFood.setSellingPrice(specFoods.getJSONObject(0).getFloat("original_price"));
+            tmpFood.setOriginalPrice(specFoods.getJSONObject(0).getFloat("original_price"));
         }
-        if (tmpFood.getSellingPrice() == null) {
-            tmpFood.setSellingPrice(food.getFloat("lowest_price"));
+        if (tmpFood.getOriginalPrice() == null) {
+            tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
         }
         tmpFood.setTotalNumber(1000);
         tmpFood.setResidualAmount(1000);
@@ -182,6 +182,8 @@ public class ElemeProcessor implements PageProcessor {
     public void process(Page page) {
         // log.info(page.getRawText());
         if (page.getUrl().regex("https://h5.ele.me/restapi/shopping/v3/restaurants.+").match()) {
+            log.info("## page type 1 ##");
+
             List<String> nextUrl = new ArrayList<>();
             JSONArray items = JSONObject.parseObject(page.getJson().toString()).getJSONArray("items");
             for (int i = 0; i < items.size(); i++) {
@@ -228,14 +230,22 @@ public class ElemeProcessor implements PageProcessor {
                 nextUrl.set(i, nextUrlElement);
             }
 
+            log.info("本次获得" + nextUrl.size() + "条店铺url记录");
+            if (nextUrl.size() != 0) {
+                page.addTargetRequests(nextUrl);
+                log.info("next url ==> " + JSON.toJSONString(nextUrl));
+            }
+
             // check if has next data
             if (!(JSONObject.parseObject(page.getJson().toString()).getBoolean("has_next"))) {
                 page.setSkip(true);
+                log.info("无数据..跳过");
+            } else {
+                page.addTargetRequest(target + params);
             }
-            page.addTargetRequest(target + params);
-            page.addTargetRequests(nextUrl);
-            log.info(JSON.toJSONString(nextUrl));
         } else {
+            log.info("## page type 2 ##");
+
             JSONObject jsonObject = JSON.parseObject(page.getJson().toString());
             JSONObject rst = jsonObject.getJSONObject("rst");
             Integer rstId = null;
