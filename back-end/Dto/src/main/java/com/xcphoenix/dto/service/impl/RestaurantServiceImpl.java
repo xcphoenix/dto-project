@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.bean.Location;
 import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.bean.SortType;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -28,10 +29,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * TODO 设置多个开店时间
+ *
  * @author xuanc
  * @version 1.0
  * @date 2019/8/13 上午9:03
@@ -180,7 +184,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         // 设置参数
         request.addParameter("size", String.valueOf(limit));
         request.addParameter("from", String.valueOf(offset));
-        request.setJsonEntity(setPara(NEARBY_DISTANCE, userLoc.getLat().doubleValue(), userLoc.getLon().doubleValue()));
+        request.setJsonEntity(setGeoArgs(NEARBY_DISTANCE, userLoc.getLat().doubleValue(), userLoc.getLon().doubleValue()));
 
         Response response = restClient.performRequest(request);
         restClient.close();
@@ -192,19 +196,20 @@ public class RestaurantServiceImpl implements RestaurantService {
         int resArraySize = responseBody.size();
         List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
 
+        // TODO 为不在营业时间的店铺，添加标记
         for (int i = 0; i < resArraySize; i++) {
             JSONObject jsonResData = responseBody.getJSONObject(i);
             Map<String, Object> resMap = jsonResData.getJSONObject("_source").getInnerMap();
             Double distance = jsonResData.getJSONArray("sort").getDouble(0);
             resMap.put("distance", distance);
-            resMap.put("is_valid", Double.parseDouble(resMap.get("delivery_range").toString()) > distance);
+            resMap.put("out_of_range", Double.parseDouble(resMap.get("delivery_range").toString()) > distance);
             restaurantList.add(resMap);
         }
 
         return restaurantList;
     }
 
-    private String setPara(double kl, double lat, double lon) {
+    private String setGeoArgs(double kl, double lat, double lon) {
         String reqBody = "{\n" +
                 "    \"_source\": {\n" +
                 "        \"excludes\": [ \"@*\", \"type\", \"gmt_create\", \"addr*\", \"*revenue\", \"foods\"]\n" +
@@ -261,5 +266,29 @@ public class RestaurantServiceImpl implements RestaurantService {
         return reqBodyJson.toJSONString();
     }
 
+    /**
+     * 分类
+     * - 综合排序(相关度)
+     * - 好评优先(评分)
+     * - 起送价最低
+     * - 配送最快
+     * - 人均消费低到高
+     * - 人均消费高到低
+     */
+    private String setSearchArgs(String text, SortType sortType) {
+        JSONObject query = JSONObject.parseObject("" +
+                "{\n" +
+                "    \"query\": {\n" +
+                "        \"dis_max\": {\n" +
+                "            \"queries\": [\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+        JSONArray matches = query.getJSONObject("dis_max").getJSONArray("queries");
+        matches.add(0, new HashMap<String, Object>(1).put("restaurant_name", text));
+        matches.add(1, new HashMap<String, Object>(1).put("foods", text));
+        return null;
+    }
 
 }

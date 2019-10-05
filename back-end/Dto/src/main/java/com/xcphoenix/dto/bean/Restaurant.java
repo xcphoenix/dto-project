@@ -100,6 +100,7 @@ public class Restaurant {
     private BigDecimal deliveryScore;
     private BigDecimal foodScore;
     private BigDecimal packageScore;
+    private Double aveConsumption;
 
     @Min(value = 0, message = "配送价不能为负")
     private Float deliveryPrice;

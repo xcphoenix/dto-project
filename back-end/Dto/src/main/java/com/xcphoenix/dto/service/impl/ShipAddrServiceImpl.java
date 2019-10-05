@@ -34,7 +34,7 @@ public class ShipAddrServiceImpl implements ShipAddrService {
     @Override
     public ShipAddr addShipAddr(ShipAddr shipAddr) {
         // 获取 countryId
-        String cityCode = geoCoderService.getCityCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
+        String cityCode = geoCoderService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
         shipAddr.setCountryCode(cityCode);
         // 获取 geoHash
         GeoHash geoHash = GeoHash.withCharacterPrecision(
@@ -60,7 +60,7 @@ public class ShipAddrServiceImpl implements ShipAddrService {
                     shipAddr.getAddrLat().doubleValue(), shipAddr.getAddrLat().doubleValue(), precision);
             shipAddr.setGeohash(geoHash.toBase32());
 
-            String cityCode = geoCoderService.getCityCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
+            String cityCode = geoCoderService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
             shipAddr.setCountryCode(cityCode);
         }
         shipAddrMapper.updateShipAddr(shipAddr);

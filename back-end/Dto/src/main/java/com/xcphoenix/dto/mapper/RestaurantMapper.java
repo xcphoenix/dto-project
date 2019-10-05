@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Select;
 public interface RestaurantMapper {
 
     /**
-     * 检测用户是否已开店
+     * 获取商家店铺id
      *
      * @param userId 用户 id
      * @return <li>用户所开的店铺id</li>

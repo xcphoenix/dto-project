@@ -25,5 +25,13 @@ public interface GeoCoderService {
      * @param lng 经度
      * @return 城市代码
      */
-    String getCityCode(BigDecimal lat, BigDecimal lng);
+    String getAreaCode(BigDecimal lat, BigDecimal lng);
+
+    /**
+     * 获取城市id
+     * @param lat 纬度
+     * @param lng 经度
+     * @return 城市id
+     */
+    Integer getAreaId(BigDecimal lat, BigDecimal lng);
 }

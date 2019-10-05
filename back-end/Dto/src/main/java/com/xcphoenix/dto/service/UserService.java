@@ -19,6 +19,18 @@ public interface UserService {
     User getUserDetail(Integer userId);
 
     /**
+     * 获取用户状态
+     *
+     * @return 用户状态：0：普通用户　1: 商家 2: 客服 3：运营 4：财务　5：root
+     */
+    Integer getUserStatus();
+
+    /**
+     * 更新用户状态为商家
+     */
+    void becomeShopper();
+
+    /**
      * 更新用户名
      *
      * @param name 用户名
@@ -29,7 +41,8 @@ public interface UserService {
      * 更新用户头像
      *
      * @param avatar 头像
-     * @return
+     * @return 头像url
+     * @throws IOException ..
      */
     String updateAvatar(String avatar) throws IOException;
 

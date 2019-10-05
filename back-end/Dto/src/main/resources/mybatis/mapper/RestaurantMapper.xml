@@ -124,6 +124,7 @@
 			`delivery_time`,
 			`score`,
 			`delivery_score`,
+   			`ave_consumption`,
 			`food_score`,
 			`package_score`,
 			`bulletin`,
