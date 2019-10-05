@@ -1,6 +1,7 @@
 package com.xcphoenix.dto.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xcphoenix.dto.mapper.area.CountryMapper;
 import com.xcphoenix.dto.service.GeoCoderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,14 +21,17 @@ import java.util.Map;
 public class GeoCoderServiceImpl implements GeoCoderService {
 
     private RestTemplate restTemplate;
+    private CountryMapper countryMapper;
+
     @Value("${qq.map.api.geocoder.url}")
     private String url;
     @Value("${qq.map.api.development.key}")
     private String key;
 
     @Autowired
-    public GeoCoderServiceImpl(RestTemplate restTemplate) {
+    public GeoCoderServiceImpl(RestTemplate restTemplate, CountryMapper countryMapper) {
         this.restTemplate = restTemplate;
+        this.countryMapper = countryMapper;
     }
 
     @Override
@@ -41,11 +45,17 @@ public class GeoCoderServiceImpl implements GeoCoderService {
     }
 
     @Override
-    public String getCityCode(BigDecimal lat, BigDecimal lng) {
+    public String getAreaCode(BigDecimal lat, BigDecimal lng) {
         return this.getLocMsg(lat, lng)
                 .getJSONObject("result")
                 .getJSONObject("ad_info")
                 .getString("adcode") + "000000";
+    }
+
+    @Override
+    public Integer getAreaId(BigDecimal lat, BigDecimal lng) {
+        String code = getAreaCode(lat, lng);
+        return countryMapper.getCountryId(code);
     }
 
 }

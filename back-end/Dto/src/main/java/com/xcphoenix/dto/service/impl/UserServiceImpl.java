@@ -42,6 +42,24 @@ public class UserServiceImpl implements UserService {
         return userMapper.getUserDetail(userId);
     }
 
+    /**
+     * 获取用户状态
+     *
+     * @return 用户状态：0：普通用户　1: 商家 2: 客服 3：运营 4：财务　5：root
+     */
+    @Override
+    public Integer getUserStatus() {
+        return userMapper.getUserStatus(ContextHolderUtils.getLoginUserId());
+    }
+
+    /**
+     * 更新用户状态为商家
+     */
+    @Override
+    public void becomeShopper() {
+        userMapper.becomeShopper(ContextHolderUtils.getLoginUserId());
+    }
+
     @Override
     public void updateName(String name) {
         Integer userId = ContextHolderUtils.getLoginUserId();

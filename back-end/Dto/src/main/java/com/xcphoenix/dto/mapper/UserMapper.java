@@ -23,6 +23,23 @@ public interface UserMapper {
     User getUserDetail(Integer userId);
 
     /**
+     * 获取用户状态
+     *
+     * @param userId 用户id
+     * @return 用户状态
+     */
+    @Select("SELECT user_status FROM user WHERE user_id = #{userId} ")
+    Integer getUserStatus(Integer userId);
+
+    /**
+     * 更新用户身份为商家
+     *
+     * @param userId 用户id
+     */
+    @Update("UPDATE user SET user_status = 1 WHERE user_id = #{userId} ")
+    void becomeShopper(Integer userId);
+
+    /**
      * 更新用户名
      *
      * @param userId   用户id
