@@ -17,6 +17,10 @@ public enum SortType {
     /**
      * 起送价最低
      */
+    MIN_PRICE,
+    /**
+     * 运费最低
+     */
     DELIVERY_PRICE,
     /**
      * 配送最快

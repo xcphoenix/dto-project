@@ -108,4 +108,9 @@ public class ErrorCode {
     public static final ErrorCode SHOP_HAVE_COLLECTED = new ErrorCode(70001, "店铺已经收藏过了");
     public static final ErrorCode SHOP_NOT_COLLECTED = new ErrorCode(70002, "未收藏该店铺");
 
+    /**
+     * 搜索相关
+     */
+    public static final ErrorCode INVALID_SEARCH_TYPE = new ErrorCode(80001, "无效的搜索类型");
+
 }

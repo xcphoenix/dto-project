@@ -22,12 +22,16 @@ public class Location {
     private static final String REGEX_LAT = "^[\\-+]?([0-8]?\\d|[0-8]?\\d\\.\\d{1,15}|90|90\\.0{1,15})$";
 
     public Location(double lon, double lat) {
+        checkValues(lon, lat);
+        this.lon = BigDecimal.valueOf(lon);
+        this.lat = BigDecimal.valueOf(lat);
+    }
+
+    public static void checkValues(double lon, double lat) {
         if (!java.util.regex.Pattern.matches(REGEX_LON, String.valueOf(lon)) ||
                 !java.util.regex.Pattern.matches(REGEX_LAT, String.valueOf(lat))) {
             throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("无效的经纬度"));
         }
-        this.lon = BigDecimal.valueOf(lon);
-        this.lat = BigDecimal.valueOf(lat);
     }
 
     public void setLon(BigDecimal lon) {
