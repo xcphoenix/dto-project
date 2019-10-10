@@ -25,4 +25,5 @@ public class IocConfig {
     public RestTemplate restTemplate(){
         return restTemplateBuilder.build();
     }
+
 }

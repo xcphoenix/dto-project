@@ -1,18 +1,23 @@
 package com.xcphoenix.dto.service.impl;
 
 import ch.hsr.geohash.GeoHash;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.bean.Location;
 import com.xcphoenix.dto.bean.Restaurant;
 import com.xcphoenix.dto.bean.SortType;
+import com.xcphoenix.dto.bean.TimeItem;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.util.GetUrlUtils;
+import com.xcphoenix.dto.util.TimeFormatUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -28,10 +33,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Time;
+import java.util.*;
 
 /**
  * TODO 设置多个开店时间
@@ -77,7 +80,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
-        restaurant.setUserId((Integer)ContextHolderUtils.getRequest().getAttribute("userId"));
+        restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
         restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
         restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
@@ -165,11 +168,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
                                                           Integer offset, Integer limit) throws IOException {
-        Location userLoc = new Location(lon, lat);
+        Location.checkValues(lon, lat);
 
         // 规范分页参数
         offset = (offset == null || offset < 0) ? 0 : offset;
-        limit = (limit == null || limit < 0 || limit > 50) ? 50 : limit;
+        limit = (limit == null || limit < 0 || limit > 20) ? 20 : limit;
 
         RestClientBuilder clientBuilder = RestClient.builder(
                 new HttpHost("47.94.5.149", 9200, "http"));
@@ -184,7 +187,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         // 设置参数
         request.addParameter("size", String.valueOf(limit));
         request.addParameter("from", String.valueOf(offset));
-        request.setJsonEntity(setGeoArgs(NEARBY_DISTANCE, userLoc.getLat().doubleValue(), userLoc.getLon().doubleValue()));
+        request.setJsonEntity(setGeoArgs(NEARBY_DISTANCE, lat, lon));
 
         Response response = restClient.performRequest(request);
         restClient.close();
@@ -196,19 +199,47 @@ public class RestaurantServiceImpl implements RestaurantService {
         int resArraySize = responseBody.size();
         List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
 
-        // TODO 为不在营业时间的店铺，添加标记
         for (int i = 0; i < resArraySize; i++) {
             JSONObject jsonResData = responseBody.getJSONObject(i);
             Map<String, Object> resMap = jsonResData.getJSONObject("_source").getInnerMap();
             Double distance = jsonResData.getJSONArray("sort").getDouble(0);
             resMap.put("distance", distance);
             resMap.put("out_of_range", Double.parseDouble(resMap.get("delivery_range").toString()) > distance);
+            resMap.put("is_rest", isRest(TimeFormatUtils.utcFormat((String) resMap.get("bh_start")),
+                    TimeFormatUtils.utcFormat((String) resMap.get("bh_end"))));
             restaurantList.add(resMap);
         }
 
         return restaurantList;
     }
 
+    public List<Map<String, Object>> searchRstAsSortType(String text, int type, double lon, double lat,
+                                                         Integer from, Integer size) throws IOException {
+        Location.checkValues(lon, lat);
+        if (type < 0 || type >= SortType.values().length) {
+            throw new ServiceLogicException(ErrorCode.INVALID_SEARCH_TYPE);
+        }
+
+        RestClient restClient = buildSearchRestClient();
+        Request request = setRestRequest(size, from);
+        request.setJsonEntity(setSearchArgs(text, SortType.values()[type], lat, lon).toJSONString());
+
+        Response response = restClient.performRequest(request);
+        restClient.close();
+
+        return dealSearchResp(response);
+    }
+
+    /**
+     * 处理搜索结果
+     */
+    private List<Map<String, Object>> dealSearchResp(Response resp) {
+        return null;
+    }
+
+    /**
+     * 设置地理查询参数
+     */
     private String setGeoArgs(double kl, double lat, double lon) {
         String reqBody = "{\n" +
                 "    \"_source\": {\n" +
@@ -261,7 +292,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         sortSetting.put("lat", lat);
         sortSetting.put("lon", lon);
 
-        log.info("requestJson is : " +  reqBodyJson.toJSONString());
+        log.info("requestJson is : " + reqBodyJson.toJSONString());
 
         return reqBodyJson.toJSONString();
     }
@@ -275,20 +306,173 @@ public class RestaurantServiceImpl implements RestaurantService {
      * - 人均消费低到高
      * - 人均消费高到低
      */
-    private String setSearchArgs(String text, SortType sortType) {
-        JSONObject query = JSONObject.parseObject("" +
-                "{\n" +
-                "    \"query\": {\n" +
-                "        \"dis_max\": {\n" +
-                "            \"queries\": [\n" +
-                "            ]\n" +
+    private JSONObject setSearchArgs(String text, SortType sortType, double lat, double lon) {
+        JSONObject query = JSONObject.parseObject("{\n" +
+                "  \"_source\": {\n" +
+                "    \"excludes\": [\n" +
+                "      \"type\",\n" +
+                "      \"@timestamp\",\n" +
+                "      \"@version\",\n" +
+                "      \"addr_*\",\n" +
+                "      \"gmt_create\",\n" +
+                "      \"contact_man\",\n" +
+                "      \"country_id\"\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"stored_fields\": [\n" +
+                "    \"_source\"\n" +
+                "  ],\n" +
+                "  \"script_fields\": {\n" +
+                "    \"distance\": {\n" +
+                "      \"script\": {\n" +
+                "        \"source\": \"doc['location'].arcDistance(params.lat,params.lon)\",\n" +
+                "        \"lang\": \"painless\",\n" +
+                "        \"params\": {\n" +
+                "          \"lat\": 0.0,\n" +
+                "          \"lon\": 0.0\n" +
                 "        }\n" +
+                "      }\n" +
                 "    }\n" +
+                "  },\n" +
+                "  \"query\": {\n" +
+                "    \"bool\": {\n" +
+                "      \"must\": {\n" +
+                "        \"match_all\": {}\n" +
+                "      },\n" +
+                "      \"filter\": {\n" +
+                "        \"geo_distance\": {\n" +
+                "          \"distance\": \"10km\",\n" +
+                "          \"location\": \"0.0,0.0\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"post_filter\": {\n" +
+                "    \"multi_match\": {\n" +
+                "      \"query\": \"\",\n" +
+                "      \"fields\": [\n" +
+                "        \"restaurant_name^4\",\n" +
+                "        \"foods^2\",\n" +
+                "        \"tag\"\n" +
+                "      ],\n" +
+                "      \"minimum_should_match\": \"30%\"\n" +
+                "    }\n" +
+                "  }\n" +
                 "}");
-        JSONArray matches = query.getJSONObject("dis_max").getJSONArray("queries");
-        matches.add(0, new HashMap<String, Object>(1).put("restaurant_name", text));
-        matches.add(1, new HashMap<String, Object>(1).put("foods", text));
-        return null;
+        // 设置搜索字段
+        JSONPath.set(query, "$.post_filter.multi_match.query", text);
+        // 设置 geo
+        JSONPath.set(query, "$query.bool.filter.geo_distance.location", lat + "," + lon);
+        JSONPath.set(query, "$.script_fields.distance.script.params.lat", lat);
+        JSONPath.set(query, "$.script_fields.distance.script.params.lon", lon);
+        // 设置排序参数
+        setSortType(query, sortType);
+        return query;
     }
+
+    private void setSortType(JSONObject baseDsl, SortType sortType) {
+        JSONObject sortArg = JSONObject.parseObject("{ \"sort\": [] }");
+        String jsonPath = "$.sort";
+        int[] arr = null;
+        switch (sortType) {
+            case DEFAULT:
+                arr = new int[]{2, 3, 1};
+                break;
+            case SCORE:
+                arr = new int[]{1, 2, 3};
+                break;
+            case DELIVERY_PRICE:
+                arr = new int[]{7, 1, 2, 3};
+                break;
+            case DELIVERY_TIME:
+                arr = new int[]{5, 1, 2, 3};
+                break;
+            case PER_consumption_HIGH:
+                arr = new int[]{6, 1, 2, 3};
+                break;
+            case PER_consumption_LOW:
+                arr = new int[]{-6, 1, 2, 3};
+                break;
+            case MIN_PRICE:
+                arr = new int[]{-4, 1, 2, 3};
+                break;
+            default:
+        }
+        JSONPath.set(baseDsl, jsonPath, getSortAttrs(arr));
+    }
+
+    private List<Map<String, Object>> getSortAttrs(int[] args) {
+        String descType = "desc", ascType = "asc";
+        String[] keyArr = new String[]{
+                "score", "total_sale", "month_sale", "min_price", "delivery_time",
+                "ave_consumption", "delivery_price"
+        };
+        if (args == null) {
+            return null;
+        }
+        List<Map<String, Object>> sortAttrs = new LinkedList<>();
+        for (int arg : args) {
+            int absValue = Math.abs(arg);
+            if (absValue <= keyArr.length && absValue > 0) {
+                Map<String, Object> tmpMap = new LinkedHashMap<>();
+                tmpMap.put(keyArr[absValue - 1], arg > 0 ? descType : ascType);
+                log.info("tmpMap => " + JSON.toJSON(tmpMap));
+                sortAttrs.add(tmpMap);
+                log.info("sortAttrs => " + JSON.toJSON(sortAttrs));
+            }
+        }
+        log.info(JSON.toJSONString(sortAttrs));
+        return sortAttrs;
+    }
+
+    /**
+     * 检查店铺是否休息中
+     */
+    private boolean isRest(Time start, Time end) {
+        Time now = new Time(System.currentTimeMillis());
+        return now.getTime() < end.getTime() && now.getTime() >= start.getTime();
+    }
+
+    private boolean isRest(TimeItem[] businessHours) {
+        Time now = new Time(System.currentTimeMillis());
+        for (TimeItem item : businessHours) {
+            if (item.isInItem(now)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 设置 es RestClient
+     */
+    private RestClient buildSearchRestClient() {
+        RestClientBuilder clientBuilder = RestClient.builder(
+                new HttpHost("47.94.5.149", 9200, "http"));
+        Header[] defaultHeaders = new Header[] {
+                new BasicHeader("ContentType", "application/json")
+        };
+        clientBuilder.setDefaultHeaders(defaultHeaders);
+
+        return clientBuilder.build();
+    }
+
+    private Request setRestRequest(int size, int from) {
+        return setRestRequest(size, from, "/restaurant/_search");
+    }
+
+    private Request setRestRequest(int size, int from, String searchUrl) {
+        size = Math.min(Math.max(0, size), 20);
+        from = Math.max(0, from);
+        GetUrlUtils getUrlUtils = new GetUrlUtils(searchUrl);
+        getUrlUtils.setValue("size", size);
+        getUrlUtils.setValue("from", from);
+
+        return new Request(
+                "GET",
+                getUrlUtils.toString()
+        );
+    }
+
 
 }

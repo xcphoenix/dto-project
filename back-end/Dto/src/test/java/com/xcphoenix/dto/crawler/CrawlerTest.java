@@ -1,6 +1,7 @@
 package com.xcphoenix.dto.crawler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import us.codecraft.webmagic.Spider;
 // @Transactional
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
+@Disabled("just for get eleme data")
 class CrawlerTest {
 
     @Autowired
@@ -31,7 +33,7 @@ class CrawlerTest {
         for (; crawlerCount < crawlerTimes; crawlerCount++) {
             int offset = 0;
             int limit = 8;
-            String[] location = GeoUtil.randomLonLat(108.63, 108.86, 34.21, 34.257);
+            String[] location = GeoUtil.randomLonLat(108.38, 109.14, 33.47, 34.18);
             String url = initUrl + "&" + "offset=" + offset + "&" + "limit=" + limit + "&"
                     + "longitude=" + location[0] + "&" + "latitude=" + location[1];
             System.out.println("================= Crawler start... " + (crawlerCount + 1) + " times =================");
