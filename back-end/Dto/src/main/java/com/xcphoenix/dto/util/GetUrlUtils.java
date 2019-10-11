@@ -17,21 +17,26 @@ public class GetUrlUtils {
     private Map<String, String> params;
 
     public GetUrlUtils(String url) {
-        this.url = url.substring(0, url.indexOf('?'));
+        int index = url.indexOf('?');
         this.params = new HashMap<>();
+        if (index != -1) {
+            this.url = url.substring(0, index);
 
-        String paramStr = url.substring(url.indexOf('?') + 1);
-        String[] paramArr = paramStr.split("&");
-        for (String paramItem : paramArr) {
-            String[] kv = paramItem.split("=");
-            if (kv.length > 2) {
-                throw new RuntimeException("参数解析错误");
+            String paramStr = url.substring(index + 1);
+            String[] paramArr = paramStr.split("&");
+            for (String paramItem : paramArr) {
+                String[] kv = paramItem.split("=");
+                if (kv.length > 2) {
+                    throw new RuntimeException("参数解析错误");
+                }
+                if (kv.length == 1) {
+                    params.put(kv[0], null);
+                } else {
+                    params.put(kv[0], kv[1]);
+                }
             }
-            if (kv.length == 1) {
-                params.put(kv[0], null);
-            } else {
-                params.put(kv[0], kv[1]);
-            }
+        } else {
+            this.url = url;
         }
     }
 

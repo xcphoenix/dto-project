@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class TimeFormatUtils {
 
     public static Time utcFormat(String timeText) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         LocalDateTime localDateTime = LocalDateTime.parse(timeText, formatter);
         return Time.valueOf(localDateTime.toLocalTime());
     }

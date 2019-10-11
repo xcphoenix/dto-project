@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -167,52 +168,20 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
-                                                          Integer offset, Integer limit) throws IOException {
+                                                          Integer from, Integer size) throws IOException {
         Location.checkValues(lon, lat);
 
-        // 规范分页参数
-        offset = (offset == null || offset < 0) ? 0 : offset;
-        limit = (limit == null || limit < 0 || limit > 20) ? 20 : limit;
-
-        RestClientBuilder clientBuilder = RestClient.builder(
-                new HttpHost("47.94.5.149", 9200, "http"));
-        Header[] defaultHeaders = new Header[]{new BasicHeader("ContentType", "application/json")};
-        clientBuilder.setDefaultHeaders(defaultHeaders);
-        RestClient restClient = clientBuilder.build();
-
-        Request request = new Request(
-                "GET",
-                "/restaurant/_search"
-        );
-        // 设置参数
-        request.addParameter("size", String.valueOf(limit));
-        request.addParameter("from", String.valueOf(offset));
+        RestClient restClient = buildSearchRestClient();
+        Request request = setRestRequest(size, from);
         request.setJsonEntity(setGeoArgs(NEARBY_DISTANCE, lat, lon));
 
         Response response = restClient.performRequest(request);
         restClient.close();
 
-        JSONArray responseBody = JSONObject.parseObject(EntityUtils.toString(response.getEntity()))
-                .getJSONObject("hits")
-                .getJSONArray("hits");
-
-        int resArraySize = responseBody.size();
-        List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
-
-        for (int i = 0; i < resArraySize; i++) {
-            JSONObject jsonResData = responseBody.getJSONObject(i);
-            Map<String, Object> resMap = jsonResData.getJSONObject("_source").getInnerMap();
-            Double distance = jsonResData.getJSONArray("sort").getDouble(0);
-            resMap.put("distance", distance);
-            resMap.put("out_of_range", Double.parseDouble(resMap.get("delivery_range").toString()) > distance);
-            resMap.put("is_rest", isRest(TimeFormatUtils.utcFormat((String) resMap.get("bh_start")),
-                    TimeFormatUtils.utcFormat((String) resMap.get("bh_end"))));
-            restaurantList.add(resMap);
-        }
-
-        return restaurantList;
+        return dealBriefResp(response, 1);
     }
 
+    @Override
     public List<Map<String, Object>> searchRstAsSortType(String text, int type, double lon, double lat,
                                                          Integer from, Integer size) throws IOException {
         Location.checkValues(lon, lat);
@@ -227,14 +196,48 @@ public class RestaurantServiceImpl implements RestaurantService {
         Response response = restClient.performRequest(request);
         restClient.close();
 
-        return dealSearchResp(response);
+        return dealBriefResp(response, 2);
+    }
+
+    private List<Map<String, Object>> dealBriefResp(Response resp, int type) throws IOException {
+
+        JSONArray responseBody = JSONObject.parseObject(EntityUtils.toString(resp.getEntity()))
+                .getJSONObject("hits")
+                .getJSONArray("hits");
+
+        int resArraySize = responseBody.size();
+        List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
+
+        for (int i = 0; i < resArraySize; i++) {
+            JSONObject jsonResData = responseBody.getJSONObject(i);
+            Map<String, Object> resMap = jsonResData.getJSONObject("_source").getInnerMap();
+            Double distance = getDistance(responseBody, type, i);
+            resMap.put("distance", distance);
+            resMap.put("out_of_range", Double.parseDouble(resMap.get("delivery_range").toString()) < distance);
+            resMap.put("is_rest", isRest(TimeFormatUtils.utcFormat((String) resMap.get("bh_start")),
+                    TimeFormatUtils.utcFormat((String) resMap.get("bh_end"))));
+            // for single time
+            resMap.put("bh_start", TimeFormatUtils.utcFormat((String) resMap.get("bh_start")));
+            resMap.put("bh_end", TimeFormatUtils.utcFormat((String) resMap.get("bh_end")));
+            restaurantList.add(resMap);
+        }
+
+        return restaurantList;
     }
 
     /**
-     * 处理搜索结果
+     * 1: nearby
+     * 2: search
      */
-    private List<Map<String, Object>> dealSearchResp(Response resp) {
-        return null;
+    private Double getDistance(JSONArray jsonArray, int type, int pos) {
+        String jsonPath;
+        if (type == 1) {
+            jsonPath = "$[" + pos + "].sort[0]";
+        } else {
+            jsonPath = "$[" + pos + "].fields.distance[0]";
+        }
+        DecimalFormat df = new DecimalFormat("0.00");
+        return Double.parseDouble(df.format(JSONPath.eval(jsonArray,jsonPath)));
     }
 
     /**
@@ -268,7 +271,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 "            \"lon\": 0\n" +
                 "          },\n" +
                 "          \"order\":         \"asc\",\n" +
-                "          \"unit\":          \"km\", \n" +
+                "          \"unit\":          \"m\", \n" +
                 "          \"distance_type\": \"plane\"\n" +
                 "        }\n" +
                 "      }\n" +
@@ -317,6 +320,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 "      \"gmt_create\",\n" +
                 "      \"contact_man\",\n" +
                 "      \"country_id\"\n" +
+                "      \"foods\"\n" +
                 "    ]\n" +
                 "  },\n" +
                 "  \"stored_fields\": [\n" +
@@ -416,12 +420,10 @@ public class RestaurantServiceImpl implements RestaurantService {
             if (absValue <= keyArr.length && absValue > 0) {
                 Map<String, Object> tmpMap = new LinkedHashMap<>();
                 tmpMap.put(keyArr[absValue - 1], arg > 0 ? descType : ascType);
-                log.info("tmpMap => " + JSON.toJSON(tmpMap));
                 sortAttrs.add(tmpMap);
-                log.info("sortAttrs => " + JSON.toJSON(sortAttrs));
             }
         }
-        log.info(JSON.toJSONString(sortAttrs));
+        log.debug("sort params ==>" + JSON.toJSONString(sortAttrs));
         return sortAttrs;
     }
 
