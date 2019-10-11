@@ -73,4 +73,7 @@ public interface RestaurantService {
      */
     List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
                                                    Integer offset, Integer limit) throws IOException;
+
+    List<Map<String, Object>> searchRstAsSortType(String text, int type, double lon, double lat,
+                                                  Integer from, Integer size) throws IOException;
 }

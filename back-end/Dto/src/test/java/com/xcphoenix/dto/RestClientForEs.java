@@ -33,4 +33,12 @@ class RestClientForEs {
         log.info(JSON.toJSONString(restaurants));
     }
 
+    @Test
+    void searchRstTest() throws IOException {
+        String text = "麻辣";
+        List<Map<String, Object>> rstList = restaurantService
+                .searchRstAsSortType(text, 2, 108.887407, 34.163527,  0, 20);
+        log.info(JSON.toJSONString(rstList));
+    }
+
 }
