@@ -58,7 +58,7 @@ spring:
 
   # redis cache
   redis:
-    host: localhost
+    host: 47.94.5.149
     database: 1
 
   # elasticsearch
