@@ -3,7 +3,7 @@
 	
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{HH:mm:ss} %-5level >>> %msg%n</pattern>
+			<pattern>%d{HH:mm:ss} %-5level >> %msg%n</pattern>
 		</layout>
 	</appender>
 	

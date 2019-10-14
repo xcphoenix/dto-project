@@ -15,7 +15,7 @@
 	<description>仿饿了么、美团...</description>
 	
 	<properties>
-		<java.version>12</java.version>
+		<java.version>13</java.version>
 		<junit-jupiter.version>5.3.2</junit-jupiter.version>
 		<mockito.version>2.24.0</mockito.version>
 	</properties>
