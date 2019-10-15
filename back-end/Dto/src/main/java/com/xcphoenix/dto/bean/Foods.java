@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Foods {
 
-    private Integer categoryId;
+    private Long categoryId;
     private String categoryName;
     List<Food> foodsDetail;
 

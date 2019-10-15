@@ -44,7 +44,7 @@ public class FoodCategoryController {
 
     @DeleteMapping("/category/{categoryId}")
     @UserLoginToken
-    public Result deleteCategory(@PathVariable Integer categoryId) {
+    public Result deleteCategory(@PathVariable Long categoryId) {
         foodCategoryService.deleteCategory(categoryId);
         return new Result("删除成功", null);
     }

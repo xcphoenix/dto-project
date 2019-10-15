@@ -24,7 +24,7 @@ public interface ShipAddrService {
      *
      * @param shipAddrId 收货地址id
      */
-    void delShipAddr(Integer shipAddrId);
+    void delShipAddr(Long shipAddrId);
 
     /**
      * 更新收货地址信息
@@ -40,7 +40,7 @@ public interface ShipAddrService {
      * @param shipAddrId 地址id
      * @return 地址信息
      */
-    ShipAddr getAddrMsgById(Integer shipAddrId);
+    ShipAddr getAddrMsgById(Long shipAddrId);
 
     /**
      * 获取用户所设置的收货地址信息

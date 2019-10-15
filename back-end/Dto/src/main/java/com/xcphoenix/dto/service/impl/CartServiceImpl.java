@@ -3,12 +3,11 @@ package com.xcphoenix.dto.service.impl;
 import com.xcphoenix.dto.bean.Cart;
 import com.xcphoenix.dto.bean.CartItem;
 import com.xcphoenix.dto.service.CartService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @date 2019/10/12 下午9:57
  */
+@Slf4j
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -41,12 +41,30 @@ public class CartServiceImpl implements CartService {
         return "cart_item_detail:" + cartId + ":" + foodId;
     }
 
-    public void clearItems(Long userId, Long rstId) {
+    @Override
+    public void cleanCart(Long userId, Long rstId) {
+        Long cartId = getCartId(userId, rstId);
+        String cartKey = getCartKey(userId, rstId);
+        String itemKey = getItemKey(cartId);
 
-    }
-
-    public void clearCart(Long userId, Long rstId) {
-
+        if (cartId == null) {
+            log.info("cart not found... [userId: " + userId + ", rstId: " + rstId) ;
+            return;
+        }
+        Set<String> foodIds = redisTemplate.opsForSet().members(itemKey);
+        if (foodIds != null && foodIds.size() != 0) {
+            for (String id : foodIds) {
+                String itemDetailKey = getDetail(cartId, Long.valueOf(id));
+                Boolean success = redisTemplate.delete(itemDetailKey);
+                if (success != null) {
+                    log.info("clear Hash [" + itemDetailKey + "] " + (success ? "成功":"失败"));
+                }
+            }
+        }
+        redisTemplate.delete(itemKey);
+        log.info("clear Hash [" + itemKey + "]... ");
+        redisTemplate.delete(cartKey);
+        log.info("clear Hash [" + cartKey + "]... ");
     }
 
     /**
@@ -71,8 +89,6 @@ public class CartServiceImpl implements CartService {
         // 获取购物车自增 id
         Long cartId = redisTemplate.opsForValue().increment("cart_id_incr");
         redisTemplate.opsForHash().put(getCartKey(userId, rstId), "id", cartId);
-        // 创建 set
-        // redisTemplate.opsForSet().add(getItemKey(cartId));
 
         return cartId;
     }
@@ -92,14 +108,24 @@ public class CartServiceImpl implements CartService {
         for (CartItem cartItem : cart.getCartItems()) {
             foods.add(String.valueOf(cartItem.getFoodId()));
         }
-        Set<String> diff = redisTemplate.opsForSet()
-                .difference(itemKey, foods);
-        // remove invalid data
-        redisTemplate.opsForSet().remove(itemKey, diff);
+
+        Set<String> diff = redisTemplate.opsForSet().members(itemKey);
         if (diff != null) {
+            diff.removeAll(foods);
+        }
+
+        log.info("insert data => " + foods);
+        log.info("diff data => " + diff);
+
+        if (diff != null) {
+            // remove invalid data
+            redisTemplate.opsForSet().remove(itemKey, diff);
             foods.removeAll(diff);
+
             // add new data
-            redisTemplate.opsForSet().add(itemKey, foods.toArray(String[]::new));
+            if (foods.size() != 0) {
+                redisTemplate.opsForSet().add(itemKey, foods.toArray(String[]::new));
+            }
         }
 
         // 获得有效数据
@@ -116,7 +142,10 @@ public class CartServiceImpl implements CartService {
         cart.init();
         for (CartItem cartItem : cartItemList) {
             cart.compute(cartItem);
-            String hashKey = getDetail(cartId, cartItem.getFoodId());
+            Long foodId = cartItem.getFoodId();
+
+            String hashKey = getDetail(cartId, foodId);
+            redisTemplate.opsForHash().put(hashKey, "food_id", foodId);
             redisTemplate.opsForHash().put(hashKey, "quantity", cartItem.getQuantity());
             redisTemplate.opsForHash().put(hashKey, "selling_price", cartItem.getSellingPrice());
             redisTemplate.opsForHash().put(hashKey, "original_price", cartItem.getOriginalPrice());
@@ -130,6 +159,7 @@ public class CartServiceImpl implements CartService {
         redisTemplate.opsForHash().put(cartKey, "total_weight", cart.getTotalWeight());
     }
 
+    @Override
     public void updateCart(Cart cart) {
         Long cartId = getCartId(cart.getUserId(), cart.getRestaurantId());
         if (cartId == null) {
@@ -137,6 +167,56 @@ public class CartServiceImpl implements CartService {
         }
         cart.setCartId(cartId);
         modifyCart(cart);
+    }
+
+    @Override
+    public Cart getCart(Long userId, Long rstId) {
+        Cart cart = new Cart();
+        Long cartId = getCartId(userId, rstId);
+        if (cartId == null) {
+            return null;
+        }
+        cart.setCartId(cartId);
+        cart.setUserId(userId);
+        cart.setRestaurantId(rstId);
+
+        Collection<Object> keys = new ArrayList<>();
+        keys.add("discount_amount");
+        keys.add("original_total");
+        keys.add("total");
+        keys.add("total_weight");
+
+        List<Object> values = redisTemplate.opsForHash().multiGet(getCartKey(userId, rstId), keys);
+        cart.setDiscountAmount((Float) values.get(0));
+        cart.setOriginalTotal((Float) values.get(1));
+        cart.setTotal((Float) values.get(2));
+        cart.setTotalWeight((Integer) values.get(3));
+
+        keys.clear();
+        keys.add("quantity");
+        keys.add("selling_price");
+        keys.add("original_price");
+        keys.add("food_id");
+        List<CartItem> cartItemList = new ArrayList<>();
+        Set<String> cartItemSet = redisTemplate.opsForSet().members(getItemKey(cartId));
+
+        if (cartItemSet != null) {
+            for(String item : cartItemSet) {
+                CartItem cartItem = new CartItem();
+                values = redisTemplate.opsForHash().multiGet(getDetail(cartId, Long.valueOf(item)), keys);
+
+                cartItem.setQuantity((Integer) values.get(0));
+                cartItem.setSellingPrice((Float) values.get(1));
+                cartItem.setOriginalPrice((Float) values.get(2));
+                cartItem.setFoodId((Long) values.get(3));
+
+                cartItemList.add(cartItem);
+            }
+        }
+
+        cart.setCartItems(cartItemList);
+
+        return cart;
     }
 
 }

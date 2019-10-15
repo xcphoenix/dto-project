@@ -41,7 +41,7 @@ public class ShopperAspect {
 
     @Before(value = "checkShopper(shopperCheck)", argNames = "shopperCheck")
     public void execBeforePointcut(ShopperCheck shopperCheck) {
-        Integer userId = (Integer) ContextHolderUtils.getRequest().getAttribute("userId");
+        Long userId = (Long) ContextHolderUtils.getRequest().getAttribute("userId");
         logger.info("验证用户是否是商家..");
         if (userId == null) {
             throw new ServiceLogicException(ErrorCode.SERVER_EXCEPTION);

@@ -20,7 +20,7 @@ public interface UserMapper {
      */
     @Select("SELECT user_id, user_name, user_phone, user_avatar, user_sex, user_status " +
             "FROM user WHERE user_id = #{userId}")
-    User getUserDetail(Integer userId);
+    User getUserDetail(Long userId);
 
     /**
      * 获取用户状态
@@ -29,7 +29,7 @@ public interface UserMapper {
      * @return 用户状态
      */
     @Select("SELECT user_status FROM user WHERE user_id = #{userId} ")
-    Integer getUserStatus(Integer userId);
+    Integer getUserStatus(Long userId);
 
     /**
      * 更新用户身份为商家
@@ -37,7 +37,7 @@ public interface UserMapper {
      * @param userId 用户id
      */
     @Update("UPDATE user SET user_status = 1 WHERE user_id = #{userId} ")
-    void becomeShopper(Integer userId);
+    void becomeShopper(Long userId);
 
     /**
      * 更新用户名
@@ -46,7 +46,7 @@ public interface UserMapper {
      * @param username 用户名
      */
     @Update("UPDATE user SET user_name = #{username} WHERE user_id = #{userId} ")
-    void updateNameById(@Param("userId") Integer userId, @Param("username") String username);
+    void updateNameById(@Param("userId") Long userId, @Param("username") String username);
 
     /**
      * 更新用户头像
@@ -55,7 +55,7 @@ public interface UserMapper {
      * @param avatarUrl 用户头像
      */
     @Update("UPDATE user SET user_avatar = #{avatarUrl} WHERE user_id = #{userId} ")
-    void updateAvatarById(@Param("userId") Integer userId, @Param("avatarUrl") String avatarUrl);
+    void updateAvatarById(@Param("userId") Long userId, @Param("avatarUrl") String avatarUrl);
 
 
 }

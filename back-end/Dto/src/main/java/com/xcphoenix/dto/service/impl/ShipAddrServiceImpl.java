@@ -45,8 +45,8 @@ public class ShipAddrServiceImpl implements ShipAddrService {
     }
 
     @Override
-    public void delShipAddr(Integer shipAddrId) {
-        Integer userId = ContextHolderUtils.getLoginUserId();
+    public void delShipAddr(Long shipAddrId) {
+        Long userId = ContextHolderUtils.getLoginUserId();
         if (shipAddrMapper.delShipAddr(shipAddrId, userId) != 1) {
             throw new ServiceLogicException(ErrorCode.ADDR_NOT_FOUND);
         }
@@ -68,8 +68,8 @@ public class ShipAddrServiceImpl implements ShipAddrService {
     }
 
     @Override
-    public ShipAddr getAddrMsgById(Integer shipAddrId) {
-        Integer userId = ContextHolderUtils.getLoginUserId();
+    public ShipAddr getAddrMsgById(Long shipAddrId) {
+        Long userId = ContextHolderUtils.getLoginUserId();
         ShipAddr shipAddr = shipAddrMapper.getAddrById(shipAddrId, userId);
         if (shipAddr == null) {
             throw new ServiceLogicException(ErrorCode.ADDR_NOT_FOUND);
@@ -79,7 +79,7 @@ public class ShipAddrServiceImpl implements ShipAddrService {
 
     @Override
     public List<ShipAddr> getAddresses() {
-        Integer userId = ContextHolderUtils.getLoginUserId();
+        Long userId = ContextHolderUtils.getLoginUserId();
         List<ShipAddr> shipAddrList = shipAddrMapper.getAddrByUserId(userId);
         shipAddrList.forEach(shipAddr -> shipAddr = shipAddr.dataConvert());
         return shipAddrList;

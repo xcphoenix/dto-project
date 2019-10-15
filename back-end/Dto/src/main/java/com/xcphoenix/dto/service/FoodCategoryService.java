@@ -30,7 +30,7 @@ public interface FoodCategoryService {
      *
      * @param categoryId 分类id
      */
-    void deleteCategory(Integer categoryId);
+    void deleteCategory(Long categoryId);
 
     /**
      * 获取店铺下的所有分类信息
@@ -44,5 +44,5 @@ public interface FoodCategoryService {
      *
      * @param categoryId 分类 id
      */
-    void assertBelongShop(Integer categoryId);
+    void assertBelongShop(Long categoryId);
 }

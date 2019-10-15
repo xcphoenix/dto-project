@@ -3,7 +3,7 @@ package com.xcphoenix.dto;
 import com.alibaba.fastjson.JSON;
 import com.xcphoenix.dto.bean.Cart;
 import com.xcphoenix.dto.bean.CartItem;
-import com.xcphoenix.dto.service.impl.CartServiceImpl;
+import com.xcphoenix.dto.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author      xuanc
@@ -25,7 +28,7 @@ import java.util.List;
 class CartTest {
 
     @Autowired
-    private CartServiceImpl cartService;
+    private CartService cartService;
 
     @Test
     void testAddCart() {
@@ -38,15 +41,25 @@ class CartTest {
              cartItem.setFoodId((long) i);
              cartItem.setQuantity((int)(Math.random() * 6) + 1);
              cartItem.setOriginalPrice((long)(Math.random() * 100) % 50);
-             cartItem.setSellingPrice((float) (cartItem.getOriginalPrice() - Math.random() * 10));
+             cartItem.setSellingPrice(Math.abs((float) (cartItem.getOriginalPrice() - Math.random() * 10)));
 
              cartItemList.add(cartItem);
         }
         cart.setCartItems(cartItemList);
-
-        log.info("cart data ==> " + JSON.toJSONString(cart));
-
         cartService.updateCart(cart);
+        String saveJson = JSON.toJSONString(cart);
+        log.info("[Insert] cart data ==> " + JSON.toJSONString(cart));
+
+        cart = cartService.getCart(cart.getUserId(), cart.getRestaurantId());
+        log.info("[Get] cart data ==> " + JSON.toJSONString(cart));
+        assertTrue(JSON.parseObject(saveJson, Cart.class).equals(cart));
+
+        cartService.cleanCart(999999L, 888888L);
+
+        cart = cartService.getCart(cart.getUserId(), cart.getRestaurantId());
+        log.info("[After clean] cart data ==> " + JSON.toJSONString(cart));
+        assertNull(cart);
+
     }
 
 }

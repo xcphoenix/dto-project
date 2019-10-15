@@ -35,7 +35,7 @@ public interface FoodService {
      * @param foodId 食品id
      * @return 食品信息
      */
-    Food getFoodDetailById(Integer foodId);
+    Food getFoodDetailById(Long foodId);
 
     /**
      * 获取店铺商品的全部信息
@@ -50,6 +50,6 @@ public interface FoodService {
      * @param categoryId 分类 id
      * @return ..
      */
-    List<Food> getFoodsByCategory(Integer categoryId);
+    List<Food> getFoodsByCategory(Long categoryId);
 
 }

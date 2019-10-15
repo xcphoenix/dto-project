@@ -22,7 +22,7 @@ public interface CollectionMapper {
      * @param shopId 店铺id
      */
     @Insert("INSERT INTO collection(user_id, restaurant_id, gmt_create) VALUES (#{userId}, #{shopId}, NOW())")
-    void collectShop(@Param("userId") Integer userId, @Param("shopId") Integer shopId);
+    void collectShop(@Param("userId") Long userId, @Param("shopId") Long shopId);
 
     /**
      * 获取店铺收藏信息
@@ -32,7 +32,7 @@ public interface CollectionMapper {
      * @return <li>1: 收藏</li> <li>other: 未收藏orError</li>
      */
     @Select("SELECT COUNT(*) from collection WHERE user_id = #{userId} AND restaurant_id = #{shopId}")
-    Integer isCollected(@Param("userId") Integer userId, @Param("shopId") Integer shopId);
+    Integer isCollected(@Param("userId") Long userId, @Param("shopId") Long shopId);
 
     /**
      * 取消收藏
@@ -41,7 +41,7 @@ public interface CollectionMapper {
      * @param shopId 店铺id
      */
     @Delete("DELETE from collection WHERE user_id = #{userId} AND restaurant_id = #{shopId}")
-    void cancelCollection(@Param("userId") Integer userId, @Param("shopId") Integer shopId);
+    void cancelCollection(@Param("userId") Long userId, @Param("shopId") Long shopId);
 
     /**
      * 获取用户收藏列表
@@ -49,6 +49,6 @@ public interface CollectionMapper {
      * @param userId 用户id
      * @return 店铺list
      */
-    List<Restaurant> getCollectedShops(@Param("userId") Integer userId);
+    List<Restaurant> getCollectedShops(@Param("userId") Long userId);
 
 }

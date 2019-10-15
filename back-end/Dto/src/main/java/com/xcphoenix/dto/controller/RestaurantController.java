@@ -41,7 +41,7 @@ public class RestaurantController {
     @UserLoginToken
     @GetMapping("/restaurant")
     public Result getRestaurant(HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
         return new Result("查询成功").addMap("restaurant", restaurantService.getRestaurantDetail(userId));
     }
 

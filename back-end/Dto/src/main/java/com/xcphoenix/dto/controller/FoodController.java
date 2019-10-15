@@ -45,7 +45,7 @@ public class FoodController {
 
     @UserLoginToken
     @GetMapping("/food/{foodId}")
-    public Result getFoodDetail(@PathVariable Integer foodId) {
+    public Result getFoodDetail(@PathVariable Long foodId) {
         Food food = foodService.getFoodDetailById(foodId);
         return new Result("查询成功")
                 .addMap("food", food);
@@ -60,7 +60,7 @@ public class FoodController {
     @UserLoginToken
     @GetMapping("/foods/category")
     public Result getFoodsByCategory(@RequestBody(required = false) JSONObject jsonObject) {
-        Integer categoryId = jsonObject == null ? null : jsonObject.getInteger("categoryId");
+        Long categoryId = jsonObject == null ? null : jsonObject.getLong("categoryId");
         return new Result("查询成功")
                 .addMap("foods", foodService.getFoodsByCategory(categoryId));
     }

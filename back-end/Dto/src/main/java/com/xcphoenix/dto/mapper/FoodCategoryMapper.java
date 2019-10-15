@@ -38,7 +38,7 @@ public interface FoodCategoryMapper {
      */
     @Delete("DELETE FROM food_category WHERE category_id = #{categoryId} " +
             "AND restaurant_id = #{restaurantId}")
-    int deleteCategory(Integer categoryId, Integer restaurantId);
+    int deleteCategory(Long categoryId, Long restaurantId);
 
     /**
      * 获取所有的分类信息
@@ -48,7 +48,7 @@ public interface FoodCategoryMapper {
      */
     @Select("SELECT category_id, restaurant_id, name, description FROM food_category " +
             "WHERE restaurant_id = #{restaurantId} ")
-    List<FoodCategory> getCategories(Integer restaurantId);
+    List<FoodCategory> getCategories(Long restaurantId);
 
     /**
      * 店铺是否有该分类
@@ -59,7 +59,7 @@ public interface FoodCategoryMapper {
      */
     @Select("SELECT COUNT(*) FROM food_category " +
             "WHERE category_id = #{categoryId} AND restaurant_id = #{restaurantId}")
-    Integer checkHaveCategories(Integer categoryId, Integer restaurantId);
+    Integer checkHaveCategories(Long categoryId, Long restaurantId);
 
     /**
      * 获取 id 对应的名称

@@ -84,7 +84,7 @@ public class FoodServiceImpl implements FoodService {
 
     @ShopperCheck
     @Override
-    public Food getFoodDetailById(Integer foodId) {
+    public Food getFoodDetailById(Long foodId) {
         Food food = foodMapper.getFoodById(foodId, restaurantService.getLoginShopperResId());
         if (food == null) {
             throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
@@ -98,7 +98,7 @@ public class FoodServiceImpl implements FoodService {
     @ShopperCheck
     @Override
     public List<Foods> getAllFoods() {
-        Integer restaurantId = restaurantService.getLoginShopperResId();
+        Long restaurantId = restaurantService.getLoginShopperResId();
         List<Foods> foodsList = foodMapper.getAllFoods(restaurantId);
         foodsList.add(new Foods(null, defaultCategoryName,
                 foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName)));
@@ -107,8 +107,8 @@ public class FoodServiceImpl implements FoodService {
 
     @ShopperCheck
     @Override
-    public List<Food> getFoodsByCategory(Integer categoryId) {
-        Integer restaurantId = restaurantService.getLoginShopperResId();
+    public List<Food> getFoodsByCategory(Long categoryId) {
+        Long restaurantId = restaurantService.getLoginShopperResId();
         foodCategoryService.assertBelongShop(categoryId);
         if (categoryId == null) {
             return foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName);

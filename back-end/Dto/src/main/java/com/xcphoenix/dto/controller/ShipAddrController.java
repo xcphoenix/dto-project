@@ -36,7 +36,7 @@ public class ShipAddrController {
 
     @UserLoginToken
     @PutMapping("/address/{shipAddrId}")
-    public Result updateShipAddr(@Validated @RequestBody ShipAddr shipAddr, @PathVariable Integer shipAddrId) {
+    public Result updateShipAddr(@Validated @RequestBody ShipAddr shipAddr, @PathVariable Long shipAddrId) {
         shipAddr.setShipAddrId(shipAddrId);
         ShipAddr shipAddrUpd = shipAddrService.updateShipAddr(shipAddr);
         return new Result("更新成功").addMap("address", shipAddrUpd);
@@ -44,14 +44,14 @@ public class ShipAddrController {
 
     @UserLoginToken
     @DeleteMapping("/address/{shipAddrId}")
-    public Result delShipAddr(@PathVariable Integer shipAddrId) {
+    public Result delShipAddr(@PathVariable Long shipAddrId) {
         shipAddrService.delShipAddr(shipAddrId);
         return new Result("删除成功");
     }
 
     @UserLoginToken
     @GetMapping("/address/{shipAddrId}")
-    public Result getShipAddrById(@PathVariable Integer shipAddrId) {
+    public Result getShipAddrById(@PathVariable Long shipAddrId) {
         ShipAddr shipAddr = shipAddrService.getAddrMsgById(shipAddrId);
         return new Result("获取成功").addMap("address", shipAddr);
     }

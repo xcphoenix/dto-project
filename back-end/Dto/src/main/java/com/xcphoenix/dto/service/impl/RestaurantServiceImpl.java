@@ -70,7 +70,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Integer getUserRestaurantId(Integer userId) {
+    public Long getUserRestaurantId(Long userId) {
         return restaurantMapper.hasRestaurant(userId);
     }
 
@@ -81,7 +81,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
-        restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
+        restaurant.setUserId((Long) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
         restaurant.setLogo(base64ImgService.convertPicture(restaurant.getLogo(), inShoreImgDire));
         restaurant.setBannerImg(base64ImgService.convertPicture(restaurant.getBannerImg(), bannerImgDire));
@@ -115,19 +115,19 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @ShopperCheck
     @Override
-    public Restaurant getRestaurantDetail(Integer userId) {
+    public Restaurant getRestaurantDetail(Long userId) {
         return restaurantMapper.getUserShopDetail(userId);
     }
 
     @Override
-    public Integer getLoginShopperResId() {
-        Integer userId = (Integer) ContextHolderUtils.getRequest().getAttribute("userId");
+    public Long getLoginShopperResId() {
+        Long userId = (Long) ContextHolderUtils.getRequest().getAttribute("userId");
         return getUserRestaurantId(userId);
     }
 
     @Override
     public void updateRestaurant(Restaurant restaurant) throws IOException {
-        restaurant.setUserId((Integer) ContextHolderUtils.getRequest().getAttribute("userId"));
+        restaurant.setUserId((Long) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setRestaurantId(getLoginShopperResId());
         restaurant.rangeFormat();
 

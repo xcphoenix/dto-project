@@ -64,7 +64,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     throw new ServiceLogicException(ErrorCode.TOKEN_NOT_FOUND);
                 }
 
-                int userId, userStatus;
+                long userId, userStatus;
                 Date expireTime;
                 Date refreshTime;
                 try {
@@ -90,7 +90,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if (expireTime.getTime() < System.currentTimeMillis()) {
                         User userDetail = new User();
                         userDetail.setUserId(userId);
-                        userDetail.setStatus(userStatus);
+                        userDetail.setStatus((int) userStatus);
 
                         // 创建新 token
                         String newToken = tokenService.createToken(userDetail);

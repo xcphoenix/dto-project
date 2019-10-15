@@ -25,21 +25,21 @@ public class CollectController {
 
     @UserLoginToken
     @GetMapping("/{shopId}")
-    public Result collectShop(@PathVariable("shopId") Integer shopId) {
+    public Result collectShop(@PathVariable("shopId") Long shopId) {
         collectionService.collectShop(shopId);
         return new Result("收藏成功");
     }
 
     @UserLoginToken
     @DeleteMapping("/{shopId}")
-    public Result cancelShop(@PathVariable("shopId") Integer shopId) {
+    public Result cancelShop(@PathVariable("shopId") Long shopId) {
         collectionService.cancelCollect(shopId);
         return new Result("取消成功");
     }
 
     @UserLoginToken
     @GetMapping("/status/{shopId}")
-    public Result getCollectionStatus(@PathVariable("shopId") Integer shopId) {
+    public Result getCollectionStatus(@PathVariable("shopId") Long shopId) {
         Boolean status = collectionService.getCollectStatus(shopId);
         return new Result(null).addMap("status", status);
     }
