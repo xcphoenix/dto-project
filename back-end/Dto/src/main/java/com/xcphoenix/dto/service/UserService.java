@@ -16,7 +16,7 @@ public interface UserService {
      * @param userId 用户 id
      * @return 用户信息
      */
-    User getUserDetail(Integer userId);
+    User getUserDetail(Long userId);
 
     /**
      * 获取用户状态

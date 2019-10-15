@@ -18,8 +18,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class FoodCategory {
 
-    private Integer categoryId;
-    private Integer restaurantId;
+    private Long categoryId;
+    private Long restaurantId;
 
     @Length(max = 25, message = "分类字数超出范围")
     @NotBlank(message = "分类名不能为空", groups = {ValidateGroup.addData.class})

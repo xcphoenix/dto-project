@@ -18,7 +18,7 @@ public interface RestaurantMapper {
      * <li>null: 用户没有用开店记录</li>
      */
     @Select("SELECT restaurant_id FROM restaurant WHERE user_id = #{userId} ")
-    Integer hasRestaurant(Integer userId);
+    Long hasRestaurant(Long userId);
 
     /**
      * 查找名为 name 的店铺 id
@@ -42,7 +42,7 @@ public interface RestaurantMapper {
      * @param userId 用户 id
      * @return 店铺信息
      */
-    Restaurant getUserShopDetail(Integer userId);
+    Restaurant getUserShopDetail(Long userId);
 
     /**
      * 更新店铺信息
@@ -66,6 +66,6 @@ public interface RestaurantMapper {
      * @return 店铺存在否
      */
     @Select("SELECT COUNT(*) FROM restaurant WHERE restaurant_id = #{shopId} ")
-    Integer isShopExists(Integer shopId);
+    Integer isShopExists(Long shopId);
 
 }

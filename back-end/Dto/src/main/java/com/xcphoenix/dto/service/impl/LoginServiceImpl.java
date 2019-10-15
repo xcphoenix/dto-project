@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Integer loginByPhonePass(String phone, String password) {
+    public Long loginByPhonePass(String phone, String password) {
         if (phone == null || password == null) {
             throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("缺少必要的参数"));
         }
@@ -42,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Integer loginByName(String username, String password) {
+    public Long loginByName(String username, String password) {
         if (username == null || password == null) {
             throw new ServiceLogicException(ErrorCode.illegalArgumentBuilder("缺少必要的参数"));
         }
@@ -50,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Integer registerByPhonePass(User user) {
+    public Long registerByPhonePass(User user) {
          if(loginMapper.isExistsByPhone(user.getUserPhone()) != null) {
              return null;
          }

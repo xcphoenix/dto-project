@@ -24,7 +24,7 @@ class CollectTest {
 
     @Test
     void getCollectedShopTest() {
-        log.info(JSON.toJSONString(collectionMapper.getCollectedShops(2)));
+        log.info(JSON.toJSONString(collectionMapper.getCollectedShops(2L)));
     }
 
 }

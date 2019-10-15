@@ -26,7 +26,7 @@ public interface ShipAddrMapper {
      * @param userId 用户id
      * @return 是否成功
      */
-    int delShipAddr(@Param("addrId") Integer addrId, @Param("userId") Integer userId);
+    int delShipAddr(@Param("addrId") Long addrId, @Param("userId") Long userId);
 
     /**
      * 更新收货地址
@@ -41,7 +41,7 @@ public interface ShipAddrMapper {
      * @param userId 用户id
      * @return 信息
      */
-    List<ShipAddr> getAddrByUserId(@Param("userId") Integer userId);
+    List<ShipAddr> getAddrByUserId(@Param("userId") Long userId);
 
     /**
      * 获取指定 id 的收货地址信息
@@ -50,6 +50,6 @@ public interface ShipAddrMapper {
      * @param shipAddrId 收货地址id
      * @return 收货地址信息
      */
-    ShipAddr getAddrById(@Param("shipAddrId") Integer shipAddrId, @Param("userId") Integer userId);
+    ShipAddr getAddrById(@Param("shipAddrId") Long shipAddrId, @Param("userId") Long userId);
 
 }

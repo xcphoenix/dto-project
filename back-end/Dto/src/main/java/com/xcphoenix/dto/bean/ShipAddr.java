@@ -23,8 +23,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ShipAddr {
 
-    private Integer shipAddrId;
-    private Integer userId;
+    private Long shipAddrId;
+    private Long userId;
 
     @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
     private String contact;

@@ -24,7 +24,7 @@ public interface LoginService {
      * @return <li>用户 id</li>
      * <li>null：用户不存在</li>
      */
-    Integer loginByPhonePass(String phone, String password);
+    Long loginByPhonePass(String phone, String password);
 
     /**
      * 手机号+密码登录
@@ -34,7 +34,7 @@ public interface LoginService {
      * @return <li>用户 id</li>
      * <li>null：用户不存在</li>
      */
-    Integer loginByName(String username, String password);
+    Long loginByName(String username, String password);
 
     /**
      * 手机号+验证码登录
@@ -54,6 +54,6 @@ public interface LoginService {
      * @param user 用户信息
      * @return 用户 id
      */
-    Integer registerByPhonePass(User user);
+    Long registerByPhonePass(User user);
 
 }

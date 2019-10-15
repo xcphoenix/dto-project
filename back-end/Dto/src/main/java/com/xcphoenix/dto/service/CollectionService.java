@@ -15,13 +15,13 @@ public interface CollectionService {
      * 收藏店铺
      * @param shopId 店铺id
      */
-    void collectShop(Integer shopId);
+    void collectShop(Long shopId);
 
     /**
      * 取消收藏
      * @param shopId 店铺id
      */
-    void cancelCollect(Integer shopId);
+    void cancelCollect(Long shopId);
 
     /**
      * 获取店铺收藏状态<br />
@@ -29,7 +29,7 @@ public interface CollectionService {
      * @param shopId 店铺id
      * @return 状态
      */
-    Boolean getCollectStatus(Integer shopId);
+    Boolean getCollectStatus(Long shopId);
 
     /**
      * 获取用户店铺收藏状态

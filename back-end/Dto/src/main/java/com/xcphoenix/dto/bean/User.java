@@ -23,7 +23,7 @@ public class User {
      * 判断登录时第一个字符是否是数字，来确定是手机号登录还是用户名登录
      */
 
-    private Integer userId;
+    private Long userId;
 
     @Pattern(regexp = "^[a-zA-z][a-zA-Z0-9_]{2,15}$", message = "用户名格式错误")
     private String userName;

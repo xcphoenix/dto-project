@@ -54,7 +54,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
 
     @Override
     public void updateCategory(FoodCategory foodCategory) {
-        Integer restaurantId = restaurantService.getLoginShopperResId();
+        Long restaurantId = restaurantService.getLoginShopperResId();
         foodCategory.setRestaurantId(restaurantId);
         if (foodCategory.getCategoryId() == null || foodCategoryMapper.checkHaveCategories(foodCategory.getCategoryId(), restaurantId) != 1) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
@@ -71,7 +71,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     }
 
     @Override
-    public void deleteCategory(Integer categoryId) {
+    public void deleteCategory(Long categoryId) {
         if (foodCategoryMapper.deleteCategory(categoryId, restaurantService.getLoginShopperResId()) == 0) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
         }
@@ -83,7 +83,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     }
 
     @Override
-    public void assertBelongShop(Integer categoryId) {
+    public void assertBelongShop(Long categoryId) {
         if (categoryId != null &&
                 foodCategoryMapper.checkHaveCategories(categoryId, restaurantService.getLoginShopperResId()) != 1) {
             throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);

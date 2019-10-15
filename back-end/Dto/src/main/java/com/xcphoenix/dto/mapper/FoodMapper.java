@@ -44,7 +44,7 @@ public interface FoodMapper {
      * @param restaurantId 店铺 id
      * @return 信息
      */
-    Food getFoodById(@Param("foodId") Integer foodId, @Param("restaurantId") Integer restaurantId);
+    Food getFoodById(@Param("foodId") Long foodId, @Param("restaurantId") Long restaurantId);
 
     /**
      * 获取店铺的所有食品信息
@@ -52,7 +52,7 @@ public interface FoodMapper {
      * @param restaurantId 店铺 id
      * @return list
      */
-    List<Foods> getAllFoods(@Param("restaurantId") Integer restaurantId);
+    List<Foods> getAllFoods(@Param("restaurantId") Long restaurantId);
 
     /**
      * 获取指定分类的所有食品
@@ -61,7 +61,7 @@ public interface FoodMapper {
      * @param restaurantId 店铺 id
      * @return 信息
      */
-    List<Food> getFoodsByCategory(@Param("categoryId") Integer categoryId, @Param("restaurantId") Integer restaurantId);
+    List<Food> getFoodsByCategory(@Param("categoryId") Long categoryId, @Param("restaurantId") Long restaurantId);
 
     /**
      * 获取m默认分类的食品
@@ -70,6 +70,6 @@ public interface FoodMapper {
      * @param defaultCategory 默认分类名
      * @return 信息
      */
-    List<Food> getFoodsCategoryNull(@Param("restaurantId") Integer restaurantId, @Param("defaultCategory") String defaultCategory);
+    List<Food> getFoodsCategoryNull(@Param("restaurantId") Long restaurantId, @Param("defaultCategory") String defaultCategory);
 
 }

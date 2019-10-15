@@ -47,7 +47,7 @@ public class LoginController {
         if (!loginService.isExists(phone)) {
             return Result.error(ErrorCode.MOBILE_NOT_FOUND);
         }
-        Integer userId = loginService.loginByPhonePass(phone, passwd);
+        Long userId = loginService.loginByPhonePass(phone, passwd);
         if (userId == null) {
             return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
@@ -69,7 +69,7 @@ public class LoginController {
         if (!loginService.isExists(userName)) {
             return Result.error(ErrorCode.USER_NOT_FOUND);
         }
-        Integer userId = loginService.loginByName(userName, userPassword);
+        Long userId = loginService.loginByName(userName, userPassword);
         if (userId == null) {
             return Result.error(ErrorCode.LOGIN_PASSWD_ERROR);
         }
@@ -86,7 +86,7 @@ public class LoginController {
     @PostMapping("/register")
     public Result registerTmpDev(@Validated(ValidateGroup.addData.class) @RequestBody User user) {
         user.setUserName(RandomStringUtils.randomAlphanumeric(2) + System.currentTimeMillis());
-        Integer userId = loginService.registerByPhonePass(user);
+        Long userId = loginService.registerByPhonePass(user);
         if (userId == null) {
             return Result.error(ErrorCode.MOBILE_REGISTERED);
         }

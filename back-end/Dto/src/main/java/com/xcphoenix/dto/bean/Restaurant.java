@@ -27,8 +27,8 @@ import java.text.DecimalFormat;
 @Data
 public class Restaurant {
 
-    private Integer restaurantId;
-    private Integer userId;
+    private Long restaurantId;
+    private Long userId;
 
     @Length(max = 50, message = "店铺名称字数超出范围")
     @NotBlank(message = "店铺名称不能为空", groups = {ValidateGroup.addData.class})

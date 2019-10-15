@@ -69,9 +69,9 @@ public class ElemeProcessor implements PageProcessor {
         return first + second + third;
     }
 
-     private Integer createRUser() {
+     private Long createRUser() {
         log.info("创建用户...");
-        Integer tmpUserId;
+        Long tmpUserId;
         do {
             User tmpUser = new User();
             tmpUser.setUserPhone(getTel());
@@ -83,7 +83,7 @@ public class ElemeProcessor implements PageProcessor {
         return tmpUserId;
     }
 
-    private Integer makeTmpRst(JSONObject rst) throws ParseException {
+    private Long makeTmpRst(JSONObject rst) throws ParseException {
         log.info("创建店铺...");
         // log.info("rst => " + rst.toJSONString());
         Restaurant tmpRst = new Restaurant();
@@ -248,7 +248,7 @@ public class ElemeProcessor implements PageProcessor {
 
             JSONObject jsonObject = JSON.parseObject(page.getJson().toString());
             JSONObject rst = jsonObject.getJSONObject("rst");
-            Integer rstId = null;
+            Long rstId = null;
             try {
                 rstId = makeTmpRst(rst);
             } catch (ParseException e) {
@@ -264,7 +264,7 @@ public class ElemeProcessor implements PageProcessor {
                 foodCategory.setDescription(menu.getString("description"));
                 foodCategoryMapper.addNewCategory(foodCategory);
                 log.info("商品分类添加成功!");
-                Integer categoryId = foodCategory.getCategoryId();
+                Long categoryId = foodCategory.getCategoryId();
 
                 JSONArray foods = menu.getJSONArray("foods");
                 for (int j = 0; j < foods.size(); j++) {

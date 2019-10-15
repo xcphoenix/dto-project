@@ -20,9 +20,9 @@ import java.sql.Timestamp;
 @Data
 public class Food {
 
-    private Integer foodId;
-    private Integer restaurantId;
-    private Integer categoryId;
+    private Long foodId;
+    private Long restaurantId;
+    private Long categoryId;
 
     @JSONField(deserialize = false)
     private String category;

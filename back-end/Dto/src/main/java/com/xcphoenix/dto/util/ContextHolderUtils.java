@@ -24,12 +24,12 @@ public class ContextHolderUtils {
     /**
      * 获取登录用户 id
      */
-    public static Integer getLoginUserId() {
+    public static Long getLoginUserId() {
         Object object =  getRequest().getAttribute("userId");
-        if (!(object instanceof Integer)) {
+        if (!(object instanceof Long)) {
             throw new ServiceLogicException(ErrorCode.USER_NOT_LOGIN);
         }
-        return (Integer) object;
+        return (Long) object;
     }
 
 }

@@ -89,7 +89,7 @@ public class TokenService {
                 refreshTime, TimeUnit.MILLISECONDS);
     }
 
-    public boolean checkInBlacklist(int userId, String token) {
+    public boolean checkInBlacklist(Long userId, String token) {
         String tmpTime = stringRedisTemplate.opsForValue().get("preBlacklist:" + userId);
         if (tmpTime != null) {
             long logoutServerTime = Long.parseLong(tmpTime);

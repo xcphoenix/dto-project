@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserDetail(Integer userId) {
+    public User getUserDetail(Long userId) {
         return userMapper.getUserDetail(userId);
     }
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateName(String name) {
-        Integer userId = ContextHolderUtils.getLoginUserId();
+        Long userId = ContextHolderUtils.getLoginUserId();
         try {
             userMapper.updateNameById(userId, name);
         } catch (DuplicateKeyException dke) {
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String updateAvatar(String avatar) throws IOException {
-        Integer userId = ContextHolderUtils.getLoginUserId();
+        Long userId = ContextHolderUtils.getLoginUserId();
         String avatarUrl = base64ImgService.convertPicture(avatar, avatarDire);
         userMapper.updateAvatarById(userId, avatarUrl);
         return avatarUrl;

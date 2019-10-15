@@ -19,7 +19,7 @@ public interface RestaurantService {
      * @param userId 用户 id
      * @return 店铺 id
      */
-    Integer getUserRestaurantId(Integer userId);
+    Long getUserRestaurantId(Long userId);
 
     /**
      * 店铺名是否可用
@@ -44,14 +44,14 @@ public interface RestaurantService {
      * @param userId 用户 id
      * @return 店铺详情
      */
-    Restaurant getRestaurantDetail(Integer userId);
+    Restaurant getRestaurantDetail(Long userId);
 
     /**
      * 获取店铺 id
      *
      * @return 登录商家的店铺id
      */
-    public Integer getLoginShopperResId();
+    public Long getLoginShopperResId();
 
     /**
      * 更新店铺信息

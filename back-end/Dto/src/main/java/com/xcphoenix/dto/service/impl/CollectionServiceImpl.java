@@ -28,7 +28,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public void collectShop(Integer shopId) {
+    public void collectShop(Long shopId) {
         if (getCollectStatus(shopId)) {
             throw new ServiceLogicException(ErrorCode.SHOP_HAVE_COLLECTED);
         }
@@ -36,7 +36,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public void cancelCollect(Integer shopId) {
+    public void cancelCollect(Long shopId) {
         if (!getCollectStatus(shopId)) {
             throw new ServiceLogicException(ErrorCode.SHOP_NOT_COLLECTED);
         }
@@ -44,7 +44,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public Boolean getCollectStatus(Integer shopId) {
+    public Boolean getCollectStatus(Long shopId) {
         if (restaurantMapper.isShopExists(shopId) != 1) {
             throw new ServiceLogicException(ErrorCode.SHOP_NOT_FOUND);
         }

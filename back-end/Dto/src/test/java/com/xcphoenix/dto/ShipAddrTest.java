@@ -41,7 +41,7 @@ class ShipAddrTest {
 
     private Object userId = null;
     private ShipAddr shipAddr = new ShipAddr(
-            null, 2, "联系人", "18222222222", null, "110101", "xxx地址",
+            null, 2L, "联系人", "18222222222", null, "110101", "xxx地址",
             BigDecimal.valueOf(110.088280), BigDecimal.valueOf(34.567000), null, null, 1, null, false
     );
 
@@ -114,7 +114,7 @@ class ShipAddrTest {
         assertNotNull(shipAddrList);
         assertEquals(afterSize - beforeSize, 2);
 
-        Integer firstShipAddrId = shipAddrList.get(0).getShipAddrId();
+        Long firstShipAddrId = shipAddrList.get(0).getShipAddrId();
 
         shipAddrService.delShipAddr(firstShipAddrId);
 

@@ -41,7 +41,7 @@ public interface LoginMapper {
      *         <li>null: 用户不存在或密码错误</li>
      */
     @Select("SELECT user_id FROM user WHERE user_name = #{username} AND user_password = #{password}")
-    Integer loginByName(String username, String password);
+    Long loginByName(String username, String password);
 
     /**
      * 使用用户名和密码登录
@@ -52,7 +52,7 @@ public interface LoginMapper {
      *         <li>null: 用户不存在或密码错误</li>
      */
     @Select("SELECT user_id FROM user WHERE user_phone = #{phone} AND user_password = #{password}")
-    Integer loginByPhonePass(String phone, String password);
+    Long loginByPhonePass(String phone, String password);
 
     /**
      * 使用手机号+密码注册用户
