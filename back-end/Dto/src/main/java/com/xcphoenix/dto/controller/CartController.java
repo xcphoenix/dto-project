@@ -5,10 +5,7 @@ import com.xcphoenix.dto.bean.Cart;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.CartService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author      xuanc
@@ -29,7 +26,23 @@ public class CartController {
     @GetMapping("/cart")
     public Result getCart(@RequestParam("restaurantId") Long rstId) {
         Cart cart = cartService.getCart(ContextHolderUtils.getLoginUserId(), rstId);
-        return null;
+        return new Result("查询成功").addMap("cart", cart);
+    }
+
+    @UserLoginToken
+    @PutMapping("/cart")
+    public Result updateCart(@RequestBody Cart cart) {
+        cart.setUserId(ContextHolderUtils.getLoginUserId());
+        cartService.updateCart(cart);
+        cart = cartService.getCart(cart.getUserId(), cart.getRestaurantId());
+        return new Result("更新成功").addMap("cart", cart);
+    }
+
+    @UserLoginToken
+    @DeleteMapping("/cart")
+    public Result cleanCart(@RequestParam("restaurantId") Long rstId) {
+        cartService.cleanCart(ContextHolderUtils.getLoginUserId(), rstId);
+        return new Result("清空购物车成功");
     }
 
 }

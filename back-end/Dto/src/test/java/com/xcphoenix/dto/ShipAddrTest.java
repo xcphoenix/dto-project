@@ -7,10 +7,7 @@ import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.ShipAddrService;
 import com.xcphoenix.dto.util.ContextHolderUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +38,7 @@ class ShipAddrTest {
 
     private Object userId = null;
     private ShipAddr shipAddr = new ShipAddr(
-            null, 2L, "联系人", "18222222222", null, "110101", "xxx地址",
+            null, 91L, "联系人", "18222222222", null, "110101", "xxx地址",
             BigDecimal.valueOf(110.088280), BigDecimal.valueOf(34.567000), null, null, 1, null, false
     );
 
@@ -49,7 +46,7 @@ class ShipAddrTest {
     void setUserId() {
         // save
         userId = ContextHolderUtils.getRequest().getAttribute("userId");
-        ContextHolderUtils.getRequest().setAttribute("userId", 2);
+        ContextHolderUtils.getRequest().setAttribute("userId", 91L);
     }
 
     @AfterEach
