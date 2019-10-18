@@ -23,9 +23,6 @@ public interface RestaurantService {
 
     /**
      * 店铺名是否可用
-     *
-     * @param name 店铺名
-     * @return 可用情况
      */
     boolean isNameUsable(String name);
 
@@ -44,7 +41,12 @@ public interface RestaurantService {
      * @param userId 用户 id
      * @return 店铺详情
      */
-    Restaurant getRestaurantDetail(Long userId);
+    Restaurant getRstByShopper(Long userId);
+
+    /**
+     * 获取店铺信息
+     */
+    Restaurant getRstDetail(Long rstId);
 
     /**
      * 获取店铺 id
@@ -55,25 +57,18 @@ public interface RestaurantService {
 
     /**
      * 更新店铺信息
-     *
-     * @param restaurant 店铺信息
-     * @throws IOException io
      */
     void updateRestaurant(Restaurant restaurant) throws IOException;
 
     /**
-     * 获取附近的店铺信息，包括距离以及是否在配送范围
-     *
-     * @param lon 经度
-     * @param lat 纬度
-     * @param offset 分页偏移量
-     * @param limit 分页数量
-     * @return map
-     * @throws IOException call restful api
+     * 获取店铺信息摘要
      */
-    List<Map<String, Object>> getNearbyRestaurants(double lon, double lat,
-                                                   Integer offset, Integer limit) throws IOException;
+    List<Map<String, Object>> getRstRemark(int type, double lon, double lat, Integer from, Integer size) throws IOException;
 
-    List<Map<String, Object>> searchRstAsSortType(String text, int type, double lon, double lat,
-                                                  Integer from, Integer size) throws IOException;
+    /**
+     * 根据关键字获取店铺摘要
+     */
+    List<Map<String, Object>> getRstRemarkWithSearch(String text, int type, double lon, double lat, Integer from, Integer size)
+            throws IOException;
+
 }
