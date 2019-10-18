@@ -129,4 +129,22 @@ public class Restaurant {
         this.deliveryRange = Float.parseFloat(decimalFormat.format(this.deliveryRange));
     }
 
+    /**
+     * 检查店铺是否休息中
+     */
+    public static boolean isRest(Time start, Time end) {
+        Time now = new Time(System.currentTimeMillis());
+        return now.getTime() < end.getTime() && now.getTime() >= start.getTime();
+    }
+
+    public static boolean isRest(TimeItem[] businessHours) {
+        Time now = new Time(System.currentTimeMillis());
+        for (TimeItem item : businessHours) {
+            if (item.isInItem(now)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

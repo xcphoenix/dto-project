@@ -11,6 +11,14 @@ public enum SortType {
      */
     DEFAULT,
     /**
+     * 月销售量
+     */
+    SALE,
+    /**
+     * 距离
+     */
+    DISTANCE,
+    /**
      * 好评优先(评分)
      */
     SCORE,

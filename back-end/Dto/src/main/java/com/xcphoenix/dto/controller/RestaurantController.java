@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author xuanc
@@ -42,24 +40,17 @@ public class RestaurantController {
     @GetMapping("/restaurant")
     public Result getRestaurant(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        return new Result("查询成功").addMap("restaurant", restaurantService.getRestaurantDetail(userId));
+        return new Result("查询成功").addMap("restaurant", restaurantService.getRstByShopper(userId));
     }
 
     @UserLoginToken
     @PutMapping("/restaurant")
     public Result updateRestaurant(@Validated @RequestBody Restaurant restaurant) throws IOException {
         restaurantService.updateRestaurant(restaurant);
-        restaurant = restaurantService.getRestaurantDetail(restaurant.getUserId());
+        restaurant = restaurantService.getRstByShopper(restaurant.getUserId());
         restaurant.dataConvertToShow();
         return new Result("更新成功").addMap("restaurant", restaurant);
     }
 
-    @GetMapping("/nearby")
-    public Result getNearbyShops(@RequestParam("lon") Double lon, @RequestParam("lat") Double lat,
-                                 @RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
-            throws IOException {
-        List<Map<String, Object>> nearbyRes = restaurantService.getNearbyRestaurants(lon, lat, offset, limit);
-        return new Result("获取成功").addMap("shops", nearbyRes);
-    }
 
 }

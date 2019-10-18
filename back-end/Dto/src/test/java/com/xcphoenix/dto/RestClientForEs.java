@@ -1,6 +1,8 @@
 package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
+import com.xcphoenix.dto.exception.ServiceLogicException;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author      xuanc
@@ -29,7 +33,7 @@ class RestClientForEs {
     @Test
     void getNearbyResTest() throws IOException {
         List<Map<String, Object>> restaurants =  restaurantService
-                .getNearbyRestaurants(108.887407, 34.163527, 0, 20);
+                .getRstRemark(2,108.887407, 34.163527, 0, 20);
         log.info(JSON.toJSONString(restaurants));
     }
 
@@ -37,8 +41,18 @@ class RestClientForEs {
     void searchRstTest() throws IOException {
         String text = "麻辣";
         List<Map<String, Object>> rstList = restaurantService
-                .searchRstAsSortType(text, 2, 108.887407, 34.163527,  0, 20);
+                .getRstRemarkWithSearch(text, 2, 108.887407, 34.163527,  0, 20);
         log.info(JSON.toJSONString(rstList));
+    }
+
+    @Test
+    void searchRstTypeTest() throws IOException {
+        String text = "麻辣";
+        assertThrows(ServiceLogicException.class, () -> {
+            List<Map<String, Object>> rstList = restaurantService
+                    .getRstRemarkWithSearch(text, 9, 108.887407, 34.163527,  0, 20);
+            log.info(JSON.toJSONString(rstList));
+        }, ErrorCode.INVALID_SEARCH_TYPE.getMsg());
     }
 
 }
