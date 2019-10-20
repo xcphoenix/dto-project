@@ -2,13 +2,15 @@ package com.xcphoenix.dto.service.impl;
 
 import com.xcphoenix.dto.bean.Cart;
 import com.xcphoenix.dto.bean.CartItem;
+import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.CartService;
+import com.xcphoenix.dto.service.FoodService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 获取店铺信息后才会请求购物车信息，在获取店铺商品信息后将数据缓存到 Redis，
@@ -23,199 +25,73 @@ import java.util.stream.Collectors;
 @Service
 public class CartServiceImpl implements CartService {
 
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
+    private FoodService foodService;
 
-    public CartServiceImpl(RedisTemplate<String, String> redisTemplate) {
+    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate, FoodService foodService) {
         this.redisTemplate = redisTemplate;
+        this.foodService = foodService;
     }
 
     private String getCartKey(Long userId, Long rstId) {
         return "cart:" + userId + ":" + rstId;
     }
 
-    private String getItemKey(Long cartId) {
-        return "cart_item:" + cartId;
-    }
-
-    private String getDetail(Long cartId, Long foodId) {
-        return "cart_item_detail:" + cartId + ":" + foodId;
-    }
-
     @Override
     public void cleanCart(Long userId, Long rstId) {
-        Long cartId = getCartId(userId, rstId);
-        String cartKey = getCartKey(userId, rstId);
-        String itemKey = getItemKey(cartId);
-
-        if (cartId == null) {
-            log.info("cart not found... [userId: " + userId + ", rstId: " + rstId) ;
-            return;
-        }
-        Set<String> foodIds = redisTemplate.opsForSet().members(itemKey);
-        if (foodIds != null && foodIds.size() != 0) {
-            for (String id : foodIds) {
-                String itemDetailKey = getDetail(cartId, Long.valueOf(id));
-                Boolean success = redisTemplate.delete(itemDetailKey);
-                if (success != null) {
-                    log.info("clear Hash [" + itemDetailKey + "] " + (success ? "成功":"失败"));
-                }
-            }
-        }
-        redisTemplate.delete(itemKey);
-        log.info("clear Hash [" + itemKey + "]... ");
-        redisTemplate.delete(cartKey);
-        log.info("clear Hash [" + cartKey + "]... ");
-    }
-
-    /**
-     * 获取购物车 id
-     *
-     * @param userId 用户 id
-     * @param rstId 店铺 id
-     * @return 购物车id，若购物车不存在，返回 null
-     */
-    private Long getCartId(Long userId, Long rstId) {
-        return (Long) redisTemplate.opsForHash().get(getCartKey(userId, rstId), "id");
-    }
-
-    /**
-     * 初始化购物车，获取购物车 id
-     *
-     * @param userId 用户 id
-     * @param rstId  店铺 id
-     * @return 购物车 id
-     */
-    private Long initCart(Long userId, Long rstId) {
-        // 获取购物车自增 id
-        Long cartId = redisTemplate.opsForValue().increment("cart_id_incr");
-        redisTemplate.opsForHash().put(getCartKey(userId, rstId), "id", cartId);
-
-        return cartId;
-    }
-
-    /**
-     * 更新购物车<br />
-     * <b>更新前需判断购物车是否存在，若存在设置 cart.cartId 值</b>
-     *
-     * @param cart 购物车信息
-     */
-    private void modifyCart(Cart cart) {
-        Long cartId = cart.getCartId();
-        String cartKey = getCartKey(cart.getUserId(), cart.getRestaurantId());
-        String itemKey = getItemKey(cartId);
-
-        Set<String> foods = new HashSet<>();
-        for (CartItem cartItem : cart.getCartItems()) {
-            foods.add(String.valueOf(cartItem.getFoodId()));
-        }
-
-        Set<String> diff = redisTemplate.opsForSet().members(itemKey);
-        if (diff != null) {
-            diff.removeAll(foods);
-        }
-
-        log.info("insert data => " + foods);
-        log.info("diff data => " + diff);
-
-        if (diff != null) {
-            // remove invalid data
-            redisTemplate.opsForSet().remove(itemKey, diff);
-            foods.removeAll(diff);
-
-            // add new data
-            if (foods.size() != 0) {
-                redisTemplate.opsForSet().add(itemKey, foods.toArray(String[]::new));
-            }
-        }
-
-        // 获得有效数据
-        List<CartItem> cartItemList = cart.getCartItems();
-        if (diff != null && diff.size() != 0) {
-            for (String foodId: diff) {
-                redisTemplate.delete(getDetail(cartId, Long.valueOf(foodId)));
-            }
-            cartItemList = cart.getCartItems().stream()
-                    .filter((CartItem item) -> !diff.contains(String.valueOf(item.getFoodId())))
-                    .collect(Collectors.toList());
-        }
-
-        cart.init();
-        for (CartItem cartItem : cartItemList) {
-            cart.compute(cartItem);
-            Long foodId = cartItem.getFoodId();
-
-            String hashKey = getDetail(cartId, foodId);
-            redisTemplate.opsForHash().put(hashKey, "food_id", foodId);
-            redisTemplate.opsForHash().put(hashKey, "quantity", cartItem.getQuantity());
-            redisTemplate.opsForHash().put(hashKey, "selling_price", cartItem.getSellingPrice());
-            redisTemplate.opsForHash().put(hashKey, "original_price", cartItem.getOriginalPrice());
-        }
-        cart.computeDiscount();
-
-        // update [cart]
-        redisTemplate.opsForHash().put(cartKey, "discount_amount", cart.getDiscountAmount());
-        redisTemplate.opsForHash().put(cartKey, "original_total", cart.getOriginalTotal());
-        redisTemplate.opsForHash().put(cartKey, "total", cart.getTotal());
-        redisTemplate.opsForHash().put(cartKey, "total_weight", cart.getTotalWeight());
+        redisTemplate.delete(getCartKey(userId, rstId));
     }
 
     @Override
     public void updateCart(Cart cart) {
-        Long cartId = getCartId(cart.getUserId(), cart.getRestaurantId());
-        if (cartId == null) {
-            cartId = initCart(cart.getUserId(), cart.getRestaurantId());
+        String rstVersionKey = "rst:" + cart.getRestaurantId() + ":version";
+        Object rstVersionId = redisTemplate.opsForValue().get(rstVersionKey);
+        if (rstVersionId == null) {
+            redisTemplate.opsForValue().set(rstVersionKey, 1);
+            cart.setRstVersion("1");
+        } else {
+            cart.setRstVersion(String.valueOf(rstVersionId));
         }
-        cart.setCartId(cartId);
-        modifyCart(cart);
+        String cartKey = getCartKey(cart.getUserId(), cart.getRestaurantId());
+        filterCartItems(cart).compute();
+        // 设置过期时间为三个月
+        redisTemplate.opsForValue().set(cartKey, cart, 30 * 3, TimeUnit.DAYS);
     }
 
     @Override
     public Cart getCart(Long userId, Long rstId) {
-        Cart cart = new Cart();
-        Long cartId = getCartId(userId, rstId);
-        if (cartId == null) {
+        String cartKey = getCartKey(userId, rstId);
+        Cart cart = (Cart) redisTemplate.opsForValue().get(cartKey);
+        if (cart == null) {
             return null;
         }
-        cart.setCartId(cartId);
-        cart.setUserId(userId);
-        cart.setRestaurantId(rstId);
+        // 检查数据一致性
+        String cartRstVersionId = cart.getRstVersion();
+        String rstVersionKey = "rst:" + cart.getRestaurantId() + ":version";
+        String globalRstVersionId = String.valueOf(redisTemplate.opsForValue().get(rstVersionKey));
 
-        Collection<Object> keys = new ArrayList<>();
-        keys.add("discount_amount");
-        keys.add("original_total");
-        keys.add("total");
-        keys.add("total_weight");
-
-        List<Object> values = redisTemplate.opsForHash().multiGet(getCartKey(userId, rstId), keys);
-        cart.setDiscountAmount((Float) values.get(0));
-        cart.setOriginalTotal((Float) values.get(1));
-        cart.setTotal((Float) values.get(2));
-        cart.setTotalWeight((Integer) values.get(3));
-
-        keys.clear();
-        keys.add("quantity");
-        keys.add("selling_price");
-        keys.add("original_price");
-        keys.add("food_id");
-        List<CartItem> cartItemList = new ArrayList<>();
-        Set<String> cartItemSet = redisTemplate.opsForSet().members(getItemKey(cartId));
-
-        if (cartItemSet != null) {
-            for(String item : cartItemSet) {
-                CartItem cartItem = new CartItem();
-                values = redisTemplate.opsForHash().multiGet(getDetail(cartId, Long.valueOf(item)), keys);
-
-                cartItem.setQuantity((Integer) values.get(0));
-                cartItem.setSellingPrice((Float) values.get(1));
-                cartItem.setOriginalPrice((Float) values.get(2));
-                cartItem.setFoodId((Long) values.get(3));
-
-                cartItemList.add(cartItem);
-            }
+        if (cartRstVersionId == null || !cartRstVersionId.equals(globalRstVersionId)) {
+            log.info("get cart::data had changed! refresh...");
+            filterCartItems(cart).compute();
         }
 
-        cart.setCartItems(cartItemList);
+        return cart;
+    }
 
+    private Cart filterCartItems(Cart cart) {
+        for(int i = 0; i < cart.getCartItems().size(); ) {
+            CartItem cartItem = cart.getCartItems().get(i);
+            Long foodId = cartItem.getFoodId();
+            try {
+                Food food = foodService.getFoodDetailById(foodId);
+                food.convertCartItem(cartItem);
+            } catch (ServiceLogicException sle) {
+                log.info("filter cartItems: food may be deleted");
+                cart.getCartItems().remove(i);
+                continue;
+            }
+            i++;
+        }
         return cart;
     }
 
