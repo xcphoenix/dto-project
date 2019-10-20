@@ -5,20 +5,29 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import com.xcphoenix.dto.util.fastjson.SqlTimeDeserializer;
 import com.xcphoenix.dto.util.fastjson.SqlTimeSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,17 +70,38 @@ public class WebConfig implements WebMvcConfigurer {
      * 使用 fastJson 默认序列化 redis
      */
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
         GenericFastJsonRedisSerializer fastJsonRedisSerializer = new GenericFastJsonRedisSerializer();
-        redisTemplate.setDefaultSerializer(fastJsonRedisSerializer);
         // 设置默认的Serialize，包含 keySerializer & valueSerializer
+        redisTemplate.setDefaultSerializer(fastJsonRedisSerializer);
 
-        // redisTemplate.setKeySerializer(fastJsonRedisSerializer);//单独设置keySerializer
-        // redisTemplate.setValueSerializer(fastJsonRedisSerializer);//单独设置valueSerializer
+        // 排序 key 和 Hash key，使用字符串序列化，避免使用 fastjson 序列化导致键上有多余的引号
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
         return redisTemplate;
+    }
+
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        // 初始化一个RedisCacheWriter
+        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
+        // 设置CacheManager的值序列化方式为 fastJsonRedisSerializer,
+        // RedisCacheConfiguration默认使用StringRedisSerializer序列化key，
+        ClassLoader loader = this.getClass().getClassLoader();
+
+        RedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer<>(loader.getClass());
+        RedisSerializationContext.SerializationPair pair = RedisSerializationContext
+                .SerializationPair.fromSerializer(fastJsonRedisSerializer);
+        // 设置缓存配置
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(pair)
+                .entryTtl(Duration.ofHours(2))
+                .prefixKeysWith("cache:");
+        return new RedisCacheManager(redisCacheWriter, defaultCacheConfig);
     }
 
     /**

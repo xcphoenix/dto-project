@@ -31,9 +31,8 @@ public class RestaurantController {
     @UserLoginToken
     @PostMapping("/restaurant")
     public Result addNewRestaurant(@Validated(ValidateGroup.addData.class) @RequestBody Restaurant restaurant) throws IOException {
-        restaurantService.addNewRestaurant(restaurant);
-        restaurant.dataConvertToShow();
-        return new Result("添加成功").addMap("restaurant", restaurant);
+        Restaurant newRst = restaurantService.addNewRestaurant(restaurant);
+        return new Result("添加成功").addMap("restaurant", newRst);
     }
 
     @UserLoginToken

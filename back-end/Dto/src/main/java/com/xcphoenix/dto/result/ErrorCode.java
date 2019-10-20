@@ -96,6 +96,7 @@ public class ErrorCode {
     public static final ErrorCode FOOD_NAME_DUPLICATE = new ErrorCode(50003, "食品名已被占用");
     public static final ErrorCode FOOD_NOT_FOUND = new ErrorCode(50004, "食品不存在");
     public static final ErrorCode CATEGORY_NAME_CONFLICT = new ErrorCode(50005, "不允许的分类名");
+    public static final ErrorCode CATEGORY_NOT_NULL = new ErrorCode(50006, "标记为此分类的商品非空");
 
     /**
      * 收货地址

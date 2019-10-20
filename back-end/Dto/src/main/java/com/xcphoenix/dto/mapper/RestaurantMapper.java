@@ -57,7 +57,7 @@ public interface RestaurantMapper {
      * @param shopId 店铺id
      * @return 店铺信息
      */
-    Restaurant getShopDetailById(Integer shopId);
+    Restaurant getShopDetailById(Long shopId);
 
     /**
      * 店铺是否存在

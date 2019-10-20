@@ -1,6 +1,7 @@
 package com.xcphoenix.dto.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
@@ -22,6 +24,7 @@ public class Food {
 
     private Long foodId;
     private Long restaurantId;
+    @NotNull(message = "分类id不存在", groups = {ValidateGroup.addData.class})
     private Long categoryId;
 
     @JSONField(deserialize = false)
@@ -50,4 +53,12 @@ public class Food {
     private Integer residualAmount;
 
     private Timestamp gmtCreate;
+
+    public CartItem convertCartItem(CartItem cartItem) {
+        cartItem.setFoodId(foodId);
+        cartItem.setOriginalPrice(originalPrice);
+        cartItem.setSellingPrice(originalPrice);
+        return cartItem;
+    }
+
 }

@@ -23,6 +23,8 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -56,12 +58,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     private String bannerImgDire;
 
     private final int precision = 12;
-    private static final double NEARBY_DISTANCE = 10;
 
     @Autowired
     public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
         this.restaurantMapper = restaurantMapper;
         this.base64ImgService = base64ImgService;
+    }
+
+    @Override
+    public boolean isExists(Long rstId) {
+        return restaurantMapper.isShopExists(rstId) == 1;
     }
 
     @Override
@@ -75,6 +81,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @CachePut(value = "rstCacheManager", key = "'rst:' + #result.restaurantId + ':detail'")
     public Restaurant addNewRestaurant(Restaurant restaurant) throws IOException {
         restaurant.setUserId((Long) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setStoreImg(base64ImgService.convertPicture(restaurant.getStoreImg(), storeImgDire));
@@ -105,6 +112,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         } catch (DuplicateKeyException dke) {
             throw new ServiceLogicException(ErrorCode.USER_HAVE_SHOP);
         }
+
+        restaurant.dataConvertToShow();
         return restaurant;
     }
 
@@ -115,10 +124,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Cacheable(value = "rstCacheManager", key = "'rst:' + #rstId + ':detail'")
     public Restaurant getRstDetail(Long rstId) {
-        return null;
+        return restaurantMapper.getShopDetailById(rstId);
     }
 
+    @ShopperCheck
     @Override
     public Long getLoginShopperResId() {
         Long userId = (Long) ContextHolderUtils.getRequest().getAttribute("userId");
@@ -126,7 +137,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void updateRestaurant(Restaurant restaurant) throws IOException {
+    @CachePut(value = "rstCacheManager", key = "'rst:' + #restaurant.restaurantId + ':detail'")
+    public Restaurant updateRestaurant(Restaurant restaurant) throws IOException {
         restaurant.setUserId((Long) ContextHolderUtils.getRequest().getAttribute("userId"));
         restaurant.setRestaurantId(getLoginShopperResId());
         restaurant.rangeFormat();
@@ -164,6 +176,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         restaurantMapper.updateRestaurant(restaurant);
+        return getRstDetail(restaurant.getRestaurantId());
     }
 
     @Override
@@ -189,7 +202,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Map<String, Object>> getRstRemarkWithSearch(String text, int type, double lon, double lat, Integer from, Integer size) throws IOException {
+    public List<Map<String, Object>> getRstRemarkWithSearch(String text, int type, double lon, double lat,
+                                                            Integer from, Integer size) throws IOException {
         RestClient restClient = EsRestBuilder.buildSearchRestClient();
         Request request = EsRestBuilder.setRestRequest(size, from);
         request.setJsonEntity(

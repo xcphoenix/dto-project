@@ -5,6 +5,7 @@ import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.Food;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.FoodService;
+import com.xcphoenix.dto.validator.ValidateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,18 +30,18 @@ public class FoodController {
 
     @UserLoginToken
     @PostMapping("/food")
-    public Result addFood(@Validated @RequestBody Food food) throws IOException {
-        foodService.addFood(food);
+    public Result addFood(@Validated(ValidateGroup.addData.class) @RequestBody Food food) throws IOException {
+        Food newFood = foodService.addFood(food);
         return new Result("添加成功")
-                .addMap("food", foodService.getFoodDetailById(food.getFoodId()));
+                .addMap("food", newFood);
     }
 
     @UserLoginToken
     @PutMapping("/food")
     public Result updateFood(@Validated @RequestBody Food food) throws IOException {
-        foodService.updateFood(food);
+        Food updateFood = foodService.updateFood(food);
         return new Result("更新成功")
-                .addMap("food", foodService.getFoodDetailById(food.getFoodId()));
+                .addMap("food", updateFood);
     }
 
     @UserLoginToken
@@ -54,7 +55,7 @@ public class FoodController {
     @UserLoginToken
     @GetMapping("/foods")
     public Result getAllFoods() {
-        return new Result("查询成功").addMap("foods", foodService.getAllFoods());
+        return new Result("查询成功").addMap("foods", foodService.getAllFoodsByShopper());
     }
 
     @UserLoginToken

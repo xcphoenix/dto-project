@@ -103,13 +103,6 @@
 		SELECT category_id, restaurant_id FROM food_category WHERE restaurant_id = #{restaurantId}
 	</select>
 	
-	<!-- 获取店铺的默认分类信息 -->
-	<select id="getFoodsCategoryNull" resultType="com.xcphoenix.dto.bean.Food">
-		SELECT <include refid="foodDetails" />, #{defaultCategory} AS category
-		FROM food
-		WHERE restaurant_id = #{restaurantId} AND category_id IS NULL
-	</select>
-	
 	<!-- 获取店铺指定分类的商品信息 -->
 	<select id="getFoodsByCategory" resultMap="getFoodDetail">
 		SELECT <include refid="foodDetails" />
