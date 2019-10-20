@@ -17,33 +17,33 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Cart {
 
-    Long cartId;
     Long userId;
     Long restaurantId;
     float discountAmount;
     float originalTotal;
     float total;
     int totalWeight;
+    String rstVersion;
     List<CartItem> cartItems;
 
-    /**
-     * 初始化数据
-     */
-    public void init() {
+    private void init() {
         this.discountAmount = 0;
         this.originalTotal = 0;
         this.total = 0;
         this.totalWeight = 0;
     }
 
-    public void computeDiscount() {
+    public void compute() {
+        init();
+        if (cartItems == null) {
+            return;
+        }
+        for (CartItem cartItem : cartItems) {
+            this.totalWeight += cartItem.getQuantity();
+            this.total += cartItem.getSellingPrice();
+            this.originalTotal += cartItem.getOriginalPrice();
+        }
         this.discountAmount = this.originalTotal - this.total;
-    }
-
-    public void compute(CartItem cartItem) {
-        this.totalWeight += cartItem.getQuantity();
-        this.total += cartItem.getSellingPrice();
-        this.originalTotal += cartItem.getOriginalPrice();
     }
 
     @Override
@@ -59,7 +59,6 @@ public class Cart {
                 Float.compare(cart.getOriginalTotal(), getOriginalTotal()) == 0 &&
                 Float.compare(cart.getTotal(), getTotal()) == 0 &&
                 getTotalWeight() == cart.getTotalWeight() &&
-                getCartId().equals(cart.getCartId()) &&
                 getUserId().equals(cart.getUserId()) &&
                 getRestaurantId().equals(cart.getRestaurantId()) &&
                 getCartItems().containsAll(cart.getCartItems()) &&
@@ -68,6 +67,6 @@ public class Cart {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCartId(), getUserId(), getRestaurantId(), getDiscountAmount(), getOriginalTotal(), getTotal(), getTotalWeight(), getCartItems());
+        return Objects.hash(getUserId(), getRestaurantId(), getDiscountAmount(), getOriginalTotal(), getTotal(), getTotalWeight(), getCartItems());
     }
 }
