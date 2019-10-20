@@ -14,7 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,6 +39,7 @@ public class FoodServiceImpl implements FoodService {
     private RestaurantService restaurantService;
     private FoodCategoryService foodCategoryService;
     private Base64ImgService base64ImgService;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Value("${upload.image.directory.food}")
     private String foodCoverDire;
@@ -44,16 +50,23 @@ public class FoodServiceImpl implements FoodService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, FoodCategoryService foodCategoryService, Base64ImgService base64ImgService) {
+    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, FoodCategoryService foodCategoryService, Base64ImgService base64ImgService, RedisTemplate<String, Object> redisTemplate) {
         this.foodMapper = foodMapper;
         this.restaurantService = restaurantService;
         this.foodCategoryService = foodCategoryService;
         this.base64ImgService = base64ImgService;
+        this.redisTemplate = redisTemplate;
+    }
+
+    @Override
+    public boolean isExists(Long foodId, Long rstId) {
+        return foodMapper.exists(foodId, rstId) == 1;
     }
 
     @ShopperCheck
     @Override
-    public void addFood(Food food) throws IOException {
+    @CachePut(value = "foodCacheManager", key = "'food:' + #result.foodId + ':detail'")
+    public Food addFood(Food food) throws IOException {
         food.setRestaurantId(restaurantService.getLoginShopperResId());
         food.setCoverImg(base64ImgService.convertPicture(food.getCoverImg(), foodCoverDire));
         food.setResidualAmount(food.getTotalNumber());
@@ -64,11 +77,21 @@ public class FoodServiceImpl implements FoodService {
             logger.warn("食品信息冲突，触发主键唯一性约束", dke);
             throw new ServiceLogicException(ErrorCode.FOOD_NAME_DUPLICATE);
         }
+        refreshRstVerId(food.getRestaurantId());
+        return food;
     }
 
     @ShopperCheck
     @Override
-    public void updateFood(Food food) throws IOException {
+    @Caching(
+            put = {
+                    @CachePut(value = "foodCacheManager", key = "'food:' + #food.foodId + ':detail'")
+            },
+            evict = {
+                    @CacheEvict(value = "foodCacheManager", key = "'rst:' + #restaurantServiceImpl.getLoginShopperResId() + ':foods'")
+            }
+    )
+    public Food updateFood(Food food) throws IOException {
         foodCategoryService.assertBelongShop(food.getCategoryId());
         food.setRestaurantId(restaurantService.getLoginShopperResId());
         if (food.getCoverImg() != null) {
@@ -80,10 +103,13 @@ public class FoodServiceImpl implements FoodService {
             logger.warn("食品信息冲突，触发主键唯一性约束", dke);
             throw new ServiceLogicException(ErrorCode.FOOD_NAME_DUPLICATE);
         }
+        refreshRstVerId(restaurantService.getLoginShopperResId());
+        return getFoodDetailById(food.getFoodId());
     }
 
     @ShopperCheck
     @Override
+    @Cacheable(value = "foodCacheManager", key = "'food:' + #foodId + ':detail'")
     public Food getFoodDetailById(Long foodId) {
         Food food = foodMapper.getFoodById(foodId, restaurantService.getLoginShopperResId());
         if (food == null) {
@@ -97,22 +123,66 @@ public class FoodServiceImpl implements FoodService {
 
     @ShopperCheck
     @Override
-    public List<Foods> getAllFoods() {
+    public List<Foods> getAllFoodsByShopper() {
         Long restaurantId = restaurantService.getLoginShopperResId();
-        List<Foods> foodsList = foodMapper.getAllFoods(restaurantId);
-        foodsList.add(new Foods(null, defaultCategoryName,
-                foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName)));
-        return foodsList;
+        return foodMapper.getAllFoods(restaurantId);
     }
 
-    @ShopperCheck
+    @Override
+    @Cacheable(value = "foodCacheManager", key = "'rst:' + #rstId + ':foods'")
+    public List<Foods> getAllFoodsByRstId(Long rstId) {
+        if (!restaurantService.isExists(rstId)) {
+            throw new ServiceLogicException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        return foodMapper.getAllFoods(rstId);
+    }
+
     @Override
     public List<Food> getFoodsByCategory(Long categoryId) {
         Long restaurantId = restaurantService.getLoginShopperResId();
         foodCategoryService.assertBelongShop(categoryId);
-        if (categoryId == null) {
-            return foodMapper.getFoodsCategoryNull(restaurantId, defaultCategoryName);
-        }
         return foodMapper.getFoodsByCategory(categoryId, restaurantId);
     }
+
+    @ShopperCheck
+    @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "foodCacheManager", key = "'food:' + #foodId + ':detail'"),
+                    @CacheEvict(value = "foodCacheManager", key = "'rst:' + #restaurantServiceImpl.getLoginShopperResId() + ':foods'")
+            }
+    )
+    public void delFoodById(Long foodId) {
+        Long rstId = restaurantService.getLoginShopperResId();
+        if (!isExists(foodId, rstId)) {
+            throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
+        }
+        foodMapper.delFood(foodId, rstId);
+        refreshRstVerId(rstId);
+    }
+
+    @ShopperCheck
+    @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "foodCacheManager", key = "'food:' + #foodId + ':detail'")
+            },
+            evict = {
+                    @CacheEvict(value = "foodCacheManager", key = "'rst:' + #restaurantServiceImpl.getLoginShopperResId() + ':foods'")
+            }
+    )
+    public Food changeCategory(Long foodId, Long newCategoryId) {
+        foodCategoryService.assertBelongShop(newCategoryId);
+        foodMapper.changeCategory(foodId, newCategoryId);
+        // 刷新缓存
+        refreshRstVerId(restaurantService.getLoginShopperResId());
+        // 自调用不会使用缓存
+        return getFoodDetailById(foodId);
+    }
+
+    private void refreshRstVerId(Long rstId) {
+        String rstVersionKey = "rst:" + rstId + ":version";
+        redisTemplate.opsForValue().increment(rstVersionKey);
+    }
+
 }

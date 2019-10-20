@@ -14,6 +14,14 @@ import java.util.Map;
 public interface RestaurantService {
 
     /**
+     * 店铺是否存在
+     *
+     * @param rstId 店铺id
+     * @return boolean
+     */
+    boolean isExists(Long rstId);
+
+    /**
      * 是否是新商家 - 即：有无开店记录
      *
      * @param userId 用户 id
@@ -57,8 +65,9 @@ public interface RestaurantService {
 
     /**
      * 更新店铺信息
+     * @return
      */
-    void updateRestaurant(Restaurant restaurant) throws IOException;
+    Restaurant updateRestaurant(Restaurant restaurant) throws IOException;
 
     /**
      * 获取店铺信息摘要

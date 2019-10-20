@@ -26,7 +26,7 @@ public interface FoodCategoryService {
     void updateCategory(FoodCategory foodCategory);
 
     /**
-     * 删除分类
+     * 删除分类：外建约束
      *
      * @param categoryId 分类id
      */

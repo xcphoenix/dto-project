@@ -3,6 +3,7 @@ package com.xcphoenix.dto.mapper;
 import com.xcphoenix.dto.bean.FoodCategory;
 import org.apache.ibatis.annotations.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public interface FoodCategoryMapper {
     void updateCategory(FoodCategory foodCategory);
 
     /**
-     * 删除分类信息，引用此分类的其他食品标签都将被置空（数据库外键设置）
+     * 删除分类信息，若有引用此分类的其他食品则删除失败
      *
      * @param categoryId   分类 id
      * @param restaurantId 店铺 id
@@ -38,7 +39,7 @@ public interface FoodCategoryMapper {
      */
     @Delete("DELETE FROM food_category WHERE category_id = #{categoryId} " +
             "AND restaurant_id = #{restaurantId}")
-    int deleteCategory(Long categoryId, Long restaurantId);
+    int deleteCategory(Long categoryId, Long restaurantId) throws SQLIntegrityConstraintViolationException;
 
     /**
      * 获取所有的分类信息

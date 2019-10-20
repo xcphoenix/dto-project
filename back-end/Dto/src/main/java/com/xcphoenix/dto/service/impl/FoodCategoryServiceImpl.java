@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 /**
@@ -22,7 +23,6 @@ import java.util.List;
  * @date 2019/8/15 上午8:26
  */
 @Service
-@ShopperCheck
 public class FoodCategoryServiceImpl implements FoodCategoryService {
 
     private FoodCategoryMapper foodCategoryMapper;
@@ -38,6 +38,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         this.restaurantService = restaurantService;
     }
 
+    @ShopperCheck
     @Override
     public void addNewCategory(FoodCategory foodCategory) {
         if (defaultCategoryName.equals(foodCategory.getName())) {
@@ -52,6 +53,7 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         }
     }
 
+    @ShopperCheck
     @Override
     public void updateCategory(FoodCategory foodCategory) {
         Long restaurantId = restaurantService.getLoginShopperResId();
@@ -70,18 +72,24 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
         }
     }
 
+    @ShopperCheck
     @Override
     public void deleteCategory(Long categoryId) {
-        if (foodCategoryMapper.deleteCategory(categoryId, restaurantService.getLoginShopperResId()) == 0) {
-            throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_FOUND);
+        assertBelongShop(categoryId);
+        try {
+            foodCategoryMapper.deleteCategory(categoryId, restaurantService.getLoginShopperResId());
+        } catch (SQLIntegrityConstraintViolationException cve) {
+            throw new ServiceLogicException(ErrorCode.CATEGORY_NOT_NULL);
         }
     }
 
+    @ShopperCheck
     @Override
     public List<FoodCategory> getCategories() {
         return foodCategoryMapper.getCategories(restaurantService.getLoginShopperResId());
     }
 
+    @ShopperCheck
     @Override
     public void assertBelongShop(Long categoryId) {
         if (categoryId != null &&

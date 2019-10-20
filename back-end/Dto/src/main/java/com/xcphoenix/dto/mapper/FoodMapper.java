@@ -4,6 +4,8 @@ import com.xcphoenix.dto.bean.Food;
 import com.xcphoenix.dto.bean.Foods;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,13 +24,23 @@ public interface FoodMapper {
     void addFood(Food food);
 
     /**
+     * 判断商品是否存在
+     *
+     * @param foodId 商品id
+     * @param rstId  店铺id
+     * @return 1: 存在 0: 不存在 其他：数据库设置异常
+     */
+    @Select("SELECT COUNT(*) FROM food WHERE food_id = #{foodId} AND restaurant_id = #{rstId}")
+    Integer exists(Long foodId, Long rstId);
+
+    /**
      * 下架食品
      *
      * @param restaurantId 店铺 id
      * @param foodId       下架的食品 id
      */
     @Delete("DELETE FROM food WHERE food_id = #{foodId} AND restaurant_id = #{restaurantId}")
-    void delFood(Integer foodId, Integer restaurantId);
+    void delFood(Long foodId, Long restaurantId);
 
     /**
      * 更新食品信息
@@ -64,12 +76,11 @@ public interface FoodMapper {
     List<Food> getFoodsByCategory(@Param("categoryId") Long categoryId, @Param("restaurantId") Long restaurantId);
 
     /**
-     * 获取m默认分类的食品
-     *
-     * @param restaurantId 店铺 id
-     * @param defaultCategory 默认分类名
-     * @return 信息
+     * 更新分类
+     * @param foodId 商品id
+     * @param newCategoryId 新分类
      */
-    List<Food> getFoodsCategoryNull(@Param("restaurantId") Long restaurantId, @Param("defaultCategory") String defaultCategory);
+    @Update("UPDATE food SET category_id = #{newCategoryId} WHERE food_id = #{foodId}")
+    void changeCategory(@Param("foodId") Long foodId, @Param("newCategoryId") Long newCategoryId);
 
 }
