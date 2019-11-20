@@ -5,7 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xcphoenix.dto.bean.ShipAddr;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.ShipAddrService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

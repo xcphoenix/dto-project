@@ -7,7 +7,7 @@ import com.xcphoenix.dto.mapper.ShipAddrMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.GeoCoderService;
 import com.xcphoenix.dto.service.ShipAddrService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +83,12 @@ public class ShipAddrServiceImpl implements ShipAddrService {
         List<ShipAddr> shipAddrList = shipAddrMapper.getAddrByUserId(userId);
         shipAddrList.forEach(shipAddr -> shipAddr = shipAddr.dataConvert());
         return shipAddrList;
+    }
+
+    @Override
+    public ShipAddr getDefaultAddress() {
+        Long userId = ContextHolderUtils.getLoginUserId();
+        return shipAddrMapper.getDefaultAddr(userId);
     }
 
 }

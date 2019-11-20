@@ -7,8 +7,8 @@ package com.xcphoenix.dto.validator;
  */ 
 public class ValidateGroup {
 
-    public interface addData{};
+    public interface AddData {};
 
-    public interface updateData{};
+    public interface UpdateData {};
 
 }

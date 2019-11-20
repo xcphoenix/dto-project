@@ -6,7 +6,7 @@ import com.xcphoenix.dto.mapper.UserMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.UserService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

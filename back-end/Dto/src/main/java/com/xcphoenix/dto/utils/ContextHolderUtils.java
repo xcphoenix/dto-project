@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util;
+package com.xcphoenix.dto.utils;
 
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -30,6 +30,13 @@ public class ContextHolderUtils {
             throw new ServiceLogicException(ErrorCode.USER_NOT_LOGIN);
         }
         return (Long) object;
+    }
+
+    /**
+     * 是否为登录用户
+     */
+    public static boolean isLogin() {
+        return getRequest().getAttribute("userId") != null;
     }
 
 }

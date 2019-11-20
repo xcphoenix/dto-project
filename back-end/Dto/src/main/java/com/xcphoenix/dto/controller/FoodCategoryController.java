@@ -29,7 +29,7 @@ public class FoodCategoryController {
 
     @PostMapping("/category")
     @UserLoginToken
-    public Result addCategory(@Validated(ValidateGroup.addData.class) @RequestBody FoodCategory foodCategory) {
+    public Result addCategory(@Validated(ValidateGroup.AddData.class) @RequestBody FoodCategory foodCategory) {
         foodCategoryService.addNewCategory(foodCategory);
         return new Result("添加成功")
                 .addMap("category", foodCategory);

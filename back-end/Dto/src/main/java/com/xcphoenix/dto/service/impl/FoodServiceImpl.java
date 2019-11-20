@@ -107,7 +107,6 @@ public class FoodServiceImpl implements FoodService {
         return getFoodDetailById(food.getFoodId());
     }
 
-    @ShopperCheck
     @Override
     @Cacheable(value = "foodCacheManager", key = "'food:' + #foodId + ':detail'")
     public Food getFoodDetailById(Long foodId) {

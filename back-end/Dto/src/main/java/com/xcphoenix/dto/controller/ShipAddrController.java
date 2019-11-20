@@ -29,7 +29,7 @@ public class ShipAddrController {
 
     @UserLoginToken
     @PostMapping("/address")
-    public Result addShipAddr(@Validated(ValidateGroup.addData.class) @RequestBody ShipAddr shipAddr) {
+    public Result addShipAddr(@Validated(ValidateGroup.AddData.class) @RequestBody ShipAddr shipAddr) {
         ShipAddr shipAddrAdded = shipAddrService.addShipAddr(shipAddr);
         return new Result("添加成功").addMap("address", shipAddrAdded);
     }

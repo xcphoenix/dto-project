@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util.fastjson;
+package com.xcphoenix.dto.utils.fastjson;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
@@ -16,6 +16,9 @@ public class SqlTimeSerializer implements ObjectSerializer {
 
     @Override
     public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) throws IOException {
+        final String separator = ":";
+        final int indexOfSeparator = 5;
+
         SerializeWriter out = serializer.out;
 
         String sqlTime = object.toString();
@@ -23,8 +26,8 @@ public class SqlTimeSerializer implements ObjectSerializer {
             out.writeString("");
             return;
         }
-        if (sqlTime.lastIndexOf(":") == 5) {
-            out.writeString(sqlTime.substring(0, 5));
+        if (sqlTime.lastIndexOf(separator) == indexOfSeparator) {
+            out.writeString(sqlTime.substring(0, indexOfSeparator));
         } else {
             out.writeString(sqlTime);
         }

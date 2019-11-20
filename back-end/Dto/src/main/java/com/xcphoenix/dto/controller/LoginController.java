@@ -84,7 +84,7 @@ public class LoginController {
 
     @PassToken
     @PostMapping("/register")
-    public Result registerTmpDev(@Validated(ValidateGroup.addData.class) @RequestBody User user) {
+    public Result registerTmpDev(@Validated(ValidateGroup.AddData.class) @RequestBody User user) {
         user.setUserName(RandomStringUtils.randomAlphanumeric(2) + System.currentTimeMillis());
         Long userId = loginService.registerByPhonePass(user);
         if (userId == null) {

@@ -46,10 +46,17 @@ public interface ShipAddrMapper {
     /**
      * 获取指定 id 的收货地址信息
      *
-     * @param userId 用户id
+     * @param userId     用户id
      * @param shipAddrId 收货地址id
      * @return 收货地址信息
      */
     ShipAddr getAddrById(@Param("shipAddrId") Long shipAddrId, @Param("userId") Long userId);
+
+    /**
+     * 获取默认的收货地址
+     * @param userId 用户id
+     * @return 默认收货地址（如果只有一个收货地址，视为默认收货地址）
+     */
+    ShipAddr getDefaultAddr(@Param("userId") Long userId);
 
 }

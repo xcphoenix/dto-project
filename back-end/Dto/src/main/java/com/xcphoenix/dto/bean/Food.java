@@ -24,7 +24,7 @@ public class Food {
 
     private Long foodId;
     private Long restaurantId;
-    @NotNull(message = "分类id不存在", groups = {ValidateGroup.addData.class})
+    @NotNull(message = "分类id不存在", groups = {ValidateGroup.AddData.class})
     private Long categoryId;
 
     @JSONField(deserialize = false)

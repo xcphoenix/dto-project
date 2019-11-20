@@ -4,7 +4,7 @@ import com.xcphoenix.dto.annotation.ShopperCheck;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.RestaurantService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;

@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util.es;
+package com.xcphoenix.dto.utils.es;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
