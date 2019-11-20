@@ -12,10 +12,11 @@ import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.Base64ImgService;
 import com.xcphoenix.dto.service.RestaurantService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
-import com.xcphoenix.dto.util.TimeFormatUtils;
-import com.xcphoenix.dto.util.es.EsRestBuilder;
-import com.xcphoenix.dto.util.es.SearchRst;
+import com.xcphoenix.dto.service.UserService;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
+import com.xcphoenix.dto.utils.TimeFormatUtils;
+import com.xcphoenix.dto.utils.es.EsRestBuilder;
+import com.xcphoenix.dto.utils.es.SearchRst;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -47,6 +48,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private RestaurantMapper restaurantMapper;
     private Base64ImgService base64ImgService;
+    private UserService userService;
 
     @Value("${upload.image.directory.store}")
     private String storeImgDire;
@@ -60,9 +62,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final int precision = 12;
 
     @Autowired
-    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService) {
+    public RestaurantServiceImpl(RestaurantMapper restaurantMapper, Base64ImgService base64ImgService, UserService userService) {
         this.restaurantMapper = restaurantMapper;
         this.base64ImgService = base64ImgService;
+        this.userService = userService;
     }
 
     @Override
@@ -113,29 +116,12 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new ServiceLogicException(ErrorCode.USER_HAVE_SHOP);
         }
 
+        userService.becomeShopper();
         restaurant.dataConvertToShow();
         return restaurant;
     }
 
     @ShopperCheck
-    @Override
-    public Restaurant getRstByShopper(Long userId) {
-        return restaurantMapper.getUserShopDetail(userId);
-    }
-
-    @Override
-    @Cacheable(value = "rstCacheManager", key = "'rst:' + #rstId + ':detail'")
-    public Restaurant getRstDetail(Long rstId) {
-        return restaurantMapper.getShopDetailById(rstId);
-    }
-
-    @ShopperCheck
-    @Override
-    public Long getLoginShopperResId() {
-        Long userId = (Long) ContextHolderUtils.getRequest().getAttribute("userId");
-        return getUserRestaurantId(userId);
-    }
-
     @Override
     @CachePut(value = "rstCacheManager", key = "'rst:' + #restaurant.restaurantId + ':detail'")
     public Restaurant updateRestaurant(Restaurant restaurant) throws IOException {
@@ -177,6 +163,27 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         restaurantMapper.updateRestaurant(restaurant);
         return getRstDetail(restaurant.getRestaurantId());
+    }
+
+    @ShopperCheck
+    @Override
+    public Restaurant getRstByShopper() {
+        Long userId = ContextHolderUtils.getLoginUserId();
+        return restaurantMapper
+                .getUserShopDetail(userId).dataConvertToShow();
+    }
+
+    @Override
+    @Cacheable(value = "rstCacheManager", key = "'rst:' + #rstId + ':detail'")
+    public Restaurant getRstDetail(Long rstId) {
+        return restaurantMapper.getShopDetailById(rstId);
+    }
+
+    @ShopperCheck
+    @Override
+    public Long getLoginShopperResId() {
+        Long userId = (Long) ContextHolderUtils.getRequest().getAttribute("userId");
+        return getUserRestaurantId(userId);
     }
 
     @Override

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.OrderMapper">
+	
+	<insert id="addOrder">
+		INSERT INTO order_form(order_code, restaurant_id, user_id, ship_addr_id, item_count,
+		                       package_price, delivery_price, original_price, total_price, pay_type,
+		                       order_time, invalid_time, delivery_type, remark, ex_ship_addr,
+		                       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url) VALUES ()
+	</insert>
+	
+</mapper>

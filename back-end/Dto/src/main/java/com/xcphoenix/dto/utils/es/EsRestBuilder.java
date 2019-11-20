@@ -1,6 +1,6 @@
-package com.xcphoenix.dto.util.es;
+package com.xcphoenix.dto.utils.es;
 
-import com.xcphoenix.dto.util.GetUrlUtils;
+import com.xcphoenix.dto.utils.GetUrlUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.message.BasicHeader;

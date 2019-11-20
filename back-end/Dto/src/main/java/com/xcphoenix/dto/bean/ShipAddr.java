@@ -26,10 +26,10 @@ public class ShipAddr {
     private Long shipAddrId;
     private Long userId;
 
-    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.AddData.class})
     private String contact;
 
-    @NotBlank(message = "联系电话不存在", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "联系电话不存在", groups = {ValidateGroup.AddData.class})
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String phone;
 

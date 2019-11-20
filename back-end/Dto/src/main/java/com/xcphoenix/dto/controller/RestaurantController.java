@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
+ * TODO 打开店铺页面，查询店铺信息、购物车信息、商品信息、是否收藏店铺
  * @author xuanc
  * @version 1.0
  * @date 2019/8/12 下午9:09
@@ -28,27 +30,71 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
+    /**
+     * 商家 - 添加店铺
+     */
     @UserLoginToken
     @PostMapping("/restaurant")
-    public Result addNewRestaurant(@Validated(ValidateGroup.addData.class) @RequestBody Restaurant restaurant) throws IOException {
+    public Result addNewRestaurant(@Validated(ValidateGroup.AddData.class) @RequestBody Restaurant restaurant) throws IOException {
         Restaurant newRst = restaurantService.addNewRestaurant(restaurant);
         return new Result("添加成功").addMap("restaurant", newRst);
     }
 
+    /**
+     * 商家 - 获取自己的店铺信息
+     */
     @UserLoginToken
     @GetMapping("/restaurant")
-    public Result getRestaurant(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        return new Result("查询成功").addMap("restaurant", restaurantService.getRstByShopper(userId));
+    public Result getRestaurant() {
+        return new Result("查询成功")
+                .addMap("restaurant", restaurantService.getRstByShopper());
     }
 
+    /**
+     * 商家 - 更新自己的店铺信息
+     */
     @UserLoginToken
     @PutMapping("/restaurant")
     public Result updateRestaurant(@Validated @RequestBody Restaurant restaurant) throws IOException {
         restaurantService.updateRestaurant(restaurant);
-        restaurant = restaurantService.getRstByShopper(restaurant.getUserId());
-        restaurant.dataConvertToShow();
+        restaurant = restaurantService.getRstByShopper();
         return new Result("更新成功").addMap("restaurant", restaurant);
+    }
+
+    /**
+     * 获取指定店铺的基本信息
+     */
+    @GetMapping("/rst/{rstId}")
+    public Result getRstDetail(@PathVariable("rstId") Long rstId) {
+        Restaurant rstDetail = restaurantService.getRstDetail(rstId);
+        return new Result("获取成功").addMap("rst", rstDetail);
+    }
+
+    /**
+     * 获取周边店铺信息
+     */
+    @GetMapping("/nearby/rsts")
+    public Result getNearbyRstRemark(@RequestParam("type") int type,
+                                     @RequestParam("lon") double lon,
+                                     @RequestParam("lat") double lat,
+                                     @RequestParam("from") int from,
+                                     @RequestParam("size") int size) throws IOException {
+        List<Map<String, Object>> rstList = restaurantService.getRstRemark(type, lon, lat, from, size);
+        return new Result("获取成功").addMap("rsts", rstList);
+    }
+
+    /**
+     * 查询周边店铺信息
+     */
+    @GetMapping("/nearby/rsts/filter")
+    public Result getRstRemarkByKeyword(@RequestParam("keyword") String keyword,
+                                        @RequestParam("type") int type,
+                                        @RequestParam("lon") double lon,
+                                        @RequestParam("lat") double lat,
+                                        @RequestParam("from") int from,
+                                        @RequestParam("size") int size) throws IOException {
+        List<Map<String, Object>> rstList = restaurantService.getRstRemarkWithSearch(keyword, type, lon, lat, from, size);
+        return new Result("获取成功").addMap("rsts", rstList);
     }
 
 

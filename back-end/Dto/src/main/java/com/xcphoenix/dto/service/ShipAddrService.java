@@ -48,4 +48,11 @@ public interface ShipAddrService {
      * @return 收货地址信息列表
      */
     List<ShipAddr> getAddresses();
+
+    /**
+     * 获取默认收货地址
+     *
+     * @return 地址信息
+     */
+    ShipAddr getDefaultAddress();
 }

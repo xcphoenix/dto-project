@@ -88,4 +88,23 @@
 		WHERE user_id = #{userId} AND ship_addr_id = #{shipAddrId}
 	</select>
 	
+	<select id="getDefaultAddr">
+		SELECT
+			ship_addr_id, user_id, contact, phone, country_id, address, addr_lng, addr_lat,
+			geohash, address_detail, tag_type, is_default
+		FROM
+			`ship_addr`
+		WHERE
+			user_id = #{userId}
+		  AND (
+				is_default = 1
+				OR (
+					   SELECT
+						   COUNT(*)
+					   FROM
+						   `ship_addr`
+				   ) = 1
+			)
+	</select>
+	
 </mapper>

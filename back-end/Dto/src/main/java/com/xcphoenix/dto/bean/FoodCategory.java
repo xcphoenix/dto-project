@@ -22,10 +22,10 @@ public class FoodCategory {
     private Long restaurantId;
 
     @Length(max = 25, message = "分类字数超出范围")
-    @NotBlank(message = "分类名不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "分类名不能为空", groups = {ValidateGroup.AddData.class})
     private String name;
 
-    @NotBlank(message = "分类描述不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "分类描述不能为空", groups = {ValidateGroup.AddData.class})
     @Length(max = 25, message = "分类描述超出范围")
     private String description;
 

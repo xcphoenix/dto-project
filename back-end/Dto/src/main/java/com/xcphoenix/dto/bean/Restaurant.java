@@ -31,13 +31,13 @@ public class Restaurant {
     private Long userId;
 
     @Length(max = 50, message = "店铺名称字数超出范围")
-    @NotBlank(message = "店铺名称不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "店铺名称不能为空", groups = {ValidateGroup.AddData.class})
     private String restaurantName;
-    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "联系人不能为空", groups = {ValidateGroup.AddData.class})
     private String contactMan;
 
     @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-    @NotBlank(message = "手机号码不能为空", groups = {ValidateGroup.addData.class})
+    @NotBlank(message = "手机号码不能为空", groups = {ValidateGroup.AddData.class})
     private String restaurantPhone;
 
     @Length(max = 256, message = "店铺描述字数超出范围")
@@ -80,7 +80,7 @@ public class Restaurant {
 
     private String geohash;
 
-    @NotNull(message = "配送距离不能为空", groups = {ValidateGroup.addData.class})
+    @NotNull(message = "配送距离不能为空", groups = {ValidateGroup.AddData.class})
     @DecimalMin(value = "0.0", message = "配送距离参数错误")
     private Float deliveryRange;
 
@@ -105,6 +105,8 @@ public class Restaurant {
 
     @Min(value = 0, message = "配送价不能为负")
     private Float deliveryPrice;
+    @Min(value = 0, message = "餐盒费不能为负")
+    private Float packagePrice;
     @Min(value = 0, message = "起送价不能为负")
     private Integer minPrice;
 
@@ -115,9 +117,10 @@ public class Restaurant {
     private Float monthRevenue;
     private Timestamp gmtCreate;
 
-    public void dataConvertToShow() {
+    public Restaurant dataConvertToShow() {
         tags = tag.split(",");
         instoreImgs = instoreImg.split(",");
+        return this;
     }
 
     public void rangeFormat() {

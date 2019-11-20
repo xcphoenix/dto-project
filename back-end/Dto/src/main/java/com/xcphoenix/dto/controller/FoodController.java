@@ -30,7 +30,7 @@ public class FoodController {
 
     @UserLoginToken
     @PostMapping("/food")
-    public Result addFood(@Validated(ValidateGroup.addData.class) @RequestBody Food food) throws IOException {
+    public Result addFood(@Validated(ValidateGroup.AddData.class) @RequestBody Food food) throws IOException {
         Food newFood = foodService.addFood(food);
         return new Result("添加成功")
                 .addMap("food", newFood);
@@ -65,4 +65,35 @@ public class FoodController {
         return new Result("查询成功")
                 .addMap("foods", foodService.getFoodsByCategory(categoryId));
     }
+
+    /**
+     * 获取店铺的商品信息
+     */
+    @GetMapping("{rstId}/foods")
+    public Result getFoodsByRstId(@PathVariable("rstId") Long rstId) {
+        return new Result("查询成功")
+                .addMap("foods", foodService.getAllFoodsByRstId(rstId));
+    }
+
+    /**
+     * 删除商品
+     */
+    @UserLoginToken
+    @DeleteMapping("/food/{foodId}")
+    public Result deleteFoodById(@PathVariable("foodId") Long foodId) {
+        foodService.delFoodById(foodId);
+        return new Result("删除成功");
+    }
+
+    /**
+     * 修改商品分类
+     */
+    @UserLoginToken
+    @PutMapping("/food/category/{foodId}")
+    public Result changeFoodCategory(@PathVariable("foodId") Long foodId,
+                                     @RequestParam("categoryId") Long categoryId) {
+          foodService.changeCategory(foodId, categoryId);
+          return new Result("修改成功");
+    }
+
 }

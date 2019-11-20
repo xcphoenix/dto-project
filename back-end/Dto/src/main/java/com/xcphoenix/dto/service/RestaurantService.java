@@ -46,10 +46,9 @@ public interface RestaurantService {
     /**
      * 获取店铺的具体情况（商家端获取信息）
      *
-     * @param userId 用户 id
      * @return 店铺详情
      */
-    Restaurant getRstByShopper(Long userId);
+    Restaurant getRstByShopper();
 
     /**
      * 获取店铺信息

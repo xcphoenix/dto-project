@@ -6,7 +6,7 @@ import com.xcphoenix.dto.mapper.CollectionMapper;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.CollectionService;
-import com.xcphoenix.dto.util.ContextHolderUtils;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

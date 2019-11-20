@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.util;
+package com.xcphoenix.dto.utils;
 
 import java.sql.Time;
 import java.time.LocalDateTime;

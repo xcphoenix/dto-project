@@ -114,4 +114,10 @@ public class ErrorCode {
      */
     public static final ErrorCode INVALID_SEARCH_TYPE = new ErrorCode(80001, "无效的搜索类型");
 
+    /**
+     * 订单相关
+     */
+    public static final ErrorCode ORDER_NOT_CONDITIONAL = new ErrorCode(90001, "订单不满足配送要求");
+    public static final ErrorCode ORDER_DATA_NOT_COMPLETE = new ErrorCode(90002, "订单数据不全");
+
 }
