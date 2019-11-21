@@ -53,7 +53,7 @@ public class CartServiceImpl implements CartService {
             cart.setRstVersion(String.valueOf(rstVersionId));
         }
         String cartKey = getCartKey(cart.getUserId(), cart.getRestaurantId());
-        filterCartItems(cart).compute();
+        // filterCartItems(cart).compute();
         // 设置过期时间为三个月
         redisTemplate.opsForValue().set(cartKey, cart, 30 * 3, TimeUnit.DAYS);
     }

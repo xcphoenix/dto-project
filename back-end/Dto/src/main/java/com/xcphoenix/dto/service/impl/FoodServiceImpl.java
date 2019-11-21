@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * TODO 删除食品需要处理订单等约束..
@@ -50,7 +53,9 @@ public class FoodServiceImpl implements FoodService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService, FoodCategoryService foodCategoryService, Base64ImgService base64ImgService, RedisTemplate<String, Object> redisTemplate) {
+    public FoodServiceImpl(FoodMapper foodMapper, RestaurantService restaurantService,
+                           FoodCategoryService foodCategoryService, Base64ImgService base64ImgService,
+                           RedisTemplate<String, Object> redisTemplate) {
         this.foodMapper = foodMapper;
         this.restaurantService = restaurantService;
         this.foodCategoryService = foodCategoryService;
@@ -177,6 +182,19 @@ public class FoodServiceImpl implements FoodService {
         refreshRstVerId(restaurantService.getLoginShopperResId());
         // 自调用不会使用缓存
         return getFoodDetailById(foodId);
+    }
+
+    @Override
+    public Set<Long> filterFoodsOfLackStock(Long rstId, Map<Long, Integer> baseData) {
+        Map<Long, Integer> idWithStock = foodMapper.getFoodsStock(rstId)
+                .stream().collect(Collectors.toMap(Food::getFoodId, Food::getResidualAmount));
+        Set<Long> idList = baseData.keySet();
+        baseData.forEach((key, value) -> {
+            if (idWithStock.containsKey(key) || idWithStock.get(key) >= value) {
+                idList.remove(key);
+            }
+        });
+        return idList;
     }
 
     private void refreshRstVerId(Long rstId) {
