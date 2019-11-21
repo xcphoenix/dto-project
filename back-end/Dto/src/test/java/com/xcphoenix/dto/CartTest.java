@@ -43,7 +43,7 @@ class CartTest {
              cartItem.setQuantity((int)(Math.random() * 6) + 1);
              cartItem.setOriginalPrice((long)(Math.random() * 100) % 50);
              cartItem.setSellingPrice(Math.abs((float) (cartItem.getOriginalPrice() - Math.random() * 10)));
-
+             log.info("[make data] random cartItem ==> " + JSON.toJSON(cartItem));
              cartItemList.add(cartItem);
         }
         cart.setCartItems(cartItemList);

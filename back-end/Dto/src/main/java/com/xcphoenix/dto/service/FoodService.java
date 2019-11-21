@@ -6,6 +6,8 @@ import com.xcphoenix.dto.bean.Foods;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author xuanc
@@ -87,4 +89,12 @@ public interface FoodService {
      */
     @ShopperCheck
     Food changeCategory(Long foodId, Long newCategoryId);
+
+    /**
+     * 过滤库存量不足的商品
+     * @param rstId 店铺id
+     * @param baseData 初始信息 key: 店铺id value: 库存量
+     * @return 库存量已无的商品列表
+     */
+    Set<Long> filterFoodsOfLackStock(Long rstId, Map<Long, Integer> baseData);
 }

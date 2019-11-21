@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author      xuanc
@@ -61,9 +59,10 @@ public class OrderServiceImpl implements OrderService {
      * @throws com.xcphoenix.dto.exception.ServiceLogicException 店铺不存在或订单不满足配送条件
      */
     private Order toOrder(Cart cart, Order order) {
-        Restaurant rst = assertConditional(cart);
+        Restaurant rst = getConditionedRst(cart);
         if (order == null) {
             order = new Order();
+            // 设置默认支付方式
             order.setPayType(PayTypeEnum.defaultId());
         }
         order.setUserId(cart.getUserId());
@@ -80,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemList.add(orderItem);
         }
         order.setOrderItems(orderItemList);
+
         // extra rst
         order.setExRstName(rst.getRestaurantName());
         order.setExRstLogoUrl(rst.getLogo());
@@ -95,18 +95,21 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private void assertConditional(Order order) {
+    /**
+     * 数据校验
+     */
+    private void assertConditionAttrs(Order order) throws ServiceLogicException {
         // 数据完整性：支付方式、收货地址
         if (order == null || !PayTypeEnum.includeId(order.getPayType()) || order.getShipAddrId() == null) {
             throw new ServiceLogicException(ErrorCode.ORDER_NOT_CONDITIONAL);
         }
-        // 配送要求
-
-        // 库存要求
-
     }
 
-    private Restaurant assertConditional(Cart cart) {
+    /**
+     * 下单要求检测
+     * 返回店铺数据
+     */
+    private Restaurant getConditionedRst(Cart cart) throws ServiceLogicException {
         if (cart == null) {
             throw new ServiceLogicException(ErrorCode.ORDER_NOT_CONDITIONAL);
         }
@@ -114,12 +117,28 @@ public class OrderServiceImpl implements OrderService {
         if (rst == null) {
             throw new ServiceLogicException(ErrorCode.SHOP_NOT_FOUND);
         }
+
+        // 配送要求
         if (cart.getTotal() < rst.getMinPrice()) {
             throw new ServiceLogicException(ErrorCode.ORDER_NOT_CONDITIONAL);
         }
+
+        // 库存要求
+        Map<Long, Integer> baseData = cart.getCartItems().stream().collect(
+                Collectors.toMap(CartItem::getFoodId, CartItem::getQuantity)
+        );
+        Set<Long> outOfStockFoodIds = foodService.filterFoodsOfLackStock(rst.getRestaurantId(), baseData);
+        if (outOfStockFoodIds.size() != 0) {
+            throw new ServiceLogicException(ErrorCode.OUT_OF_STOCK, outOfStockFoodIds.toArray());
+        }
+
         return rst;
     }
 
+    /**
+     * 下单
+     * @param order 支付方式、收货地址、订单备注
+     */
     @Override
     public Order purchaseNewOrder(Order order) {
         Long userId = ContextHolderUtils.getLoginUserId();
@@ -130,7 +149,8 @@ public class OrderServiceImpl implements OrderService {
         order.setInvalidTime(new Timestamp(System.currentTimeMillis() + 1000 * 10 * 60));
 
         order = toOrder(cartService.getCart(userId, rstId), order);
-        assertConditional(order);
+        order.setStatus(OrderStatusEnum.NEED_PAY.getId());
+        assertConditionAttrs(order);
 
         // TODO Redis + DelayQueue 处理订单 + 库存处理(减少&释放)
         return order;
@@ -141,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
         Long userId = ContextHolderUtils.getLoginUserId();
         Order order = toOrder(cartService.getCart(userId, rstId),null);
         ShipAddr shipAddr = shipAddrService.getDefaultAddress();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(2);
         map.put("order", order);
         map.put("address", shipAddr);
         return map;

@@ -118,6 +118,7 @@ public class ErrorCode {
      * 订单相关
      */
     public static final ErrorCode ORDER_NOT_CONDITIONAL = new ErrorCode(90001, "订单不满足配送要求");
-    public static final ErrorCode ORDER_DATA_NOT_COMPLETE = new ErrorCode(90002, "订单数据不全");
+    public static final ErrorCode OUT_OF_STOCK = new ErrorCode(90002, "商品已售空");
+    public static final ErrorCode ORDER_DATA_NOT_COMPLETE = new ErrorCode(90003, "订单数据不全");
 
 }

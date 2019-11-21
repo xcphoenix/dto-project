@@ -83,4 +83,12 @@ public interface FoodMapper {
     @Update("UPDATE food SET category_id = #{newCategoryId} WHERE food_id = #{foodId}")
     void changeCategory(@Param("foodId") Long foodId, @Param("newCategoryId") Long newCategoryId);
 
+    /**
+     * 获取店铺商品库存量
+     * @param rstId　店铺id
+     * @return 店铺id以及库存量
+     */
+    @Select("SELECT `food_id`, `residual_amount` FROM food WHERE restaurant_id = #{rstId} ORDER BY food_id")
+    List<Food> getFoodsStock(@Param("rstId") Long rstId);
+
 }
