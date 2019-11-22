@@ -60,7 +60,7 @@
     "stylus-loader": "^3.0.2",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
-    "vant": "^2.1.1",
+    "vant": "^2.1.8",
     "vue-loader": "^13.3.0",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.7",
