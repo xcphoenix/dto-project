@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.DoBusinessMapper">
+
+	<update id="syncFood">
+		UPDATE food
+		SET total_number = total_number + #{orderItem.quantity},
+		    month_sale = month_sale + #{orderItem.quantity}
+		WHERE food_id = #{orderItem.foodId}
+	</update>
+	
+	<update id="syncRst">
+		UPDATE restaurant
+		SET total_sale = total_sale + 1,
+		    month_sale = month_sale + 1,
+		    total_revenue = total_sale + #{order.totalPrice},
+		    month_revenue = month_sale + #{order.totalPrice},
+		    ave_consumption = total_revenue / total_sale
+		WHERE restaurant_id = #{order.rstId}
+	</update>
+	
+</mapper>

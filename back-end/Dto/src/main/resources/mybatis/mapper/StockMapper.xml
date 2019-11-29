@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.StockMapper">
+	
+	<update id="lock">
+		UPDATE food SET residual_amount = residual_amount - #{item.quantity}
+		WHERE food_id = #{item.foodId}
+	</update>
+	
+	<update id="resume">
+		UPDATE food SET residual_amount = residual_amount + #{item.quantity}
+		WHERE food_id = #{item.foodId}
+	</update>
+	
+</mapper>

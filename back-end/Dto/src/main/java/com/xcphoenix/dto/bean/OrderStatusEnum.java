@@ -12,21 +12,25 @@ public enum OrderStatusEnum {
      */
     NEED_PAY(0),
     /**
+     * 等待商家处理
+     */
+    WAIT_SHOPPER(1),
+    /**
      * 配送中
      */
-    SENDING(1),
+    SENDING(2),
     /**
      * 已送达
      */
-    SENT(2),
+    SENT(3),
     /**
      * 主动取消
      */
-    CANCEL(3),
+    CANCEL(4),
     /**
      * 超时取消
      */
-    TIMEOUT(4);
+    TIMEOUT(5);
 
     private int id;
 
