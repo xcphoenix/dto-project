@@ -5,8 +5,10 @@ import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.OrderMapper;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.service.*;
+import com.xcphoenix.dto.service.job.JobService;
 import com.xcphoenix.dto.utils.ContextHolderUtils;
 import com.xcphoenix.dto.utils.SnowFlakeUtils;
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,14 +29,22 @@ public class OrderServiceImpl implements OrderService {
     private FoodService foodService;
     private ShipAddrService shipAddrService;
     private CartService cartService;
+    private JobService jobService;
+    private StockService stockService;
+    private DoBusinessService doBusinessService;
 
     public OrderServiceImpl(OrderMapper orderMapper, RestaurantService restaurantService,
-                            FoodService foodService, ShipAddrService shipAddrService, CartService cartService) {
+                            FoodService foodService, ShipAddrService shipAddrService,
+                            CartService cartService, JobService jobService,
+                            StockService stockService, DoBusinessService doBusinessService) {
         this.orderMapper = orderMapper;
         this.restaurantService = restaurantService;
         this.foodService = foodService;
         this.shipAddrService = shipAddrService;
         this.cartService = cartService;
+        this.jobService = jobService;
+        this.stockService = stockService;
+        this.doBusinessService = doBusinessService;
     }
 
     /**
@@ -135,12 +145,8 @@ public class OrderServiceImpl implements OrderService {
         return rst;
     }
 
-    /**
-     * 下单
-     * @param order 支付方式、收货地址、订单备注
-     */
     @Override
-    public Order purchaseNewOrder(Order order) {
+    public Order purchaseNewOrder(Order order) throws SchedulerException {
         Long userId = ContextHolderUtils.getLoginUserId();
         Long rstId = order.getRstId();
 
@@ -152,7 +158,11 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatusEnum.NEED_PAY.getId());
         assertConditionAttrs(order);
 
-        // TODO Redis + DelayQueue 处理订单 + 库存处理(减少&释放)
+        // 库存处理
+        stockService.lock(order);
+        // 添加定时任务
+        jobService.addJob(order.getOrderCode());
+
         return order;
     }
 
@@ -167,8 +177,21 @@ public class OrderServiceImpl implements OrderService {
         return map;
     }
 
+    @Override
     public boolean isValid(Long orderCode) {
         return orderMapper.getOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode) != null;
     }
+
+    @Override
+    public int getOrderStatus(Long orderCode) {
+        return orderMapper.getOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode);
+    }
+
+    @Override
+    public void updateOrderStatus(Long orderCode, OrderStatusEnum orderStatusEnum) {
+        orderMapper.changeOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode, orderStatusEnum.getId());
+    }
+
+    public Order getOrderStatus
 
 }

@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.OrderMapper">
 	
+	<resultMap id="orderDetail" type="com.xcphoenix.dto.bean.Order">
+	
+	</resultMap>
+	
 	<insert id="addOrder">
 		INSERT INTO order_form(order_code, restaurant_id, user_id, ship_addr_id, item_count,
 		                       package_price, delivery_price, original_price, total_price, pay_type,
@@ -9,4 +13,19 @@
 		                       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url) VALUES ()
 	</insert>
 	
+	<select id="getOrderStatus" resultType="java.lang.Integer">
+		SELECT `status` FROM order_form
+		WHERE order_code = #{orderId} AND user_id = #{userId}
+	</select>
+	
+	<update id="changeOrderStatus">
+		UPDATE order_form
+		SET status = #{type}
+		WHERE order_code = #{orderId} AND user_id = #{userId}
+	</update>
+	
+	<select id="getOrderById" resultMap="orderDetail">
+	
+	</select>
+
 </mapper>

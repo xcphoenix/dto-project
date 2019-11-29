@@ -12,6 +12,7 @@ public interface OrderMapper {
 
     /**
      * 添加订单
+     *
      * @param order 订单基本属性
      *              地址信息
      *              支付方式
@@ -25,26 +26,30 @@ public interface OrderMapper {
 
     /**
      * 修改订单信息
+     *
      * @param order 订单信息
      */
     void updateOrder(Order order);
 
     /**
      * 取消订单 - 未到前可以取消
-     * @param userId 用户id
+     *
+     * @param userId  用户id
      * @param orderId 订单id
      */
     void cancelOrder(Long userId, Long orderId);
 
     /**
      * 获取订单详情
+     *
      * @param orderId 订单id
-     * @param userId 用户id
+     * @param userId  用户id
      */
-    void getOrderById(Long userId, Long orderId);
+    Order getOrderById(Long userId, Long orderId);
 
     /**
      * 获取订单数量
+     *
      * @param userId 用户id
      * @return 订单数量
      */
@@ -52,24 +57,27 @@ public interface OrderMapper {
 
     /**
      * 获取全部订单
+     *
      * @param userId 用户id
      */
     void getAllOrders(Long userId);
 
     /**
      * 修改订单状态
-     * @param userId 用户id
+     *
+     * @param userId  用户id
      * @param orderId 订单id
-     * @param type 类型
+     * @param type    类型
      */
-    void changeOrderStatus(Long userId, Long orderId, int type);
+    void changeOrderStatus(@Param("userId") Long userId, @Param("orderId") Long orderId, @Param("type") int type);
 
     /**
      * 获取订单状态
-     * @param userId 用户id
+     *
+     * @param userId  用户id
      * @param orderId 订单id
      * @return 订单状态
      */
-    Integer getOrderStatus(Long userId, Long orderId);
+    Integer getOrderStatus(@Param("userId") Long userId, @Param("orderId") Long orderId);
 
 }
