@@ -1,8 +1,8 @@
 package com.xcphoenix.dto.service;
 
 import com.xcphoenix.dto.annotation.ShopperCheck;
-import com.xcphoenix.dto.bean.Food;
-import com.xcphoenix.dto.bean.Foods;
+import com.xcphoenix.dto.bean.dao.Food;
+import com.xcphoenix.dto.bean.dto.Foods;
 
 import java.io.IOException;
 import java.util.List;

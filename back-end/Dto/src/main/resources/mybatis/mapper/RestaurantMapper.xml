@@ -12,7 +12,7 @@
 		#{instoreImg}, #{logo}, #{bannerImg}, #{bulletin}, #{deliveryPrice}, #{packagePrice}, #{minPrice}, NOW())
 	</insert>
 	
-	<select id="getUserShopDetail" resultType="com.xcphoenix.dto.bean.Restaurant">
+	<select id="getUserShopDetail" resultType="com.xcphoenix.dto.bean.dao.Restaurant">
 		SELECT <include refid="resAllFields" />
 		FROM `restaurant`
 		WHERE user_id = #{userId}
@@ -98,7 +98,7 @@
 		WHERE restaurant_id = #{restaurantId}
 	</update>
 	
-	<select id="getShopDetailById" resultType="com.xcphoenix.dto.bean.Restaurant">
+	<select id="getShopDetailById" resultType="com.xcphoenix.dto.bean.dao.Restaurant">
 		SELECT <include refid="resBaseFields" />
 		FROM `restaurant`
 		WHERE restaurant_id = #{shopId}

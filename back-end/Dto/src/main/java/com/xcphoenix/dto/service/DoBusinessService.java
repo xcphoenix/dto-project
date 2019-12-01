@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.Order;
+import com.xcphoenix.dto.bean.dao.Order;
 
 /**
  * 营业服务

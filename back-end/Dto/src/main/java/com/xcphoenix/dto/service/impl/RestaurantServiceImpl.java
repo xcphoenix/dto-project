@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.xcphoenix.dto.annotation.ShopperCheck;
-import com.xcphoenix.dto.bean.Location;
-import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.utils.LocationUtils;
+import com.xcphoenix.dto.bean.dao.Restaurant;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -189,7 +189,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<Map<String, Object>> getRstRemark(int type, double lon, double lat, Integer from, Integer size)
             throws IOException {
-        Location.checkValues(lon, lat);
+        LocationUtils.assertLegalValues(lon, lat);
 
         RestClient restClient = EsRestBuilder.buildSearchRestClient();
         Request request = EsRestBuilder.setRestRequest(size, from);

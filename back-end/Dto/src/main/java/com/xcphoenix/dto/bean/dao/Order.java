@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

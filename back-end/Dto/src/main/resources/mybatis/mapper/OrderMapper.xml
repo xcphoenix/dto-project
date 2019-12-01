@@ -2,15 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.OrderMapper">
 	
-	<resultMap id="orderDetail" type="com.xcphoenix.dto.bean.Order">
-	
+	<resultMap id="orderDetail" type="com.xcphoenix.dto.bean.dao.Order" autoMapping="true">
+		<id property="orderCode" column="order_code" />
+		<collection property="orderItems" column="order_code"
+		            select="com.xcphoenix.dto.mapper.OrderMapper.getItemByOrderCode" />
 	</resultMap>
 	
 	<insert id="addOrder">
-		INSERT INTO order_form(order_code, restaurant_id, user_id, ship_addr_id, item_count,
+		INSERT INTO order_form(order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount,
 		                       package_price, delivery_price, original_price, total_price, pay_type,
 		                       order_time, invalid_time, delivery_type, remark, ex_ship_addr,
-		                       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url) VALUES ()
+		                       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, `status`)
+		VALUES (
+					#{order.orderCode}, #{order.rstId}, #{order.userId}, #{order.shipAddrId}, #{order.itemCount}, #{order.discountAmount},
+		        	#{order.packagePrice}, #{order.deliveryPrice}, #{order.originalPrice}, #{order.totalPrice}, #{order.payType},
+		        	#{order.orderTime}, #{order.invalidTime}, #{order.deliveryPrice}, #{order.remark}, #{order.exShipAddr},
+		        	#{order.exUserName}, #{order.exUserName}, #{order.exRstName}, #{order.exRstLogoUrl}, #{order.status}
+		        )
+	</insert>
+	
+	<insert id="addOrderItem">
+		INSERT INTO order_item(order_code, food_id, quantity, original_price,
+		                       selling_price, ex_food_name, ex_food_img_url
+		)
+		VALUES (
+		     		#{orderCode}, #{orderItem.foodId}, #{orderItem.quantity}, #{orderItem.originalPrice},
+		        	#{orderItem.sellingPrice}, #{orderItem.exFoodName}, #{param1.exFoodImgUrl}
+		       )
 	</insert>
 	
 	<select id="getOrderStatus" resultType="java.lang.Integer">
@@ -25,7 +43,69 @@
 	</update>
 	
 	<select id="getOrderById" resultMap="orderDetail">
-	
+	 	SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
+	 	       delivery_price, original_price, total_price, pay_type, 
+	 	       order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr, 
+	 	       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
+	 	FROM order_form
+		WHERE order_code = #{orderId} AND user_id = #{userId}
 	</select>
+
+	<select id="getItemByOrderCode" resultType="com.xcphoenix.dto.bean.dao.OrderItem">
+		SELECT *
+		FROM order_item
+		WHERE order_code = #{orderCode}
+	</select>
+	
+	<delete id="delCanceledOrder">
+		DELETE `order_item`,
+			`order_form`
+		FROM
+			`order_item`
+				LEFT JOIN `order_form` ON `order_form`.`order_code` = `order_item`.`order_code`
+		WHERE
+			`order_item`.`order_code` = #{orderCode}
+		  AND `order_form`.`user_id` = #{userId}
+	</delete>
+	
+	<update id="updateOrder">
+		UPDATE order_form
+		<set>
+			<if test="moData.addr != null and moData.addr != ''">
+				ex_ship_addr = #{moData.addr},
+			</if>
+			<if test="moData.phone != null and moData.phone != ''">
+				ex_user_phone = #{moData.phone},
+			</if>
+			<if test="moData.remark != null and moData.remark != ''">
+				remark = #{moData.remark}
+			</if>
+		</set>
+		WHERE user_id = #{userId}
+		  AND order_code = #{orderCode}
+	</update>
+	
+	<select id="getOrderNum" resultType="integer">
+		SELECT COUNT(*)
+		FROM order_form
+		WHERE user_id = #{userId}
+	</select>
+	
+	<select id="getOrders" resultMap="orderDetail">
+		SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
+			   delivery_price, original_price, total_price, pay_type,
+			   order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr,
+			   ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
+		FROM order_form
+		WHERE user_id = #{userId}
+		ORDER BY order_code DESC
+	</select>
+	
+	<update id="updatePayTime">
+		UPDATE order_form
+		SET pay_time = NOW(), pay_type = #{payType}
+		WHERE user_id = #{userId} AND order_code = #{orderCode}
+	</update>
+
 
 </mapper>

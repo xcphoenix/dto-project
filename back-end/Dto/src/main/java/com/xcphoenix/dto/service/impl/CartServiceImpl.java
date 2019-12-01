@@ -1,8 +1,8 @@
 package com.xcphoenix.dto.service.impl;
 
-import com.xcphoenix.dto.bean.Cart;
-import com.xcphoenix.dto.bean.CartItem;
-import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.bean.dao.Cart;
+import com.xcphoenix.dto.bean.dao.CartItem;
+import com.xcphoenix.dto.bean.dao.Food;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.CartService;
 import com.xcphoenix.dto.service.FoodService;

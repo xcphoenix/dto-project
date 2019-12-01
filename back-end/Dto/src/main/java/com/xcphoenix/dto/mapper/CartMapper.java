@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper;
 
-import com.xcphoenix.dto.bean.Cart;
+import com.xcphoenix.dto.bean.dao.Cart;
 import org.apache.ibatis.annotations.*;
 
 /**

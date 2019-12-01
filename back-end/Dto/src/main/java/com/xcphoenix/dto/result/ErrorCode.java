@@ -121,5 +121,6 @@ public class ErrorCode {
     public static final ErrorCode OUT_OF_STOCK = new ErrorCode(90002, "商品已售空");
     public static final ErrorCode ORDER_DATA_NOT_COMPLETE = new ErrorCode(90003, "订单数据不全");
     public static final ErrorCode ORDER_HAS_PAID = new ErrorCode(90004, "订单已支付");
+    public static final ErrorCode ORDER_STATUS_EXCEPTIONAL = new ErrorCode(90005, "订单状态异常");
 
 }

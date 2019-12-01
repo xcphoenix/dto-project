@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
-import com.xcphoenix.dto.bean.SortType;
+import com.xcphoenix.dto.bean.bo.SortType;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,5 @@
 package com.xcphoenix.dto.service.job;
 
-import com.xcphoenix.dto.bean.OrderStatusEnum;
 import com.xcphoenix.dto.service.OrderService;
 import com.xcphoenix.dto.service.StockService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,9 +52,8 @@ public class OrderTimeoutJobListener implements JobListener {
         }
 
         Long orderCode = context.getJobDetail().getJobDataMap().getLongValue("orderCode");
-        // 订单过期
-        orderService.updateOrderStatus(orderCode, OrderStatusEnum.TIMEOUT);
-        // 恢复库存
-
+        // 处理已过期订单
+        orderService.dealOrderTimeout(orderCode);
     }
+
 }

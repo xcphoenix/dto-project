@@ -1,8 +1,8 @@
 package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
-import com.xcphoenix.dto.bean.Cart;
-import com.xcphoenix.dto.bean.CartItem;
+import com.xcphoenix.dto.bean.dao.Cart;
+import com.xcphoenix.dto.bean.dao.CartItem;
 import com.xcphoenix.dto.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;

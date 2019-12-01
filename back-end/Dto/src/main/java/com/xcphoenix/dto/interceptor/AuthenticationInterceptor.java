@@ -5,7 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.xcphoenix.dto.annotation.PassToken;
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.bean.dao.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;

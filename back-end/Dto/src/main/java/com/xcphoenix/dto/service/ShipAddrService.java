@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.bean.dao.ShipAddr;
 
 import java.util.List;
 

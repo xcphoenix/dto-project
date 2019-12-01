@@ -2,7 +2,7 @@ package com.xcphoenix.dto.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.Food;
+import com.xcphoenix.dto.bean.dao.Food;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.FoodService;
 import com.xcphoenix.dto.validator.ValidateGroup;

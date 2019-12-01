@@ -3,7 +3,7 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.area.CityMapper">
 
-	<resultMap id="cityResult" type="com.xcphoenix.dto.bean.area.City">
+	<resultMap id="cityResult" type="com.xcphoenix.dto.bean.dao.area.City">
 		<id column="_id" property="id" />
 		<result column="name" property="name" />
 		<result column="city_id" property="cityId" />

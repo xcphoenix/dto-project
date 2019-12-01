@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.bean.dao.User;
 
 import java.io.IOException;
 

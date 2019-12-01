@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.dao;
 
 import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;

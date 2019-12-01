@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper;
 
-import com.xcphoenix.dto.bean.FoodCategory;
+import com.xcphoenix.dto.bean.dao.FoodCategory;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;

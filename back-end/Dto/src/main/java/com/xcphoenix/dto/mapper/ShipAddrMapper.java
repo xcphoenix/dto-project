@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper;
 
-import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.bean.dao.ShipAddr;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

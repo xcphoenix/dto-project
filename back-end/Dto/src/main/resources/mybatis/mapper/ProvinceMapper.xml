@@ -3,7 +3,7 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xcphoenix.dto.mapper.area.ProvinceMapper">
 
-	<resultMap id="provinceResult" type="com.xcphoenix.dto.bean.area.Province">
+	<resultMap id="provinceResult" type="com.xcphoenix.dto.bean.dao.area.Province">
 		<id column="_id" property="id" />
 		<result column="name" property="name" />
 		<result column="province_id" property="provinceId" />

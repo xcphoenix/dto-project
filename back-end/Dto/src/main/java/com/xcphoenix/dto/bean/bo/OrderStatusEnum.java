@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.bo;
 
 /**
  * @author      xuanc
@@ -32,22 +32,26 @@ public enum OrderStatusEnum {
      */
     TIMEOUT(5);
 
-    private int id;
+    private int value;
 
-    OrderStatusEnum(int id) {
-        this.id = id;
+    OrderStatusEnum(int value) {
+        this.value = value;
     }
 
-    public static boolean includeId(int id) {
+    public static boolean includeId(int value) {
         for (OrderStatusEnum oe : OrderStatusEnum.values()) {
-            if (oe.getId() == id) {
+            if (oe.getValue() == value) {
                 return true;
             }
         }
         return false;
     }
 
-    public int getId() {
-        return id;
+    public boolean match(int value) {
+        return this.getValue() == value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }
