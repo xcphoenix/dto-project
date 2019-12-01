@@ -2,7 +2,7 @@ package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.bean.dao.ShipAddr;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.service.ShipAddrService;
 import com.xcphoenix.dto.utils.ContextHolderUtils;

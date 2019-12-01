@@ -1,6 +1,7 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.dao;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.xcphoenix.dto.bean.bo.TimeItem;
 import com.xcphoenix.dto.validator.ValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;

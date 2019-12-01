@@ -16,6 +16,8 @@ import java.util.Objects;
  */
 public class ContextHolderUtils {
 
+    private ContextHolderUtils() {}
+
     public static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) Objects.
                 requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();

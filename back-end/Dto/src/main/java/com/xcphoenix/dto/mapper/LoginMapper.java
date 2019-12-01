@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper;
 
-import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.bean.dao.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;

@@ -27,7 +27,6 @@ public class OrderTimeoutJob implements Job {
          * - 恢复库存
          */
         log.debug("order [" + orderCode + "] timeout");
-
     }
 
 }

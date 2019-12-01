@@ -1,7 +1,7 @@
 package com.xcphoenix.dto.controller;
 
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.bean.dao.ShipAddr;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.ShipAddrService;
 import com.xcphoenix.dto.validator.ValidateGroup;

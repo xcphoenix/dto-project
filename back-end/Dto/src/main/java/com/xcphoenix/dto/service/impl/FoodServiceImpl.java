@@ -1,8 +1,8 @@
 package com.xcphoenix.dto.service.impl;
 
 import com.xcphoenix.dto.annotation.ShopperCheck;
-import com.xcphoenix.dto.bean.Food;
-import com.xcphoenix.dto.bean.Foods;
+import com.xcphoenix.dto.bean.dao.Food;
+import com.xcphoenix.dto.bean.dto.Foods;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.FoodMapper;
 import com.xcphoenix.dto.result.ErrorCode;

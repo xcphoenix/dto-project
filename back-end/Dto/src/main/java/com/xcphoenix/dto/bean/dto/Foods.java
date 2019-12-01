@@ -1,5 +1,6 @@
-package com.xcphoenix.dto.bean;
+package com.xcphoenix.dto.bean.dto;
 
+import com.xcphoenix.dto.bean.dao.Food;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

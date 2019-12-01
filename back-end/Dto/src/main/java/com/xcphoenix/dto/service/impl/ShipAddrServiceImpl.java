@@ -1,7 +1,7 @@
 package com.xcphoenix.dto.service.impl;
 
 import ch.hsr.geohash.GeoHash;
-import com.xcphoenix.dto.bean.ShipAddr;
+import com.xcphoenix.dto.bean.dao.ShipAddr;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.ShipAddrMapper;
 import com.xcphoenix.dto.result.ErrorCode;

@@ -1,7 +1,7 @@
 package com.xcphoenix.dto.controller;
 
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.bean.dao.Restaurant;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.CollectionService;
 import org.springframework.web.bind.annotation.*;

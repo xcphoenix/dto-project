@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper.area;
 
-import com.xcphoenix.dto.bean.area.Country;
+import com.xcphoenix.dto.bean.dao.area.Country;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 

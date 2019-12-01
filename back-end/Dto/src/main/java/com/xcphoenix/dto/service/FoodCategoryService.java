@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.FoodCategory;
+import com.xcphoenix.dto.bean.dao.FoodCategory;
 
 import java.util.List;
 

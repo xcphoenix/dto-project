@@ -1,6 +1,10 @@
 package com.xcphoenix.dto.service.impl;
 
-import com.xcphoenix.dto.bean.*;
+import com.xcphoenix.dto.bean.ao.OrderModify;
+import com.xcphoenix.dto.bean.bo.DeliveryType;
+import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
+import com.xcphoenix.dto.bean.bo.PayTypeEnum;
+import com.xcphoenix.dto.bean.dao.*;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.OrderMapper;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -15,6 +19,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.xcphoenix.dto.bean.bo.OrderStatusEnum.NEED_PAY;
 
 /**
  * @author      xuanc
@@ -55,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         abstractOrderItem.setExFoodName(foodService
                 .getFoodDetailById(cartItem.getFoodId())
                 .getName());
-        abstractOrderItem.setExFoodName(foodService
+        abstractOrderItem.setExFoodImgUrl(foodService
                 .getFoodDetailById(cartItem.getFoodId())
                 .getCoverImg());
         return abstractOrderItem;
@@ -73,7 +79,9 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             order = new Order();
             // 设置默认支付方式
-            order.setPayType(PayTypeEnum.defaultId());
+            order.setPayType(PayTypeEnum.defaultValue());
+            // 设置默认配送方式
+            order.setDeliveryType(DeliveryType.SHOP_SELF_SUPPORT.getValue());
         }
         order.setUserId(cart.getUserId());
         order.setRstId(cart.getRestaurantId());
@@ -81,6 +89,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOriginalPrice(BigDecimal.valueOf(cart.getOriginalTotal()));
         order.setTotalPrice(BigDecimal.valueOf(cart.getTotal()));
         order.setItemCount(cart.getTotalWeight());
+        order.setPackagePrice(BigDecimal.valueOf(rst.getPackagePrice()));
+        order.setDeliveryPrice(BigDecimal.valueOf(rst.getDeliveryPrice()));
 
         List<OrderItem> orderItemList = new ArrayList<>();
 
@@ -109,8 +119,9 @@ public class OrderServiceImpl implements OrderService {
      * 数据校验
      */
     private void assertConditionAttrs(Order order) throws ServiceLogicException {
-        // 数据完整性：支付方式、收货地址
-        if (order == null || !PayTypeEnum.includeId(order.getPayType()) || order.getShipAddrId() == null) {
+        // 数据完整性：支付方式、收货地址、配送方式
+        if (order == null || PayTypeEnum.isMatched(order.getPayType()) ||
+                order.getShipAddrId() == null || !DeliveryType.isMatched(order.getDeliveryType())) {
             throw new ServiceLogicException(ErrorCode.ORDER_NOT_CONDITIONAL);
         }
     }
@@ -145,19 +156,35 @@ public class OrderServiceImpl implements OrderService {
         return rst;
     }
 
+    /**
+     * 更新订单状态
+     */
+    private void updateOrderStatus(Long orderCode, OrderStatusEnum orderStatusEnum) {
+        orderMapper.changeOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode, orderStatusEnum.getValue());
+    }
+
     @Override
     public Order purchaseNewOrder(Order order) throws SchedulerException {
         Long userId = ContextHolderUtils.getLoginUserId();
         Long rstId = order.getRstId();
+        Long orderCode = SnowFlakeUtils.nextId();
 
-        order.setOrderCode(SnowFlakeUtils.nextId());
+        order.setOrderCode(orderCode);
         order.setOrderTime(new Timestamp(System.currentTimeMillis()));
-        order.setInvalidTime(new Timestamp(System.currentTimeMillis() + 1000 * 10 * 60));
+        /// 无用字段
+        order.setInvalidTime(new Timestamp(System.currentTimeMillis() + 1000 * 15 * 60));
+        // 设置默认配送方式
+        order.setDeliveryType(DeliveryType.SHOP_SELF_SUPPORT.getValue());
 
         order = toOrder(cartService.getCart(userId, rstId), order);
-        order.setStatus(OrderStatusEnum.NEED_PAY.getId());
+        order.setStatus(NEED_PAY.getValue());
         assertConditionAttrs(order);
 
+        // 添加订单数据、订单商品项数据
+        orderMapper.addOrder(order);
+        for (OrderItem item : order.getOrderItems()) {
+            orderMapper.addOrderItem(item, orderCode);
+        }
         // 库存处理
         stockService.lock(order);
         // 添加定时任务
@@ -171,10 +198,45 @@ public class OrderServiceImpl implements OrderService {
         Long userId = ContextHolderUtils.getLoginUserId();
         Order order = toOrder(cartService.getCart(userId, rstId),null);
         ShipAddr shipAddr = shipAddrService.getDefaultAddress();
+
         Map<String, Object> map = new HashMap<>(2);
         map.put("order", order);
         map.put("address", shipAddr);
+        map.put("payType", PayTypeEnum.values());
+        map.put("deliveryType", DeliveryType.values());
+
         return map;
+    }
+
+    @Override
+    public void cancelOrder(Long orderCode) throws ServiceLogicException {
+        int status = getOrderStatus(orderCode);
+        if (!NEED_PAY.match(status)) {
+            throw new ServiceLogicException(ErrorCode.ORDER_STATUS_EXCEPTIONAL);
+        }
+        updateOrderStatus(orderCode, OrderStatusEnum.CANCEL);
+        stockService.resume(getOrderById(orderCode));
+    }
+
+    @Override
+    public void modifyOrder(Long orderCode, OrderModify modData) throws ServiceLogicException {
+        int status = getOrderStatus(orderCode);
+        if (!NEED_PAY.match(status)) {
+            throw new ServiceLogicException(ErrorCode.ORDER_STATUS_EXCEPTIONAL);
+        }
+        orderMapper.updateOrder(ContextHolderUtils.getLoginUserId(), orderCode, modData);
+    }
+
+    @Override
+    public void delOrder(Long orderCode) throws ServiceLogicException {
+        int orderStatus = getOrderStatus(orderCode);
+        if (!OrderStatusEnum.TIMEOUT.match(orderStatus) || !OrderStatusEnum.CANCEL.match(orderStatus)) {
+            throw new ServiceLogicException(ErrorCode.ORDER_STATUS_EXCEPTIONAL);
+        }
+        orderMapper.delCanceledOrder(ContextHolderUtils.getLoginUserId(), orderCode);
+        if (NEED_PAY.match(orderStatus)) {
+            stockService.resume(getOrderById(orderCode));
+        }
     }
 
     @Override
@@ -188,10 +250,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrderStatus(Long orderCode, OrderStatusEnum orderStatusEnum) {
-        orderMapper.changeOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode, orderStatusEnum.getId());
+    public Order getOrderById(Long orderCode) {
+        return orderMapper.getOrderById(ContextHolderUtils.getLoginUserId(), orderCode);
     }
 
-    public Order getOrderStatus
+    @Override
+    public void dealOrderTimeout(Long orderCode) {
+        // 订单过期
+        updateOrderStatus(orderCode, OrderStatusEnum.TIMEOUT);
+        // 恢复库存
+        stockService.resume(getOrderById(orderCode));
+    }
+
+    @Override
+    public void dealOrderPaid(Long orderCode, int payType) {
+        // 更新订单状态
+        updateOrderStatus(orderCode, OrderStatusEnum.WAIT_SHOPPER);
+        // 同步销量等信息
+        doBusinessService.syncOrdered(getOrderById(orderCode));
+    }
 
 }

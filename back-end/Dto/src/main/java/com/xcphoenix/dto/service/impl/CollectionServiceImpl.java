@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service.impl;
 
-import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.bean.dao.Restaurant;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.CollectionMapper;
 import com.xcphoenix.dto.mapper.RestaurantMapper;

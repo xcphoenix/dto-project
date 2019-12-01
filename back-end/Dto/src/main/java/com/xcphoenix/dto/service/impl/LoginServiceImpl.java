@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service.impl;
 
-import com.xcphoenix.dto.bean.User;
+import com.xcphoenix.dto.bean.dao.User;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.LoginMapper;
 import com.xcphoenix.dto.result.ErrorCode;

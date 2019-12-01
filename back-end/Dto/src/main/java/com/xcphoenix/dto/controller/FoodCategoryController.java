@@ -1,7 +1,7 @@
 package com.xcphoenix.dto.controller;
 
 import com.xcphoenix.dto.annotation.UserLoginToken;
-import com.xcphoenix.dto.bean.FoodCategory;
+import com.xcphoenix.dto.bean.dao.FoodCategory;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.FoodCategoryService;
 import com.xcphoenix.dto.validator.ValidateGroup;

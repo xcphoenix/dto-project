@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.Cart;
+import com.xcphoenix.dto.bean.dao.Cart;
 
 /**
  * @author      xuanc

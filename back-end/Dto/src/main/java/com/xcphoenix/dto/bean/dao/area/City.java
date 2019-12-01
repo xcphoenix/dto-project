@@ -1,4 +1,4 @@
-package com.xcphoenix.dto.bean.area;
+package com.xcphoenix.dto.bean.dao.area;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;

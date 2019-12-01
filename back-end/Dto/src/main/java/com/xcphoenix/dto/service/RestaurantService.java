@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.Restaurant;
+import com.xcphoenix.dto.bean.dao.Restaurant;
 
 import java.io.IOException;
 import java.util.List;

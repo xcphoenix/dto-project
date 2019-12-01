@@ -1,7 +1,8 @@
 package com.xcphoenix.dto.service;
 
-import com.xcphoenix.dto.bean.Order;
-import com.xcphoenix.dto.bean.OrderStatusEnum;
+import com.xcphoenix.dto.bean.ao.OrderModify;
+import com.xcphoenix.dto.bean.dao.Order;
+import com.xcphoenix.dto.exception.ServiceLogicException;
 import org.quartz.SchedulerException;
 
 import java.util.Map;
@@ -31,6 +32,28 @@ public interface OrderService {
     Map<String, Object> getPreviewData(Long rstId);
 
     /**
+     * 取消订单
+     * @param orderCode 订单编号
+     * @throws ServiceLogicException 当订单不为未支付状态时抛出
+     */
+    void cancelOrder(Long orderCode) throws ServiceLogicException;
+
+    /**
+     * 修改订单
+     * @param orderCode 订单编号
+     * @param modData 要修改的数据
+     * @throws ServiceLogicException 订单状态不为未支付状态时抛出异常
+     */
+    void modifyOrder(Long orderCode, OrderModify modData) throws ServiceLogicException;
+
+    /**
+     * 删除订单
+     * @param orderCode 要删除的订单编号
+     * @throws ServiceLogicException 订单状态为已取消订单
+     */
+    void delOrder(Long orderCode) throws ServiceLogicException;
+
+    /**
      * 订单是否有效
      * @param orderCode 订单编号
      * @return 有效返回 true
@@ -45,9 +68,23 @@ public interface OrderService {
     int getOrderStatus(Long orderCode);
 
     /**
-     * 更新订单状态
-     * @param orderCode 订单编号
-     * @param orderStatusEnum 要更新的订单状态
+     * 获取订单信息
+     * @param orderCode 订单号
+     * @return 订单信息
      */
-    void updateOrderStatus(Long orderCode, OrderStatusEnum orderStatusEnum);
+    Order getOrderById(Long orderCode);
+
+    /**
+     * 处理订单过期
+     * @param orderCode 订单编号
+     */
+    void dealOrderTimeout(Long orderCode);
+
+    /**
+     * 处理已支付订单
+     * @param orderCode 订单编号
+     * @param payType 支付方式
+     */
+    void dealOrderPaid(Long orderCode, int payType);
+
 }

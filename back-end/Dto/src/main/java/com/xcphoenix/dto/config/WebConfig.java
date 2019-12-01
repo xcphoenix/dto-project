@@ -7,6 +7,8 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
+import com.xcphoenix.dto.bean.bo.DeliveryType;
+import com.xcphoenix.dto.bean.bo.PayTypeEnum;
 import com.xcphoenix.dto.utils.fastjson.SqlTimeDeserializer;
 import com.xcphoenix.dto.utils.fastjson.SqlTimeSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +59,10 @@ public class WebConfig implements WebMvcConfigurer {
         parserConfig.putDeserializer(java.sql.Time.class, new SqlTimeDeserializer());
         SerializeConfig serializeConfig = fastJsonConfig.getSerializeConfig();
         serializeConfig.put(java.sql.Time.class, new SqlTimeSerializer());
+        // for enum
+        // noinspection unchecked
+        serializeConfig.configEnumAsJavaBean(PayTypeEnum.class, DeliveryType.class);
+
         fastJsonConfig.setParserConfig(parserConfig);
 
         List<MediaType> fastMediaTypes = new ArrayList<>();

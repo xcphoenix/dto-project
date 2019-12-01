@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.mapper;
 
-import com.xcphoenix.dto.bean.OrderItem;
+import com.xcphoenix.dto.bean.dao.OrderItem;
 import org.apache.ibatis.annotations.Param;
 
 /**

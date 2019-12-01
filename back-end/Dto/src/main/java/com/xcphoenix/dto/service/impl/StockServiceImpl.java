@@ -1,7 +1,7 @@
 package com.xcphoenix.dto.service.impl;
 
-import com.xcphoenix.dto.bean.Order;
-import com.xcphoenix.dto.bean.OrderItem;
+import com.xcphoenix.dto.bean.dao.Order;
+import com.xcphoenix.dto.bean.dao.OrderItem;
 import com.xcphoenix.dto.mapper.StockMapper;
 import com.xcphoenix.dto.service.StockService;
 import org.springframework.stereotype.Service;
