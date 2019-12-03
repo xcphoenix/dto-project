@@ -1,10 +1,13 @@
 package com.xcphoenix.dto.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xcphoenix.dto.bean.ao.OrderModify;
 import com.xcphoenix.dto.bean.bo.DeliveryType;
 import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
 import com.xcphoenix.dto.bean.bo.PayTypeEnum;
 import com.xcphoenix.dto.bean.dao.*;
+import com.xcphoenix.dto.bean.dto.PageObject;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.OrderMapper;
 import com.xcphoenix.dto.result.ErrorCode;
@@ -268,6 +271,37 @@ public class OrderServiceImpl implements OrderService {
         updateOrderStatus(orderCode, OrderStatusEnum.WAIT_SHOPPER);
         // 同步销量等信息
         doBusinessService.syncOrdered(getOrderById(orderCode));
+    }
+
+    @Override
+    public PageObject<Order> getCurrentOrders(int from, int size) {
+        PageHelper.offsetPage(from, PageObject.properPageSize(size));
+        List<Order> orderList = orderMapper.getCurrentOrders(
+                ContextHolderUtils.getLoginUserId(), OrderStatusEnum.currOrderValues()
+        );
+        return new PageObject<>(new PageInfo<>(orderList));
+    }
+
+    @Override
+    public PageObject<Order> getHistoryOrders(int from, int size) {
+        PageHelper.offsetPage(from, PageObject.properPageSize(size));
+        List<Order> orderList = orderMapper.getCurrentOrders(
+                ContextHolderUtils.getLoginUserId(), OrderStatusEnum.historyOrderValues()
+        );
+        return new PageObject<>(new PageInfo<>(orderList));
+    }
+
+    @Override
+    public int getCurrentOrdersNum() {
+        return orderMapper.getOrderInStatus(
+                ContextHolderUtils.getLoginUserId(), OrderStatusEnum.currOrderValues());
+    }
+
+    @Override
+    public int historyOrdersNum() {
+        return orderMapper.getOrderInStatus(
+                ContextHolderUtils.getLoginUserId(), OrderStatusEnum.historyOrderValues()
+        );
     }
 
 }

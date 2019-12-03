@@ -15,6 +15,7 @@ import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.service.UserService;
 import com.xcphoenix.dto.utils.ContextHolderUtils;
 import com.xcphoenix.dto.utils.TimeFormatUtils;
+import com.xcphoenix.dto.utils.UrlUtils;
 import com.xcphoenix.dto.utils.es.EsRestBuilder;
 import com.xcphoenix.dto.utils.es.SearchRst;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * TODO 设置多个开店时间
+ * TODO elasticsearch 根据结果和请求判断是否有下一条记录
  *
  * @author xuanc
  * @version 1.0
@@ -187,7 +190,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Map<String, Object>> getRstRemark(int type, double lon, double lat, Integer from, Integer size)
+    public Map<String, Object> getRstRemark(int type, double lon, double lat, Integer from, Integer size)
             throws IOException {
         LocationUtils.assertLegalValues(lon, lat);
 
@@ -209,7 +212,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Map<String, Object>> getRstRemarkWithSearch(String text, int type, double lon, double lat,
+    public Map<String, Object> getRstRemarkWithSearch(String text, int type, double lon, double lat,
                                                             Integer from, Integer size) throws IOException {
         RestClient restClient = EsRestBuilder.buildSearchRestClient();
         Request request = EsRestBuilder.setRestRequest(size, from);
@@ -230,17 +233,22 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     /**
+     * TODO 处理分页
      * 处理 response
      */
-    private List<Map<String, Object>> dealBriefResp(Response resp) throws IOException {
+    private Map<String, Object> dealBriefResp(Response resp) throws IOException {
 
-        log.debug("[Es::deal resp] response ==> " + EntityUtils.toString(resp.getEntity()));
+        String respData = EntityUtils.toString(resp.getEntity());
 
-        JSONArray responseBody = JSONObject.parseObject(EntityUtils.toString(resp.getEntity()))
+        log.debug("[Es::deal resp] response ==> " + respData);
+
+        JSONArray responseBody = JSONObject.parseObject(respData)
                 .getJSONObject("hits")
                 .getJSONArray("hits");
 
         int resArraySize = responseBody.size();
+
+        Map<String, Object> result = new HashMap<>(2);
         List<Map<String, Object>> restaurantList = new ArrayList<>(resArraySize);
 
         for (int i = 0; i < resArraySize; i++) {
@@ -257,7 +265,10 @@ public class RestaurantServiceImpl implements RestaurantService {
             restaurantList.add(resMap);
         }
 
-        return restaurantList;
+        result.put("hasNext", hasNext(resp, respData));
+        result.put("rstList", restaurantList);
+
+        return result;
     }
 
     /**
@@ -269,6 +280,19 @@ public class RestaurantServiceImpl implements RestaurantService {
         String jsonPath = "$[" + pos + "].fields.distance[0]";
         DecimalFormat df = new DecimalFormat("0.00");
         return Double.parseDouble(df.format(JSONPath.eval(jsonArray,jsonPath)));
+    }
+
+    private boolean hasNext(Response response, String respContent) {
+        String requestLine = response.getRequestLine().getUri();
+        UrlUtils urlUtils = new UrlUtils(requestLine);
+
+        int from = Integer.parseInt(urlUtils.getValue("from"));
+        int size = Integer.parseInt(urlUtils.getValue("size"));
+
+        int total = (Integer) JSONPath.extract(respContent, "$.hits.total.value");
+        int currPageSize = ((List) JSONPath.extract(respContent, "$.hits.hits")).size();
+
+        return from + currPageSize < total;
     }
 
 }

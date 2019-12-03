@@ -1,6 +1,6 @@
 package com.xcphoenix.dto.utils.es;
 
-import com.xcphoenix.dto.utils.GetUrlUtils;
+import com.xcphoenix.dto.utils.UrlUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.message.BasicHeader;
@@ -13,6 +13,8 @@ import org.elasticsearch.client.RestClient;
  * @version     1.0
  */ 
 public class EsRestBuilder {
+
+    private EsRestBuilder() {}
 
     /**
      * 设置 es RestClient
@@ -35,7 +37,7 @@ public class EsRestBuilder {
     public static Request setRestRequest(int size, int from, String searchUrl) {
         size = Math.min(Math.max(0, size), 20);
         from = Math.max(0, from);
-        GetUrlUtils getUrlUtils = new GetUrlUtils(searchUrl);
+        UrlUtils getUrlUtils = new UrlUtils(searchUrl);
         getUrlUtils.setValue("size", size);
         getUrlUtils.setValue("from", from);
 

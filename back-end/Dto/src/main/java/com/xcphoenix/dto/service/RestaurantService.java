@@ -3,7 +3,6 @@ package com.xcphoenix.dto.service;
 import com.xcphoenix.dto.bean.dao.Restaurant;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +30,8 @@ public interface RestaurantService {
 
     /**
      * 店铺名是否可用
+     * @param name 店铺名
+     * @return 是否可用
      */
     boolean isNameUsable(String name);
 
@@ -52,6 +53,8 @@ public interface RestaurantService {
 
     /**
      * 获取店铺信息
+     * @param rstId 店铺id
+     * @return 店铺
      */
     Restaurant getRstDetail(Long rstId);
 
@@ -64,19 +67,21 @@ public interface RestaurantService {
 
     /**
      * 更新店铺信息
-     * @return
+     * @param restaurant 要更新的店铺信息
+     * @return 更新后的店铺信息
+     * @throws IOException 图片处理
      */
     Restaurant updateRestaurant(Restaurant restaurant) throws IOException;
 
     /**
      * 获取店铺信息摘要
      */
-    List<Map<String, Object>> getRstRemark(int type, double lon, double lat, Integer from, Integer size) throws IOException;
+    Map<String, Object> getRstRemark(int type, double lon, double lat, Integer from, Integer size) throws IOException;
 
     /**
      * 根据关键字获取店铺摘要
      */
-    List<Map<String, Object>> getRstRemarkWithSearch(String text, int type, double lon, double lat, Integer from, Integer size)
+    Map<String, Object> getRstRemarkWithSearch(String text, int type, double lon, double lat, Integer from, Integer size)
             throws IOException;
 
 }
