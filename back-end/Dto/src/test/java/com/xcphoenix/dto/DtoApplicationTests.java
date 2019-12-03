@@ -1,13 +1,13 @@
 package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.xcphoenix.dto.bean.bo.DeliveryType;
-import com.xcphoenix.dto.bean.bo.PayTypeEnum;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xcphoenix.dto.bean.dao.Order;
 import com.xcphoenix.dto.bean.dao.Restaurant;
 import com.xcphoenix.dto.mapper.FoodCategoryMapper;
 import com.xcphoenix.dto.mapper.OrderMapper;
+import com.xcphoenix.dto.service.OrderService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.utils.SnowFlakeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 @Disabled
 @Slf4j
@@ -32,6 +32,9 @@ public class DtoApplicationTests {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderService orderService;
 
     @Test
     void testCache() {
@@ -54,17 +57,12 @@ public class DtoApplicationTests {
 
     @Test
     void testTmp() {
-        SerializeConfig serializeConfig = new SerializeConfig();
-        //noinspection unchecked
-        serializeConfig.configEnumAsJavaBean(PayTypeEnum.class, DeliveryType.class);
-
-        Map<String, Object> map = new HashMap<>(4);
-        map.put("name1", 1);
-        map.put("name2", "value2");
-        map.put("payType", PayTypeEnum.values());
-        map.put("deliveryType", DeliveryType.values());
-
-        log.info(JSON.toJSONString(map, serializeConfig));
+        PageHelper.offsetPage(2, 4);
+        List<Order> orders = orderMapper.getCurrentOrders(1L, Arrays.asList(0, 1, 2, 3, 4, 5));
+        int a = 3 + 2;
+        PageInfo pageIno = new PageInfo(orders);
+        log.info("orders = " + JSON.toJSON(orders));
+        log.info("pageInfo = " + JSON.toJSON(pageIno));
     }
 
 }

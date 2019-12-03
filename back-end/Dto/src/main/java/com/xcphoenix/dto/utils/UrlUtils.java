@@ -11,12 +11,12 @@ import java.util.Map;
  * @date 2019/10/10 下午5:48
  */
 @Getter
-public class GetUrlUtils {
+public class UrlUtils {
 
     private String url;
     private Map<String, String> params;
 
-    public GetUrlUtils(String url) {
+    public UrlUtils(String url) {
         int index = url.indexOf('?');
         this.params = new HashMap<>();
         if (index != -1) {

@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,7 +78,7 @@ public class RestaurantController {
                                      @RequestParam("lat") double lat,
                                      @RequestParam("from") int from,
                                      @RequestParam("size") int size) throws IOException {
-        List<Map<String, Object>> rstList = restaurantService.getRstRemark(type, lon, lat, from, size);
+        Map<String, Object> rstList = restaurantService.getRstRemark(type, lon, lat, from, size);
         return new Result("获取成功").addMap("rsts", rstList);
     }
 
@@ -93,7 +92,7 @@ public class RestaurantController {
                                         @RequestParam("lat") double lat,
                                         @RequestParam("from") int from,
                                         @RequestParam("size") int size) throws IOException {
-        List<Map<String, Object>> rstList = restaurantService.getRstRemarkWithSearch(keyword, type, lon, lat, from, size);
+        Map<String, Object> rstList = restaurantService.getRstRemarkWithSearch(keyword, type, lon, lat, from, size);
         return new Result("获取成功").addMap("rsts", rstList);
     }
 

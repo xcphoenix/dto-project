@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,7 +31,7 @@ class RestClientForEs {
 
     @Test
     void getNearbyResTest() throws IOException {
-        List<Map<String, Object>> restaurants =  restaurantService
+        Map<String, Object> restaurants =  restaurantService
                 .getRstRemark(2,108.887407, 34.163527, 0, 20);
         log.info(JSON.toJSONString(restaurants));
     }
@@ -40,7 +39,7 @@ class RestClientForEs {
     @Test
     void searchRstTest() throws IOException {
         String text = "麻辣";
-        List<Map<String, Object>> rstList = restaurantService
+        Map<String, Object> rstList = restaurantService
                 .getRstRemarkWithSearch(text, 2, 108.887407, 34.163527,  0, 20);
         log.info(JSON.toJSONString(rstList));
     }
@@ -49,7 +48,7 @@ class RestClientForEs {
     void searchRstTypeTest() throws IOException {
         String text = "麻辣";
         assertThrows(ServiceLogicException.class, () -> {
-            List<Map<String, Object>> rstList = restaurantService
+            Map<String, Object> rstList = restaurantService
                     .getRstRemarkWithSearch(text, 9, 108.887407, 34.163527,  0, 20);
             log.info(JSON.toJSONString(rstList));
         }, ErrorCode.INVALID_SEARCH_TYPE.getMsg());

@@ -80,6 +80,33 @@ public interface OrderMapper {
     List<Order> getOrders(@Param("userId") Long userId);
 
     /**
+     * 获取当前的订单列表
+     *
+     * @param userId 用户id
+     * @param status 当前订单状态集
+     * @return 用户的当前订单信息
+     */
+    List<Order> getCurrentOrders(@Param("userId") Long userId, @Param("status") List<Integer> status);
+
+    /**
+     * 获取历史订单列表
+     *
+     * @param userId 用户id
+     * @param status 当前订单状态集
+     * @return 历史订单信息
+     */
+    List<Order> getHistoryOrders(@Param("userId") Long userId, @Param("status") List<Integer> status);
+
+    /**
+     * 获取指定状态的订单数量
+     *
+     * @param userId 用户id
+     * @param status 指定的状态列表
+     * @return 符合条件的订单数量
+     */
+    Integer getOrderInStatus(@Param("userId") Long userId, @Param("status") List<Integer> status);
+
+    /**
      * 修改订单状态
      *
      * @param userId  用户id
@@ -110,7 +137,7 @@ public interface OrderMapper {
      *
      * @param userId    用户id
      * @param orderCode 订单编号
-     * @param payType 支付方式
+     * @param payType   支付方式
      */
     void updatePayTime(@Param("userId") Long userId, @Param("orderCode") Long orderCode, @Param("payType") int payType);
 

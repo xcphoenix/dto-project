@@ -201,7 +201,7 @@ public class SearchRst {
         int[] arr = null;
         switch (sortType) {
             case DISTANCE:
-                return getDistanceAttr();
+                return setDistanceAttr();
             case SCORE:
                 arr = new int[]{0};
                 break;
@@ -226,11 +226,11 @@ public class SearchRst {
                 return this;
             default:
         }
-        JSONPath.set(this.root, jsonPath, getSortAttrs(arr));
+        JSONPath.set(this.root, jsonPath, setSortAttrs(arr));
         return this;
     }
 
-    private List<Map<String, Object>> getSortAttrs(int[] args) {
+    private List<Map<String, Object>> setSortAttrs(int[] args) {
         String descType = "desc", ascType = "asc";
         String[] keyArr = new String[]{
                 "score", "month_sale", "min_price", "delivery_time",
@@ -252,7 +252,7 @@ public class SearchRst {
         return sortAttrs;
     }
 
-    private SearchRst getDistanceAttr() {
+    private SearchRst setDistanceAttr() {
         JSONArray sorts = JSONArray.parseArray("[\n" +
                 "    {\n" +
                 "      \"_geo_distance\": {\n" +
