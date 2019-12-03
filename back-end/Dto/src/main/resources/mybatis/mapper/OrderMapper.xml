@@ -147,5 +147,12 @@
 				#{statusItem}
 			</foreach>
 	</select>
+	
+	<select id="getOrderInvalidTime">
+		SELECT `invalid_time`
+		FROM order_form
+		WHERE user_id = #{userId}
+		  AND order_code = #{orderCode}
+	</select>
 
 </mapper>

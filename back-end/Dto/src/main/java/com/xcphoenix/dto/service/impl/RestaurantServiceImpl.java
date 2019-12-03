@@ -39,7 +39,7 @@ import java.util.Map;
 
 /**
  * TODO 设置多个开店时间
- * TODO elasticsearch 根据结果和请求判断是否有下一条记录
+ * TODO 使用 scroll after 方式处理分页
  *
  * @author xuanc
  * @version 1.0
@@ -233,7 +233,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     /**
-     * TODO 处理分页
      * 处理 response
      */
     private Map<String, Object> dealBriefResp(Response resp) throws IOException {
@@ -287,8 +286,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         UrlUtils urlUtils = new UrlUtils(requestLine);
 
         int from = Integer.parseInt(urlUtils.getValue("from"));
-        int size = Integer.parseInt(urlUtils.getValue("size"));
-
         int total = (Integer) JSONPath.extract(respContent, "$.hits.total.value");
         int currPageSize = ((List) JSONPath.extract(respContent, "$.hits.hits")).size();
 

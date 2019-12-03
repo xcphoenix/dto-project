@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 public class PageObject<T> {
 
-    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_PAGE_SIZE = 8;
     private static final int MAX_PAGE_SIZE = 15;
 
     private int start;
