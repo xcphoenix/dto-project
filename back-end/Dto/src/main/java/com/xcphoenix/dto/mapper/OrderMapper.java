@@ -5,6 +5,7 @@ import com.xcphoenix.dto.bean.dao.Order;
 import com.xcphoenix.dto.bean.dao.OrderItem;
 import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -140,5 +141,13 @@ public interface OrderMapper {
      * @param payType   支付方式
      */
     void updatePayTime(@Param("userId") Long userId, @Param("orderCode") Long orderCode, @Param("payType") int payType);
+
+    /**
+     * 获取订单失效时间
+     * @param userId 用户id
+     * @param orderCode 订单编号
+     * @return 过期时间
+     */
+    Timestamp getOrderInvalidTime(@Param("userId") Long userId, @Param("orderCode") Long orderCode);
 
 }

@@ -4,8 +4,10 @@ import com.xcphoenix.dto.bean.ao.OrderModify;
 import com.xcphoenix.dto.bean.dao.Order;
 import com.xcphoenix.dto.bean.dto.PageObject;
 import com.xcphoenix.dto.exception.ServiceLogicException;
+import org.apache.ibatis.annotations.Param;
 import org.quartz.SchedulerException;
 
+import java.sql.Timestamp;
 import java.util.Map;
 
 /**
@@ -99,24 +101,42 @@ public interface OrderService {
     void dealOrderPaid(Long orderCode, int payType);
 
     /**
+     * 获取订单记录
+     * <strong>分页</strong>
+     *
+     * @param from 偏移量
+     * @param size 数量限制
+     * @return 当前的订单信息
+     */
+    PageObject<Order> getOrders(int from, int size);
+
+    /**
      * 获取当前的订单（待支付、待送达）
      * <strong>使用分页</strong>
      *
-     * @param offset 偏移量
-     * @param limit 数量限制
+     * @param from 偏移量
+     * @param size 数量限制
      * @return 当前的订单信息
      */
-    PageObject<Order> getCurrentOrders(int offset, int limit);
+    PageObject<Order> getCurrentOrders(int from, int size);
 
     /**
      * 获取历史订单信息（已送达、已取消）
      * <strong>使用分页</strong>
      *
-     * @param offset 偏移量
-     * @param limit 数量限制
+     * @param from 偏移量
+     * @param size 数量限制
      * @return 历史订单信息
      */
-    PageObject<Order> getHistoryOrders(int offset, int limit);
+    PageObject<Order> getHistoryOrders(int from, int size);
+
+    /**
+     * 获取订单的过期时间
+     *
+     * @param orderCode 订单编号
+     * @return 订单过期时间
+     */
+    Timestamp getInvalidTime(@Param("orderCode") Long orderCode);
 
     /**
      * 未完成状态的订单数量
@@ -127,7 +147,7 @@ public interface OrderService {
 
     /**
      * 已完成状态的订单数量
-     * 
+     *
      * @return 订单数量
      */
     int historyOrdersNum();

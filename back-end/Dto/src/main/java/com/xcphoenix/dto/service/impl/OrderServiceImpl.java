@@ -269,8 +269,17 @@ public class OrderServiceImpl implements OrderService {
     public void dealOrderPaid(Long orderCode, int payType) {
         // 更新订单状态
         updateOrderStatus(orderCode, OrderStatusEnum.WAIT_SHOPPER);
+        // 刷新支付信息
+        orderMapper.updatePayTime(ContextHolderUtils.getLoginUserId(), orderCode, payType);
         // 同步销量等信息
         doBusinessService.syncOrdered(getOrderById(orderCode));
+    }
+
+    @Override
+    public PageObject<Order> getOrders(int from, int size) {
+        PageHelper.offsetPage(from, PageObject.properPageSize(size));
+        List<Order> orderList = orderMapper.getOrders(ContextHolderUtils.getLoginUserId());
+        return new PageObject<>(new PageInfo<>(orderList));
     }
 
     @Override
@@ -285,10 +294,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageObject<Order> getHistoryOrders(int from, int size) {
         PageHelper.offsetPage(from, PageObject.properPageSize(size));
-        List<Order> orderList = orderMapper.getCurrentOrders(
+        List<Order> orderList = orderMapper.getHistoryOrders(
                 ContextHolderUtils.getLoginUserId(), OrderStatusEnum.historyOrderValues()
         );
         return new PageObject<>(new PageInfo<>(orderList));
+    }
+
+    @Override
+    public Timestamp getInvalidTime(Long orderCode) {
+        return orderMapper.getOrderInvalidTime(ContextHolderUtils.getLoginUserId(), orderCode);
     }
 
     @Override

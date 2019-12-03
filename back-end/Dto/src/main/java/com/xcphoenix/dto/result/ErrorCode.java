@@ -122,5 +122,7 @@ public class ErrorCode {
     public static final ErrorCode ORDER_DATA_NOT_COMPLETE = new ErrorCode(90003, "订单数据不全");
     public static final ErrorCode ORDER_HAS_PAID = new ErrorCode(90004, "订单已支付");
     public static final ErrorCode ORDER_STATUS_EXCEPTIONAL = new ErrorCode(90005, "订单状态异常");
+    public static final ErrorCode PAY_FAILED = new ErrorCode(90006, "支付失败");
+
 
 }
