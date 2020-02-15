@@ -5,11 +5,11 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import com.xcphoenix.dto.bean.bo.DeliveryType;
 import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
 import com.xcphoenix.dto.bean.bo.PayTypeEnum;
+import com.xcphoenix.dto.utils.FastJsonRedisSerializer;
 import com.xcphoenix.dto.utils.fastjson.SqlTimeDeserializer;
 import com.xcphoenix.dto.utils.fastjson.SqlTimeSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,21 +93,21 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         // 初始化一个RedisCacheWriter
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
         // 设置CacheManager的值序列化方式为 fastJsonRedisSerializer,
         // RedisCacheConfiguration默认使用StringRedisSerializer序列化key，
-        ClassLoader loader = this.getClass().getClassLoader();
-
-        RedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer<>(loader.getClass());
-        RedisSerializationContext.SerializationPair pair = RedisSerializationContext
+        RedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
+        RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext
                 .SerializationPair.fromSerializer(fastJsonRedisSerializer);
         // 设置缓存配置
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(pair)
                 .entryTtl(Duration.ofHours(2))
                 .prefixKeysWith("cache:");
+        ParserConfig.getGlobalInstance().addAccept("com.xcphoenix.dto.");
         return new RedisCacheManager(redisCacheWriter, defaultCacheConfig);
     }
 
