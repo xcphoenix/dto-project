@@ -9,7 +9,28 @@ import java.math.BigDecimal;
  * @version 1.0
  * @date 2019/9/3 上午9:22
  */
-public interface GeoCoderService {
+public interface GeoService {
+
+    /**
+     * 根据关键字获取搜索建议
+     *
+     * @param keyword 关键字
+     * @return 搜索建议
+     */
+    JSONObject getSuggestion(String keyword);
+
+    /**
+     * 获取地址简要信息
+     *
+     * @return 地址简要信息
+     */
+    JSONObject getLocation();
+
+    /**
+     * 通过请求方的 ip 获取地理位置
+     * @return 调用腾讯地图 api 所返回的数据
+     */
+    JSONObject getLocAsIp();
 
     /**
      * 腾讯地图 webservice - 逆地址解析

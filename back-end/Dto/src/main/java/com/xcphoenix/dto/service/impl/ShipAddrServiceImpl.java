@@ -5,7 +5,7 @@ import com.xcphoenix.dto.bean.dao.ShipAddr;
 import com.xcphoenix.dto.exception.ServiceLogicException;
 import com.xcphoenix.dto.mapper.ShipAddrMapper;
 import com.xcphoenix.dto.result.ErrorCode;
-import com.xcphoenix.dto.service.GeoCoderService;
+import com.xcphoenix.dto.service.GeoService;
 import com.xcphoenix.dto.service.ShipAddrService;
 import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,19 @@ import java.util.List;
 public class ShipAddrServiceImpl implements ShipAddrService {
 
     private ShipAddrMapper shipAddrMapper;
-    private GeoCoderService geoCoderService;
+    private GeoService geoService;
     private int precision = 12;
 
     @Autowired
-    public ShipAddrServiceImpl(ShipAddrMapper shipAddrMapper, GeoCoderService geoCoderService) {
+    public ShipAddrServiceImpl(ShipAddrMapper shipAddrMapper, GeoService geoService) {
         this.shipAddrMapper = shipAddrMapper;
-        this.geoCoderService = geoCoderService;
+        this.geoService = geoService;
     }
 
     @Override
     public ShipAddr addShipAddr(ShipAddr shipAddr) {
         // 获取 countryId
-        String cityCode = geoCoderService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
+        String cityCode = geoService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
         shipAddr.setCountryCode(cityCode);
         // 获取 geoHash
         GeoHash geoHash = GeoHash.withCharacterPrecision(
@@ -60,7 +60,7 @@ public class ShipAddrServiceImpl implements ShipAddrService {
                     shipAddr.getAddrLat().doubleValue(), shipAddr.getAddrLat().doubleValue(), precision);
             shipAddr.setGeohash(geoHash.toBase32());
 
-            String cityCode = geoCoderService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
+            String cityCode = geoService.getAreaCode(shipAddr.getAddrLat(), shipAddr.getAddrLng());
             shipAddr.setCountryCode(cityCode);
         }
         shipAddrMapper.updateShipAddr(shipAddr);

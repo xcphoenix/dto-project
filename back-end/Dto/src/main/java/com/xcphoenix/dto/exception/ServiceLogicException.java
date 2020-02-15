@@ -2,6 +2,7 @@ package com.xcphoenix.dto.exception;
 
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ServiceLogicException extends RuntimeException {
     }
 
     public ServiceLogicException(ErrorCode errorCode, Object extraData) {
-        this(errorCode, Map.of("data", extraData));
+        this(errorCode, ImmutableMap.of("data", extraData));
     }
 
     public Result errorResult() {

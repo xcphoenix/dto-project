@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xcphoenix.dto.mapper.CommentMapper">
+
+	<insert id="addComment">
+		INSERT INTO `comment`(`reply_id`, `rst_id`, `user_id`, `food_score`, `delivery_score`,
+		                    `package_score`, `comment`, `time`, `is_anonymous`, `is_shopper`)
+		VALUES (
+			       #{replyId}, #{rstId}, #{userId}, #{foodScore}, #{deliveryScore},
+			       #{packageScore}, #{comment}, #{time}, #{isAnonymous}, #{isShopper}
+		       )
+	</insert>
+	
+	<select id="getCommentByRstId" resultType="com.xcphoenix.dto.bean.dao.Comment">
+		SELECT `id`, `reply_id`, `rst_id`, `user_id`, `food_score`, `delivery_score`,
+		       `package_score`, `comment`, `time`, `is_anonymous`, `is_shopper`
+		FROM `comment`
+		WHERE `rst_id` = #{rst} AND `reply_id` IS NULL
+		ORDER BY `time`
+	</select>
+	
+	<select id="getReplyByComment" resultType="com.xcphoenix.dto.bean.dao.Comment">
+		SELECT id, reply_id, rst_id, user_id, `comment`, `time`, is_anonymous, is_shopper
+		FROM `comment`
+		WHERE reply_id = #{commentId}
+		ORDER BY `time`
+	</select>
+	
+</mapper>

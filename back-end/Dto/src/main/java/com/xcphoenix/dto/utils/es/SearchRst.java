@@ -86,6 +86,8 @@ public class SearchRst {
                 "       \"bh_start\", \n" +
                 "       \"bh_end\", \n" +
                 "       \"delivery_price\", \n" +
+                "       \"delivery_time\"," +
+                "       \"ave_consumption\"," +
                 "       \"delivery_range\"\n" +
                 "   ]\n" +
                 "}");

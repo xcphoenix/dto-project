@@ -2,7 +2,7 @@ package com.xcphoenix.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.xcphoenix.dto.service.GeoCoderService;
+import com.xcphoenix.dto.service.GeoService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,16 +29,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GeoCoderTest {
 
     @Autowired
-    private GeoCoderService geoCoderService;
+    private GeoService geoService;
 
     @Test
     @DisplayName("腾讯地图api::逆地址解析")
     void testTencentGeoCoder() {
         Map<String, BigDecimal> loc = randomLonLat(100, 120, 20, 40);
-        JSONObject jsonObject = geoCoderService.getLocMsg(loc.get("lat"), loc.get("lng"));
+        JSONObject jsonObject = geoService.getLocMsg(loc.get("lat"), loc.get("lng"));
         log.info("msg: \n" + jsonObject.toString(SerializerFeature.PrettyFormat));
         int status = jsonObject.getInteger("status");
         assertEquals(status, 0);
+    }
+
+    @Test
+    void testGetLocAsIp() {
+        log.info(geoService.getLocAsIp().toJSONString());
     }
 
     static Map<String, BigDecimal> randomLonLat(double MinLng, double MaxLng, double MinLat, double MaxLat) {
@@ -51,4 +56,5 @@ class GeoCoderTest {
         map.put("lat", lat);
         return map;
     }
+
 }

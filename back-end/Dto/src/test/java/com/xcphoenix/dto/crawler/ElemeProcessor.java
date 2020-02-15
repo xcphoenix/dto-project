@@ -11,7 +11,7 @@ import com.xcphoenix.dto.bean.dao.User;
 import com.xcphoenix.dto.mapper.FoodCategoryMapper;
 import com.xcphoenix.dto.mapper.FoodMapper;
 import com.xcphoenix.dto.mapper.RestaurantMapper;
-import com.xcphoenix.dto.service.GeoCoderService;
+import com.xcphoenix.dto.service.GeoService;
 import com.xcphoenix.dto.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -53,7 +53,7 @@ public class ElemeProcessor implements PageProcessor {
     private FoodMapper foodMapper;
 
     @Autowired
-    private GeoCoderService geoCoderService;
+    private GeoService geoService;
 
     private static int getNum(int start, int end) {
         return (int) (Math.random() * (end - start + 1) + start);
@@ -115,7 +115,7 @@ public class ElemeProcessor implements PageProcessor {
         tmpRst.setTag(tags.toString());
         tmpRst.setAddrLat(BigDecimal.valueOf(lat));
         tmpRst.setAddrLng(BigDecimal.valueOf(lng));
-        tmpRst.setCountryId(geoCoderService.getAreaId(BigDecimal.valueOf(lat), BigDecimal.valueOf(lng)));
+        tmpRst.setCountryId(geoService.getAreaId(BigDecimal.valueOf(lat), BigDecimal.valueOf(lng)));
         GeoHash geoHash = GeoHash.withCharacterPrecision(lat, lng, 12);
         tmpRst.setGeohash(geoHash.toBase32());
         SimpleDateFormat format = new SimpleDateFormat("hh:mm");
@@ -225,7 +225,7 @@ public class ElemeProcessor implements PageProcessor {
 
             for (int i = 0; i < nextUrl.size(); i++) {
                 String nextUrlElement = "https://h5.ele.me/pizza/shopping/restaurants/" + nextUrl.get(i)
-                        + "/batch_shop?user_id=" + userId + "&code=0.26042264537648885&extras=%5B%22activities%22%2C%22albums%22%2C%22license%22%2C%22identification%22%2C%22qualification%22%5D&terminal=h5"
+                        + "/batch_shop?user_id=" + userId + "&status=0.26042264537648885&extras=%5B%22activities%22%2C%22albums%22%2C%22license%22%2C%22identification%22%2C%22qualification%22%5D&terminal=h5"
                         + "&latitude=" + lat + "&longitude=" + lng;
                 nextUrl.set(i, nextUrlElement);
             }

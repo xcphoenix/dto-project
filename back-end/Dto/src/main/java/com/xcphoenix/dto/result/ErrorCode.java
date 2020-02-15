@@ -15,14 +15,14 @@ public class ErrorCode {
      */
     private static final long serialVersionUID = 111111111111L;
 
-    private int code;
+    private int status;
     private String msg;
 
     /**
      * 私有
      */
-    private ErrorCode(int code, String msg) {
-        this.code = code;
+    private ErrorCode(int status, String msg) {
+        this.status = status;
         this.msg = msg;
     }
 
@@ -124,5 +124,9 @@ public class ErrorCode {
     public static final ErrorCode ORDER_STATUS_EXCEPTIONAL = new ErrorCode(90005, "订单状态异常");
     public static final ErrorCode PAY_FAILED = new ErrorCode(90006, "支付失败");
 
+    /**
+     * 定位相关
+     */
+    public static final ErrorCode LOCATION_FAILED = new ErrorCode(100001, "定位异常");
 
 }

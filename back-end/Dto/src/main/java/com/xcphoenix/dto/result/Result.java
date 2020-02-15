@@ -17,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class Result {
 
-    private int code = 200;
+    private int status = 200;
     private String msg;
     private Map<String, Object> data;
 
@@ -31,7 +31,7 @@ public class Result {
     }
 
     private Result(ErrorCode errorCode) {
-        this.code = errorCode.getCode();
+        this.status = errorCode.getStatus();
         this.msg = errorCode.getMsg();
     }
 

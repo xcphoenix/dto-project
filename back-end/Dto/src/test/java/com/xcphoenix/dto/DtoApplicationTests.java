@@ -10,6 +10,8 @@ import com.xcphoenix.dto.mapper.OrderMapper;
 import com.xcphoenix.dto.service.OrderService;
 import com.xcphoenix.dto.service.RestaurantService;
 import com.xcphoenix.dto.utils.SnowFlakeUtils;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -63,6 +65,39 @@ public class DtoApplicationTests {
         PageInfo pageIno = new PageInfo(orders);
         log.info("orders = " + JSON.toJSON(orders));
         log.info("pageInfo = " + JSON.toJSON(pageIno));
+    }
+
+    @Test
+    void testFastjsonSerialSuperClass() {
+        log.info(JSON.toJSONString(
+                new TestSub(1, "2", 3, 4.0)
+        ));
+    }
+
+}
+
+@Data
+class TestSuper {
+    private int attr1;
+    private String attr2;
+
+    TestSuper(int attr1, String attr2) {
+        this.attr1 = attr1;
+        this.attr2 = attr2;
+    }
+}
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+class TestSub extends TestSuper {
+
+    private int subAttr1;
+    private double subAttr2;
+
+    public TestSub(int attr1, String attr2, int subAttr1, double subAttr2) {
+        super(attr1, attr2);
+        this.subAttr1 = subAttr1;
+        this.subAttr2 = subAttr2;
     }
 
 }

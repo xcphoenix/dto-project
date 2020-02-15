@@ -3,6 +3,7 @@ package com.xcphoenix.dto.bean.dao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -35,6 +36,7 @@ public class Order {
     private Timestamp payTime;
     private Timestamp invalidTime;
     private int deliveryType;
+    @Length(max = 100, message = "备注长度超出限制")
     private String remark;
     private int status;
 

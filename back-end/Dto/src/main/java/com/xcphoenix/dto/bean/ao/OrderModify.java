@@ -1,6 +1,7 @@
 package com.xcphoenix.dto.bean.ao;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,6 +17,6 @@ public class OrderModify {
     private String addr;
     @Pattern(regexp = "^1([34578])\\d{9}$",message = "手机号码格式错误")
     private String phone;
-    @Size(max = 100, message = "备注长度超出限制")
+    @Length(max = 100, message = "备注长度超出限制")
     private String remark;
 }

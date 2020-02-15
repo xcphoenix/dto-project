@@ -73,7 +73,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     refreshTime = JWT.decode(token).getClaim("refresh").asDate();
                     userStatus = JWT.decode(token).getClaim("status").asInt();
                 } catch (JWTDecodeException | ClassCastException | NumberFormatException ex) {
-                    ex.printStackTrace();
                     throw new ServiceLogicException(ErrorCode.TOKEN_DECODED_ERROR);
                 }
 
