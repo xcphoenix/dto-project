@@ -56,6 +56,7 @@ public class GlobalExceptionHandler {
             String errorMsg = error.getDefaultMessage();
             return Result.error(ErrorCode.illegalArgumentBuilder(errorMsg));
         } else {
+            logger.warn("there is error: ", ex);
             return Result.error(ErrorCode.SERVER_EXCEPTION);
         }
     }

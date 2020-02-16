@@ -31,6 +31,7 @@ public class Order {
     private BigDecimal deliveryPrice;
     private BigDecimal originalPrice;
     private BigDecimal totalPrice;
+    private BigDecimal price;
     private int payType;
     private Timestamp orderTime;
     private Timestamp payTime;

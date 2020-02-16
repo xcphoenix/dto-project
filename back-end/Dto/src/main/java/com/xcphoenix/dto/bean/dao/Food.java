@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 /**
@@ -38,9 +39,9 @@ public class Food {
     private String coverImg;
 
     @DecimalMin(value = "0.0", message = "价格不能为负")
-    private Float originalPrice;
+    private BigDecimal originalPrice;
     @DecimalMin(value = "0.0", message = "价格不能为负")
-    private Float sellingPrice;
+    private BigDecimal sellingPrice;
     private Integer totalSale;
     private Integer monthSale;
 

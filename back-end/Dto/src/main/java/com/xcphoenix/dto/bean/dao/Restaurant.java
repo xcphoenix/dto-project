@@ -105,9 +105,9 @@ public class Restaurant {
     private Double aveConsumption;
 
     @Min(value = 0, message = "配送价不能为负")
-    private Float deliveryPrice;
+    private BigDecimal deliveryPrice;
     @Min(value = 0, message = "餐盒费不能为负")
-    private Float packagePrice;
+    private BigDecimal packagePrice;
     @Min(value = 0, message = "起送价不能为负")
     private Integer minPrice;
 

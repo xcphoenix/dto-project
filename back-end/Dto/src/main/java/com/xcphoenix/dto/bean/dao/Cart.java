@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,17 +20,17 @@ public class Cart {
 
     Long userId;
     Long restaurantId;
-    float discountAmount;
-    float originalTotal;
-    float total;
+    BigDecimal discountAmount;
+    BigDecimal originalTotal;
+    BigDecimal total;
     int totalWeight;
     String rstVersion;
     List<CartItem> cartItems;
 
     private void init() {
-        this.discountAmount = 0;
-        this.originalTotal = 0;
-        this.total = 0;
+        this.discountAmount = new BigDecimal(0);
+        this.originalTotal = new BigDecimal(0);
+        this.total = new BigDecimal(0);
         this.totalWeight = 0;
     }
 
@@ -40,10 +41,10 @@ public class Cart {
         }
         for (CartItem cartItem : cartItems) {
             this.totalWeight += cartItem.getQuantity();
-            this.total += cartItem.getSellingPrice();
-            this.originalTotal += cartItem.getOriginalPrice();
+            this.total.add(cartItem.getSellingPrice());
+            this.originalTotal.add(cartItem.getOriginalPrice());
         }
-        this.discountAmount = this.originalTotal - this.total;
+        this.discountAmount = this.originalTotal.subtract(total);
     }
 
     @Override
@@ -55,14 +56,14 @@ public class Cart {
             return false;
         }
         Cart cart = (Cart) o;
-        return Float.compare(cart.getDiscountAmount(), getDiscountAmount()) == 0 &&
-                Float.compare(cart.getOriginalTotal(), getOriginalTotal()) == 0 &&
-                Float.compare(cart.getTotal(), getTotal()) == 0 &&
-                getTotalWeight() == cart.getTotalWeight() &&
-                getUserId().equals(cart.getUserId()) &&
-                getRestaurantId().equals(cart.getRestaurantId()) &&
-                getCartItems().containsAll(cart.getCartItems()) &&
-                cart.getCartItems().containsAll(getCartItems());
+        return getTotalWeight() == cart.getTotalWeight() &&
+                Objects.equals(getUserId(), cart.getUserId()) &&
+                Objects.equals(getRestaurantId(), cart.getRestaurantId()) &&
+                Objects.equals(getDiscountAmount(), cart.getDiscountAmount()) &&
+                Objects.equals(getOriginalTotal(), cart.getOriginalTotal()) &&
+                Objects.equals(getTotal(), cart.getTotal()) &&
+                Objects.equals(getRstVersion(), cart.getRstVersion()) &&
+                Objects.equals(getCartItems(), cart.getCartItems());
     }
 
     @Override

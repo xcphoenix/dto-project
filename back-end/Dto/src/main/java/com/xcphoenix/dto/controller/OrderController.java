@@ -1,5 +1,6 @@
 package com.xcphoenix.dto.controller;
 
+import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.bean.ao.OrderModify;
 import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
 import com.xcphoenix.dto.bean.dao.Order;
@@ -30,12 +31,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @UserLoginToken
     @GetMapping("/pre/{rstId}")
     public Result getPreOrder(@PathVariable("rstId") Long rstId) {
         Map<String, Object> preData = orderService.getPreviewData(rstId);
         return new Result().addMap("preOrder", preData);
     }
 
+    @UserLoginToken
     @PostMapping("/{rstId}")
     public Result purchaseOrder(@PathVariable("rstId") Long rstId, @RequestBody Order order)
             throws SchedulerException {
@@ -44,6 +47,7 @@ public class OrderController {
         return new Result().addMap("newOrder", newOrder);
     }
 
+    @UserLoginToken
     @PutMapping("/{orderCode}")
     public Result modifyOrder(@PathVariable("orderCode") Long orderCode,
                               @Validated @RequestBody OrderModify orderModify) {
@@ -51,36 +55,42 @@ public class OrderController {
         return new Result();
     }
 
+    @UserLoginToken
     @PutMapping("/cancel/{orderCode}")
     public Result cancelOrder(@PathVariable("orderCode") Long orderCode) {
         orderService.cancelOrder(orderCode);
         return new Result();
     }
 
+    @UserLoginToken
     @DeleteMapping("/{orderCode}")
     public Result delOrder(@PathVariable("orderCode") Long orderCode) {
         orderService.delOrder(orderCode);
         return new Result();
     }
 
+    @UserLoginToken
     @GetMapping("/current")
     public Result getCurrentOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getCurrentOrders(from, size);
         return new Result().addMap("currOrders", orderList);
     }
 
+    @UserLoginToken
     @GetMapping("/history")
     public Result getHistoryOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getHistoryOrders(from, size);
         return new Result().addMap("historyOrders", orderList);
     }
 
+    @UserLoginToken
     @GetMapping("/all")
     public Result getOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getOrders(from, size);
         return new Result().addMap("orders", orderList);
     }
 
+    @UserLoginToken
     @GetMapping("/detail/{orderCode}")
     public Result getOrderDetail(@PathVariable("orderCode") Long orderCode) {
         Order orderDetail = orderService.getOrderById(orderCode);
@@ -93,6 +103,7 @@ public class OrderController {
      * @param orderCode 订单编号
      * @return 订单状态，如果订单为未支付，返回倒计时
      */
+    @UserLoginToken
     @GetMapping("/status/{orderCode}")
     public Result getOrderStatus(@PathVariable("orderCode") Long orderCode) {
         int status = orderService.getOrderStatus(orderCode);

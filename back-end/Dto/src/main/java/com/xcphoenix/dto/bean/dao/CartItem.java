@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -18,8 +19,8 @@ public class CartItem {
 
     Long foodId;
     int quantity;
-    float originalPrice;
-    float sellingPrice;
+    BigDecimal originalPrice;
+    BigDecimal sellingPrice;
 
     @Override
     public boolean equals(Object o) {
@@ -31,9 +32,9 @@ public class CartItem {
         }
         CartItem cartItem = (CartItem) o;
         return getQuantity() == cartItem.getQuantity() &&
-                Float.compare(cartItem.getOriginalPrice(), getOriginalPrice()) == 0 &&
-                Float.compare(cartItem.getSellingPrice(), getSellingPrice()) == 0 &&
-                Objects.equals(getFoodId(), cartItem.getFoodId());
+                getFoodId().equals(cartItem.getFoodId()) &&
+                getOriginalPrice().equals(cartItem.getOriginalPrice()) &&
+                getSellingPrice().equals(cartItem.getSellingPrice());
     }
 
     @Override

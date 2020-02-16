@@ -10,12 +10,12 @@
 	
 	<insert id="addOrder">
 		INSERT INTO order_form(order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount,
-		                       package_price, delivery_price, original_price, total_price, pay_type,
+		                       package_price, delivery_price, original_price, total_price, price, pay_type,
 		                       order_time, invalid_time, delivery_type, remark, ex_ship_addr,
 		                       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, `status`)
 		VALUES (
 					#{order.orderCode}, #{order.rstId}, #{order.userId}, #{order.shipAddrId}, #{order.itemCount}, #{order.discountAmount},
-		        	#{order.packagePrice}, #{order.deliveryPrice}, #{order.originalPrice}, #{order.totalPrice}, #{order.payType},
+		        	#{order.packagePrice}, #{order.deliveryPrice}, #{order.originalPrice}, #{order.totalPrice}, #{order.price}, #{order.payType},
 		        	#{order.orderTime}, #{order.invalidTime}, #{order.deliveryPrice}, #{order.remark}, #{order.exShipAddr},
 		        	#{order.exUserName}, #{order.exUserName}, #{order.exRstName}, #{order.exRstLogoUrl}, #{order.status}
 		        )
@@ -44,7 +44,7 @@
 	
 	<select id="getOrderById" resultMap="orderDetail">
 	 	SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
-	 	       delivery_price, original_price, total_price, pay_type, 
+	 	       delivery_price, original_price, total_price, price, pay_type,
 	 	       order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr, 
 	 	       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
 	 	FROM order_form
@@ -93,7 +93,7 @@
 	
 	<select id="getOrders" resultMap="orderDetail">
 		SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
-			   delivery_price, original_price, total_price, pay_type,
+			   delivery_price, original_price, total_price, price, pay_type,
 			   order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr,
 			   ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
 		FROM order_form
@@ -109,7 +109,7 @@
 	
 	<select id="getCurrentOrders" resultMap="orderDetail">
 		SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
-			   delivery_price, original_price, total_price, pay_type,
+			   delivery_price, original_price, total_price, price, pay_type,
 			   order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr,
 			   ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
 		FROM order_form
@@ -124,7 +124,7 @@
 	
 	<select id="getHistoryOrders" resultMap="orderDetail">
 		SELECT order_code, rst_id, user_id, ship_addr_id, item_count, discount_amount, package_price,
-		       delivery_price, original_price, total_price, pay_type,
+		       delivery_price, original_price, total_price, price, pay_type,
 		       order_time, pay_time, invalid_time, delivery_type, remark, ex_ship_addr,
 		       ex_user_name, ex_user_phone, ex_rst_name, ex_rst_logo_url, status
 		FROM order_form

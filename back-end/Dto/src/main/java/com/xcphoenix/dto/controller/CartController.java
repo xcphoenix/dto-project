@@ -23,8 +23,8 @@ public class CartController {
     }
 
     @UserLoginToken
-    @GetMapping("/cart")
-    public Result getCart(@RequestParam("restaurantId") Long rstId) {
+    @GetMapping("/cart/{rstId}")
+    public Result getCart(@PathVariable("rstId") Long rstId) {
         Cart cart = cartService.getCart(ContextHolderUtils.getLoginUserId(), rstId);
         return new Result("查询成功").addMap("cart", cart);
     }
@@ -39,8 +39,8 @@ public class CartController {
     }
 
     @UserLoginToken
-    @DeleteMapping("/cart")
-    public Result cleanCart(@RequestParam("restaurantId") Long rstId) {
+    @DeleteMapping("/cart/{rstId}")
+    public Result cleanCart(@PathVariable("rstId") Long rstId) {
         cartService.cleanCart(ContextHolderUtils.getLoginUserId(), rstId);
         return new Result("清空购物车成功");
     }

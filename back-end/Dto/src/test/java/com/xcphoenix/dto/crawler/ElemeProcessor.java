@@ -1,12 +1,9 @@
 package com.xcphoenix.dto.crawler;
 
-import ch.hsr.geohash.GeoHash;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xcphoenix.dto.bean.dao.Food;
 import com.xcphoenix.dto.bean.dao.FoodCategory;
-import com.xcphoenix.dto.bean.dao.Restaurant;
 import com.xcphoenix.dto.bean.dao.User;
 import com.xcphoenix.dto.mapper.FoodCategoryMapper;
 import com.xcphoenix.dto.mapper.FoodMapper;
@@ -22,10 +19,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
-import java.math.BigDecimal;
-import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -84,82 +78,83 @@ public class ElemeProcessor implements PageProcessor {
     }
 
     private Long makeTmpRst(JSONObject rst) throws ParseException {
-        log.info("创建店铺...");
-        // log.info("rst => " + rst.toJSONString());
-        Restaurant tmpRst = new Restaurant();
-        tmpRst.setUserId(createRUser());
-        tmpRst.setRestaurantPhone(getTel());
-        tmpRst.setContactMan("testMan");
-        Double lat = rst.getDouble("latitude");
-        Double lng = rst.getDouble("longitude");
-        tmpRst.setRestaurantDesc(rst.getString("description"));
-        tmpRst.setDeliveryPrice(rst.getFloat("float_delivery_fee"));
-        tmpRst.setMinPrice(rst.getFloat("float_minimum_order_amount").intValue());
-        tmpRst.setRestaurantName(rst.getString("name"));
-        tmpRst.setAddress(rst.getString("address"));
-        try {
-            tmpRst.setDeliveryRange(rst.getFloat("closing_count_down") / 1000);
-        } catch (NullPointerException npe) {
-            log.info("获取配送距离失败...使用默认配送范围");
-            tmpRst.setDeliveryRange(5.321f);
-        }
-        tmpRst.setBulletin(rst.getString("promotion_info"));
-
-        JSONArray flavors = rst.getJSONArray("flavors");
-        StringBuilder tags = new StringBuilder();
-        for (int i = 0; i < flavors.size(); i++) {
-            String name = flavors.getJSONObject(i).getString("name");
-            tags.append(',').append(name);
-        }
-        tags.deleteCharAt(0);
-        tmpRst.setTag(tags.toString());
-        tmpRst.setAddrLat(BigDecimal.valueOf(lat));
-        tmpRst.setAddrLng(BigDecimal.valueOf(lng));
-        tmpRst.setCountryId(geoService.getAreaId(BigDecimal.valueOf(lat), BigDecimal.valueOf(lng)));
-        GeoHash geoHash = GeoHash.withCharacterPrecision(lat, lng, 12);
-        tmpRst.setGeohash(geoHash.toBase32());
-        SimpleDateFormat format = new SimpleDateFormat("hh:mm");
-        // 设置开业时间
-        tmpRst.setBhStart(new Time(format.parse("09:00").getTime()));
-        tmpRst.setBhEnd(new Time(format.parse("21:00").getTime()));
-        tmpRst.setLogo("http://demo.com/logo.png");
-        tmpRst.setBannerImg("http://demo.com/banner.png");
-        tmpRst.setStoreImg("http://demo.com/store.png");
-        tmpRst.setInstoreImg("http://demo.com/instore.png");
-        log.info("店铺创建成功");
-
-        restaurantMapper.addRestaurant(tmpRst);
-        log.info("店铺添加成功");
-        return tmpRst.getRestaurantId();
+        // log.info("创建店铺...");
+        // // log.info("rst => " + rst.toJSONString());
+        // Restaurant tmpRst = new Restaurant();
+        // tmpRst.setUserId(createRUser());
+        // tmpRst.setRestaurantPhone(getTel());
+        // tmpRst.setContactMan("testMan");
+        // Double lat = rst.getDouble("latitude");
+        // Double lng = rst.getDouble("longitude");
+        // tmpRst.setRestaurantDesc(rst.getString("description"));
+        // tmpRst.setDeliveryPrice(rst.getFloat("float_delivery_fee"));
+        // tmpRst.setMinPrice(rst.getFloat("float_minimum_order_amount").intValue());
+        // tmpRst.setRestaurantName(rst.getString("name"));
+        // tmpRst.setAddress(rst.getString("address"));
+        // try {
+        //     tmpRst.setDeliveryRange(rst.getFloat("closing_count_down") / 1000);
+        // } catch (NullPointerException npe) {
+        //     log.info("获取配送距离失败...使用默认配送范围");
+        //     tmpRst.setDeliveryRange(5.321f);
+        // }
+        // tmpRst.setBulletin(rst.getString("promotion_info"));
+        //
+        // JSONArray flavors = rst.getJSONArray("flavors");
+        // StringBuilder tags = new StringBuilder();
+        // for (int i = 0; i < flavors.size(); i++) {
+        //     String name = flavors.getJSONObject(i).getString("name");
+        //     tags.append(',').append(name);
+        // }
+        // tags.deleteCharAt(0);
+        // tmpRst.setTag(tags.toString());
+        // tmpRst.setAddrLat(BigDecimal.valueOf(lat));
+        // tmpRst.setAddrLng(BigDecimal.valueOf(lng));
+        // tmpRst.setCountryId(geoService.getAreaId(BigDecimal.valueOf(lat), BigDecimal.valueOf(lng)));
+        // GeoHash geoHash = GeoHash.withCharacterPrecision(lat, lng, 12);
+        // tmpRst.setGeohash(geoHash.toBase32());
+        // SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+        // // 设置开业时间
+        // tmpRst.setBhStart(new Time(format.parse("09:00").getTime()));
+        // tmpRst.setBhEnd(new Time(format.parse("21:00").getTime()));
+        // tmpRst.setLogo("http://demo.com/logo.png");
+        // tmpRst.setBannerImg("http://demo.com/banner.png");
+        // tmpRst.setStoreImg("http://demo.com/store.png");
+        // tmpRst.setInstoreImg("http://demo.com/instore.png");
+        // log.info("店铺创建成功");
+        //
+        // restaurantMapper.addRestaurant(tmpRst);
+        // log.info("店铺添加成功");
+        // return tmpRst.getRestaurantId();
+        return null;
     }
 
     private void makeTmpFood(JSONObject food, FoodCategory category) throws ParseException {
-        log.info("创建商品信息...");
-        // log.info("food => " + food.toJSONString());
-
-        Food tmpFood = new Food();
-        tmpFood.setRestaurantId(category.getRestaurantId());
-        tmpFood.setCategoryId(category.getCategoryId());
-        tmpFood.setName(food.getString("name"));
-        tmpFood.setDescription(food.getString("description"));
-        tmpFood.setSellingPrice(food.getFloat("lowest_price"));
-
-        JSONArray specFoods = food.getJSONArray("specfoods");
-        if (specFoods == null) {
-            tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
-        } else {
-            tmpFood.setOriginalPrice(specFoods.getJSONObject(0).getFloat("original_price"));
-        }
-        if (tmpFood.getOriginalPrice() == null) {
-            tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
-        }
-        tmpFood.setTotalNumber(1000);
-        tmpFood.setResidualAmount(1000);
-        tmpFood.setCoverImg("http://demo.com/food.png");
-
-        log.info("商品创建成功");
-        foodMapper.addFood(tmpFood);
-        log.info("商品添加成功");
+        // log.info("创建商品信息...");
+        // // log.info("food => " + food.toJSONString());
+        //
+        // Food tmpFood = new Food();
+        // tmpFood.setRestaurantId(category.getRestaurantId());
+        // tmpFood.setCategoryId(category.getCategoryId());
+        // tmpFood.setName(food.getString("name"));
+        // tmpFood.setDescription(food.getString("description"));
+        // tmpFood.setSellingPrice(food.getFloat("lowest_price"));
+        //
+        // JSONArray specFoods = food.getJSONArray("specfoods");
+        // if (specFoods == null) {
+        //     tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
+        // } else {
+        //     tmpFood.setOriginalPrice(specFoods.getJSONObject(0).getFloat("original_price"));
+        // }
+        // if (tmpFood.getOriginalPrice() == null) {
+        //     tmpFood.setOriginalPrice(food.getFloat("lowest_price"));
+        // }
+        // tmpFood.setTotalNumber(1000);
+        // tmpFood.setResidualAmount(1000);
+        // tmpFood.setCoverImg("http://demo.com/food.png");
+        //
+        // log.info("商品创建成功");
+        // foodMapper.addFood(tmpFood);
+        // log.info("商品添加成功");
     }
 
     private Set<String> resId = new HashSet<>(110);

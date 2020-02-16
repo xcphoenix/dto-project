@@ -28,12 +28,13 @@ public class OrderItem {
     private String exFoodName;
     private String exFoodImgUrl;
 
-    public OrderItem(CartItem cartItem) {
+    public static OrderItem convert(CartItem cartItem) {
         OrderItem orderItem = new OrderItem();
         orderItem.setFoodId(cartItem.getFoodId());
         orderItem.setQuantity(cartItem.getQuantity());
-        orderItem.setSellingPrice(BigDecimal.valueOf(cartItem.getSellingPrice()));
-        orderItem.setOriginalPrice(BigDecimal.valueOf(cartItem.getOriginalPrice()));
+        orderItem.setSellingPrice(cartItem.getSellingPrice());
+        orderItem.setOriginalPrice(cartItem.getOriginalPrice());
+        return orderItem;
     }
 
 }

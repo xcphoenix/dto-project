@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO 删除食品需要处理订单等约束..
  *
  * @author      xuanc
  * @date        2019/8/15 下午3:10
@@ -115,7 +114,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Cacheable(value = "foodCacheManager", key = "'food:' + #foodId + ':detail'")
     public Food getFoodDetailById(Long foodId) {
-        Food food = foodMapper.getFoodById(foodId, restaurantService.getLoginShopperResId());
+        Food food = foodMapper.getFoodById(foodId);
         if (food == null) {
             throw new ServiceLogicException(ErrorCode.FOOD_NOT_FOUND);
         }
@@ -186,14 +185,11 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public Set<Long> filterFoodsOfLackStock(Long rstId, Map<Long, Integer> baseData) {
+        // 获取店铺所有的库存信息
         Map<Long, Integer> idWithStock = foodMapper.getFoodsStock(rstId)
                 .stream().collect(Collectors.toMap(Food::getFoodId, Food::getResidualAmount));
         Set<Long> idList = baseData.keySet();
-        baseData.forEach((key, value) -> {
-            if (idWithStock.containsKey(key) || idWithStock.get(key) >= value) {
-                idList.remove(key);
-            }
-        });
+        idList.removeIf(id -> idWithStock.containsKey(id) && idWithStock.get(id) >= baseData.get(id));
         return idList;
     }
 

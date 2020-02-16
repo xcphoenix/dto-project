@@ -53,10 +53,9 @@ public interface FoodMapper {
      * 获取食品信息
      *
      * @param foodId       食品 id
-     * @param restaurantId 店铺 id
      * @return 信息
      */
-    Food getFoodById(@Param("foodId") Long foodId, @Param("restaurantId") Long restaurantId);
+    Food getFoodById(@Param("foodId") Long foodId);
 
     /**
      * 获取店铺的所有食品信息

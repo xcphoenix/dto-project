@@ -6,7 +6,7 @@
 	<resultMap id="getFoodDetail" type="com.xcphoenix.dto.bean.dao.Food" autoMapping="true">
 		<!--<value column="food_id" property="foodId" />-->
 		<!--<result column="restaurant_id" property="restaurantId" />-->
-		<!--<result column="category_id" property="categoryId" />-->
+		<result column="category_id" property="categoryId" />
 		<!--<result column="name" property="name" />-->
 		<!--<result column="description" property="description" />-->
 		<!--<result column="cover_img" property="coverImg" />-->
@@ -25,6 +25,7 @@
 	
 	<resultMap id="getFoodsDetail" type="com.xcphoenix.dto.bean.dto.Foods" autoMapping="true">
 		<!--<result property="categoryName" column="category"/>-->
+		<result property="categoryId" column="category_id" />
 		<association property="categoryName" column="category_id"
 		             select="com.xcphoenix.dto.mapper.FoodCategoryMapper.getCategoryName" />
 		<collection property="foodsDetail" column="{categoryId=category_id, restaurantId=restaurant_id}"
@@ -95,7 +96,7 @@
 	<select id="getFoodById" resultMap="getFoodDetail">
 		SELECT <include refid="foodDetails" />
 		FROM food
-		WHERE food_id = #{foodId} AND restaurant_id = #{restaurantId}
+		WHERE food_id = #{foodId}
 	</select>
 	
 	<!-- 获取店铺所有信息 -->
