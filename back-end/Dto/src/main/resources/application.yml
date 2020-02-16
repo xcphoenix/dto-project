@@ -51,7 +51,7 @@ spring:
           enabled: true
         # 防火墙
         wall:
-          enabled: true
+          enabled: false
       # spring aop 监控，多个使用 , 分开
       aop-patterns:
         com.xcphoenix.dto.mapper.*,com.xcphoenix.dto.service.*
