@@ -1,10 +1,12 @@
 package com.xcphoenix.dto.service.job;
 
+import com.xcphoenix.dto.service.OrderService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.stereotype.Component;
 
 /**
  * 订单超时任务
@@ -15,18 +17,22 @@ import org.quartz.JobExecutionException;
  */
 @Data
 @Slf4j
+@Component
 public class OrderTimeoutJob implements Job {
 
-    private Long orderCode;
+    private OrderService orderService;
+
+    public OrderTimeoutJob(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        /*
-         * 订单超时未支付
-         * - 取消订单
-         * - 恢复库存
-         */
-        log.debug("order [" + orderCode + "] timeout");
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        long orderCode = context.getJobDetail().getJobDataMap().getLongValue("orderCode");
+        long userId = context.getJobDetail().getJobDataMap().getLongValue("userId");
+        log.info("order: " + orderCode + " by user: " + userId + " timeout");
+        // 处理已过期订单
+        orderService.dealOrderTimeout(orderCode, userId);
     }
 
 }

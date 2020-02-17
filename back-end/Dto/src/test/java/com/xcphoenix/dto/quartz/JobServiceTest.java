@@ -28,8 +28,8 @@ class JobServiceTest {
 
     @Test
     void testAddJob() throws SchedulerException, InterruptedException {
-        jobService.addJob(1L);
-        Thread.sleep(100000);
+        // jobService.addJob(1L, new Date(System.currentTimeMillis() + 1000 * 15 * 60));
+        // Thread.sleep(100000);
     }
 
 }

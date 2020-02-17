@@ -2,10 +2,9 @@ package com.xcphoenix.dto.service.job;
 
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import static org.quartz.DateBuilder.futureDate;
+import java.util.Date;
 
 /**
  * 定时任务服务
@@ -20,20 +19,20 @@ import static org.quartz.DateBuilder.futureDate;
 @Service
 public class JobService {
 
-    @Value("${order.timeout:15}")
-    private static final int EXEC_TIME = 15;
-
     private Scheduler scheduler;
     private final String defaultJobGroup = "orderTimeoutJob";
 
-    public JobService(Scheduler scheduler) {
+    public JobService(Scheduler scheduler) throws SchedulerException {
         this.scheduler = scheduler;
+        scheduler.start();
     }
 
-    private JobDetail buildJobDetail(Long orderCode) {
+    private JobDetail buildJobDetail(Long orderCode, Long userId) {
         log.info("build job detail");
         return JobBuilder.newJob(OrderTimeoutJob.class)
                 .withIdentity(String.valueOf(orderCode), defaultJobGroup)
+                .usingJobData("orderCode", orderCode)
+                .usingJobData("userId", userId)
                 .storeDurably()
                 .build();
     }
@@ -41,13 +40,12 @@ public class JobService {
     /**
      * 添加定时服务（订单过期）
      */
-    public void addJob(Long orderCode) throws SchedulerException {
+    public void addJob(Long orderCode, Long userId, Date invalidTime) throws SchedulerException {
         log.debug("start and job...");
-        JobDetail jobDetail = buildJobDetail(orderCode);
+        JobDetail jobDetail = buildJobDetail(orderCode, userId);
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity("timeoutTrigger", "order")
-                .usingJobData("orderCode", orderCode)
-                .startAt(futureDate(EXEC_TIME, DateBuilder.IntervalUnit.MINUTE))
+                .withIdentity(String.valueOf(orderCode), "order")
+                .startAt(invalidTime)
                 .build();
         log.debug("create trigger");
         scheduler.scheduleJob(jobDetail, trigger);
