@@ -81,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
         // 库存处理
         stockService.lock(order);
         // 添加定时任务
-        jobService.addJob(order.getOrderCode());
+        jobService.addJob(order.getOrderCode(), userId, new Date(order.getInvalidTime().getTime()));
 
         return order;
     }
@@ -107,8 +107,8 @@ public class OrderServiceImpl implements OrderService {
         if (!NEED_PAY.match(status)) {
             throw new ServiceLogicException(ErrorCode.ORDER_STATUS_EXCEPTIONAL);
         }
-        updateOrderStatus(orderCode, OrderStatusEnum.CANCEL);
-        stockService.resume(getOrderById(orderCode));
+        updateOrderStatus(orderCode, ContextHolderUtils.getLoginUserId(), OrderStatusEnum.CANCEL);
+        stockService.resume(getOrderById(orderCode, ContextHolderUtils.getLoginUserId()));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
         }
         orderMapper.delCanceledOrder(ContextHolderUtils.getLoginUserId(), orderCode);
         if (NEED_PAY.match(orderStatus)) {
-            stockService.resume(getOrderById(orderCode));
+            stockService.resume(getOrderById(orderCode, ContextHolderUtils.getLoginUserId()));
         }
     }
 
@@ -138,36 +138,42 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int getOrderStatus(Long orderCode) {
+    public Integer getOrderStatus(Long orderCode) {
         return orderMapper.getOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode);
     }
 
     @Override
-    public Order getOrderById(Long orderCode) {
-        return orderMapper.getOrderById(ContextHolderUtils.getLoginUserId(), orderCode);
+    public Order getOrderById(Long orderCode, Long userId) {
+        return orderMapper.getOrderById(userId, orderCode);
     }
 
     @Override
-    public void dealOrderTimeout(Long orderCode) {
+    public void dealOrderTimeout(Long orderCode, Long userId) {
         // 订单过期
-        updateOrderStatus(orderCode, OrderStatusEnum.TIMEOUT);
+        updateOrderStatus(orderCode, userId, OrderStatusEnum.TIMEOUT);
         // 恢复库存
-        stockService.resume(getOrderById(orderCode));
+        stockService.resume(getOrderById(orderCode, userId));
     }
 
     @Override
     public void dealOrderPaid(Long orderCode, int payType) {
         // 更新订单状态
-        updateOrderStatus(orderCode, OrderStatusEnum.WAIT_SHOPPER);
+        updateOrderStatus(orderCode, ContextHolderUtils.getLoginUserId(), OrderStatusEnum.WAIT_SHOPPER);
         // 刷新支付信息
         orderMapper.updatePayTime(ContextHolderUtils.getLoginUserId(), orderCode, payType);
         // 同步销量等信息
-        doBusinessService.syncOrdered(getOrderById(orderCode));
+        doBusinessService.syncOrdered(getOrderById(orderCode, ContextHolderUtils.getLoginUserId()));
     }
 
     @Override
     public PageObject<Order> getOrders(int from, int size) {
         PageHelper.offsetPage(from, PageObject.properPageSize(size));
+        List<Order> orderList = orderMapper.getOrders(ContextHolderUtils.getLoginUserId());
+        return new PageObject<>(new PageInfo<>(orderList));
+    }
+
+    @Override
+    public PageObject<Order> getOrders() {
         List<Order> orderList = orderMapper.getOrders(ContextHolderUtils.getLoginUserId());
         return new PageObject<>(new PageInfo<>(orderList));
     }
@@ -318,8 +324,8 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 更新订单状态
      */
-    private void updateOrderStatus(Long orderCode, OrderStatusEnum orderStatusEnum) {
-        orderMapper.changeOrderStatus(ContextHolderUtils.getLoginUserId(), orderCode, orderStatusEnum.getValue());
+    private void updateOrderStatus(Long orderCode, Long userId, OrderStatusEnum orderStatusEnum) {
+        orderMapper.changeOrderStatus(userId, orderCode, orderStatusEnum.getValue());
     }
 
 }

@@ -75,22 +75,24 @@ public interface OrderService {
      * @param orderCode 订单号码
      * @return 订单状态
      */
-    int getOrderStatus(Long orderCode);
+    Integer getOrderStatus(Long orderCode);
 
     /**
      * 获取订单信息
      *
      * @param orderCode 订单号
+     * @param userId 用户id
      * @return 订单信息
      */
-    Order getOrderById(Long orderCode);
+    Order getOrderById(Long orderCode, Long userId);
 
     /**
      * 处理订单过期
      *
      * @param orderCode 订单编号
+     * @param userId 用户id
      */
-    void dealOrderTimeout(Long orderCode);
+    void dealOrderTimeout(Long orderCode, Long userId);
 
     /**
      * 处理已支付订单
@@ -109,6 +111,12 @@ public interface OrderService {
      * @return 当前的订单信息
      */
     PageObject<Order> getOrders(int from, int size);
+
+    /**
+     * 不分页 获取所有订单
+     * @return 订单信息
+     */
+    PageObject<Order> getOrders();
 
     /**
      * 获取当前的订单（待支付、待送达）

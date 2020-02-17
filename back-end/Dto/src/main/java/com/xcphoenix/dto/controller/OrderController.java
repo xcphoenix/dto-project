@@ -5,8 +5,10 @@ import com.xcphoenix.dto.bean.ao.OrderModify;
 import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
 import com.xcphoenix.dto.bean.dao.Order;
 import com.xcphoenix.dto.bean.dto.PageObject;
+import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.OrderService;
+import com.xcphoenix.dto.utils.ContextHolderUtils;
 import org.quartz.SchedulerException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +46,7 @@ public class OrderController {
             throws SchedulerException {
         order.setRstId(rstId);
         Order newOrder = orderService.purchaseNewOrder(order);
+        newOrder.convertId();
         return new Result().addMap("newOrder", newOrder);
     }
 
@@ -73,6 +76,7 @@ public class OrderController {
     @GetMapping("/current")
     public Result getCurrentOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getCurrentOrders(from, size);
+        orderList.getData().forEach(Order::convertId);
         return new Result().addMap("currOrders", orderList);
     }
 
@@ -80,6 +84,7 @@ public class OrderController {
     @GetMapping("/history")
     public Result getHistoryOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getHistoryOrders(from, size);
+        orderList.getData().forEach(Order::convertId);
         return new Result().addMap("historyOrders", orderList);
     }
 
@@ -87,14 +92,29 @@ public class OrderController {
     @GetMapping("/all")
     public Result getOrders(@RequestParam("from") int from, @RequestParam("size") int size) {
         PageObject<Order> orderList = orderService.getOrders(from, size);
+        orderList.getData().forEach(Order::convertId);
+        return new Result().addMap("orders", orderList);
+    }
+
+    @UserLoginToken
+    @GetMapping("/all/nopage")
+    public Result getOrders() {
+        PageObject<Order> orderList = orderService.getOrders();
+        orderList.getData().forEach(Order::convertId);
         return new Result().addMap("orders", orderList);
     }
 
     @UserLoginToken
     @GetMapping("/detail/{orderCode}")
     public Result getOrderDetail(@PathVariable("orderCode") Long orderCode) {
-        Order orderDetail = orderService.getOrderById(orderCode);
-        return new Result().addMap("detail", orderDetail);
+        Order orderDetail = orderService.getOrderById(orderCode, ContextHolderUtils.getLoginUserId());
+        if (orderDetail != null) {
+            orderDetail.convertId();
+            return new Result().addMap("detail", orderDetail);
+        } else {
+            return Result.error(ErrorCode.ORDER_INVALID);
+        }
+
     }
 
     /**
@@ -106,7 +126,10 @@ public class OrderController {
     @UserLoginToken
     @GetMapping("/status/{orderCode}")
     public Result getOrderStatus(@PathVariable("orderCode") Long orderCode) {
-        int status = orderService.getOrderStatus(orderCode);
+        Integer status = orderService.getOrderStatus(orderCode);
+        if (status == null) {
+            return Result.error(ErrorCode.ORDER_INVALID);
+        }
         if (OrderStatusEnum.NEED_PAY.match(status)) {
             Timestamp timestamp = orderService.getInvalidTime(orderCode);
             Long jetLag = timestamp.getTime() - System.currentTimeMillis();

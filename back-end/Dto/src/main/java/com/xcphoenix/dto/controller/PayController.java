@@ -1,5 +1,6 @@
 package com.xcphoenix.dto.controller;
 
+import com.xcphoenix.dto.annotation.UserLoginToken;
 import com.xcphoenix.dto.result.ErrorCode;
 import com.xcphoenix.dto.result.Result;
 import com.xcphoenix.dto.service.PayService;
@@ -21,8 +22,10 @@ public class PayController {
         this.payService = payService;
     }
 
+    @UserLoginToken
     @PostMapping("/order/{orderCode}")
-    public Result payOrder(@PathVariable Long orderCode, @RequestParam("type") int type) throws SchedulerException {
+    public Result payOrder(@PathVariable Long orderCode,
+                           @RequestParam(value = "type", defaultValue = "1") int type) throws SchedulerException {
         boolean isSuccess = payService.payOrder(orderCode, type);
         if (isSuccess) {
             return new Result("支付成功");

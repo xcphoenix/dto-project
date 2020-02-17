@@ -1,5 +1,7 @@
 package com.xcphoenix.dto.bean.dao;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.xcphoenix.dto.bean.bo.OrderStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,11 @@ public class Order {
      * snow flake
      */
     private Long orderCode;
+    /**
+     * 处理前端丢失精度...
+     */
+    @JSONField(deserialize = false)
+    private String orderId;
     private Long rstId;
     private Long userId;
     private Long shipAddrId;
@@ -40,6 +47,11 @@ public class Order {
     @Length(max = 100, message = "备注长度超出限制")
     private String remark;
     private int status;
+    /**
+     * 订单状态描述
+     */
+    @JSONField(deserialize = false)
+    private String statusDesc;
 
     /**
      * 冗余字段
@@ -51,5 +63,12 @@ public class Order {
     private String exRstLogoUrl;
 
     private List<OrderItem> orderItems;
+
+    public void convertId() {
+        if (orderCode != null) {
+            orderId = String.valueOf(orderCode);
+        }
+        statusDesc = OrderStatusEnum.getStatusEnum(status).getName();
+    }
 
 }

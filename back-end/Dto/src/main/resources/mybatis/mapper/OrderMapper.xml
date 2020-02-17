@@ -17,7 +17,7 @@
 					#{order.orderCode}, #{order.rstId}, #{order.userId}, #{order.shipAddrId}, #{order.itemCount}, #{order.discountAmount},
 		        	#{order.packagePrice}, #{order.deliveryPrice}, #{order.originalPrice}, #{order.totalPrice}, #{order.price}, #{order.payType},
 		        	#{order.orderTime}, #{order.invalidTime}, #{order.deliveryPrice}, #{order.remark}, #{order.exShipAddr},
-		        	#{order.exUserName}, #{order.exUserName}, #{order.exRstName}, #{order.exRstLogoUrl}, #{order.status}
+		        	#{order.exUserName}, #{order.exUserPhone}, #{order.exRstName}, #{order.exRstLogoUrl}, #{order.status}
 		        )
 	</insert>
 	
