@@ -37,23 +37,21 @@ public interface LoginMapper {
      * 使用用户名和密码登录
      *
      * @param username 用户名
-     * @param password 密码
      * @return <li>用户 user_id</li>
      * <li>null: 用户不存在或密码错误</li>
      */
-    @Select("SELECT user_id FROM user WHERE user_name = #{username} AND user_password = #{password}")
-    Long loginByName(@Param("username") String username, @Param("password") String password);
+    @Select("SELECT user_id, user_password FROM user WHERE user_name = #{username}")
+    User loginByName(@Param("username") String username);
 
     /**
      * 使用用户名和密码登录
      *
      * @param phone    手机号
-     * @param password 密码
      * @return <li>用户 user_id</li>
      * <li>null: 用户不存在或密码错误</li>
      */
-    @Select("SELECT user_id FROM user WHERE user_phone = #{phone} AND user_password = #{password}")
-    Long loginByPhonePass(@Param("phone") String phone, @Param("password") String password);
+    @Select("SELECT user_id, user_password FROM user WHERE user_phone = #{phone}")
+    User loginByPhonePass(@Param("phone") String phone);
 
     /**
      * 使用手机号+密码注册用户
