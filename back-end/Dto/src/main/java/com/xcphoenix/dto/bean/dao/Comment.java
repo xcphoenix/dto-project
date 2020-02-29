@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.Length;
 import java.sql.Timestamp;
 
 /**
- * TODO 评价支持图片
  *
  * @author      xuanc
  * @date        2019/12/4 下午3:59

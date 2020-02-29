@@ -17,7 +17,6 @@ import java.text.DecimalFormat;
 
 /**
  * 店铺 - bean
- * TODO 餐盒费用
  *
  * @author xuanc
  * @version 1.0

@@ -25,7 +25,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TODO JWT 过期会被捕获
  *
  * @author      xuanc
  * @date        2019/8/7 下午3:24

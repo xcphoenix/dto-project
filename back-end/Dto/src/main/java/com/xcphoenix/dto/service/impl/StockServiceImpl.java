@@ -21,14 +21,14 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void resume(Order order) {
+    public synchronized void resume(Order order) {
         for (OrderItem orderItem : order.getOrderItems()) {
             stockMapper.resume(orderItem);
         }
     }
 
     @Override
-    public void lock(Order order) {
+    public synchronized void lock(Order order) {
         for (OrderItem orderItem : order.getOrderItems()) {
             stockMapper.lock(orderItem);
         }

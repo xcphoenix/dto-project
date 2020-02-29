@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * TODO anonymous avatar url 数据配置化
  *
  * @author      xuanc
  * @date        2019/12/4 下午10:39

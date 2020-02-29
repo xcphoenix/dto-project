@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 import java.util.Map;
 
 /**
- * TODO Websocket连接, 实时刷新订单状态
  *
  * @author      xuanc
  * @date        2019/10/21 下午10:23
