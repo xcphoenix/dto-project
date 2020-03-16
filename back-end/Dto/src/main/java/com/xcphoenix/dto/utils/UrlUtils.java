@@ -55,15 +55,15 @@ public class UrlUtils {
         return paramsStr.toString();
     }
 
-    public String getValue(String key) {
+    public String getParam(String key) {
         return params.get(key);
     }
 
-    public void setValue(String key, Object value) {
+    public void setParam(String key, Object value) {
         params.put(key, String.valueOf(value));
     }
 
-    public boolean delKey(String key) {
+    public boolean delParam(String key) {
         return params.remove(key) != null;
     }
 

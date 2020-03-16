@@ -38,8 +38,8 @@ public class EsRestBuilder {
         size = Math.min(Math.max(0, size), 20);
         from = Math.max(0, from);
         UrlUtils getUrlUtils = new UrlUtils(searchUrl);
-        getUrlUtils.setValue("size", size);
-        getUrlUtils.setValue("from", from);
+        getUrlUtils.setParam("size", size);
+        getUrlUtils.setParam("from", from);
 
         return new Request(
                 "GET",

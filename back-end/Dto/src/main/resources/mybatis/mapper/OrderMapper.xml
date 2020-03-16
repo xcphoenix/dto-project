@@ -148,7 +148,7 @@
 			</foreach>
 	</select>
 	
-	<select id="getOrderInvalidTime">
+	<select id="getOrderInvalidTime" resultType="java.sql.Timestamp">
 		SELECT `invalid_time`
 		FROM order_form
 		WHERE user_id = #{userId}

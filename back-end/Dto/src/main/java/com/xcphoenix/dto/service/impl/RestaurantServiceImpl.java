@@ -283,7 +283,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         String requestLine = response.getRequestLine().getUri();
         UrlUtils urlUtils = new UrlUtils(requestLine);
 
-        int from = Integer.parseInt(urlUtils.getValue("from"));
+        int from = Integer.parseInt(urlUtils.getParam("from"));
         int total = (Integer) JSONPath.extract(respContent, "$.hits.total.value");
         int currPageSize = ((List) JSONPath.extract(respContent, "$.hits.hits")).size();
 

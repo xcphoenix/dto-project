@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +42,10 @@ public class TokenService {
     private long refreshTime;
 
     @Resource
-    private RedisTemplate redisTemplate;
-
-    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     public String createToken(User user) {
-        String iss = "elmqx.xcphoenix.com";
+        String iss = "elmqx.xcphoenix.top";
         Date exp = new Date(System.currentTimeMillis() + expireTime);
         Date refresh = new Date(System.currentTimeMillis() + refreshTime);
         String tmpStr = UUID.randomUUID().toString().replace("-", "")
@@ -70,6 +66,7 @@ public class TokenService {
         try {
             jwtVerifier.verify(token);
         } catch (TokenExpiredException jve) {
+            // 过期可以续签
             logger.warn("JWT 过期", jve);
             return true;
         } catch (JWTVerificationException jve) {
@@ -79,10 +76,16 @@ public class TokenService {
         return true;
     }
 
+    /**
+     * 记录失效的token
+     */
     public void putBlacklist(int userId, String token) {
         stringRedisTemplate.opsForValue().set("blacklist:" + userId + ":token", token, refreshTime, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * 记录过期的token时间
+     */
     public void putPreBlacklist(int userId) {
         stringRedisTemplate.opsForValue().set("preBlacklist:" + userId, String.valueOf(System.currentTimeMillis()),
                 refreshTime, TimeUnit.MILLISECONDS);

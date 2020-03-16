@@ -86,6 +86,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 if (refreshTime.getTime() < System.currentTimeMillis()) {
                     throw new ServiceLogicException(ErrorCode.TOKEN_TIME_EXPIRED);
                 } else if (tokenService.verifierToken(token) && tokenService.checkInBlacklist(userId, token)) {
+                    // 续签
                     if (expireTime.getTime() < System.currentTimeMillis()) {
                         User userDetail = new User();
                         userDetail.setUserId(userId);
