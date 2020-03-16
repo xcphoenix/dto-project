@@ -1,0 +1,16 @@
+{
+  "_attr":  {
+    "lat": "$.distance.script.params.lat",
+    "lon": "$.distance.script.params.lon"
+  },
+  "distance": {
+    "script": {
+      "source": "doc['location'].arcDistance(params.lat,params.lon)",
+      "lang": "painless",
+      "params": {
+        "lon": 0.0,
+        "lat": 0.0
+      }
+    }
+  }
+}

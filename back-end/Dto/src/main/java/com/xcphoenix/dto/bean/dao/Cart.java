@@ -68,6 +68,7 @@ public class Cart {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getRestaurantId(), getDiscountAmount(), getOriginalTotal(), getTotal(), getTotalWeight(), getCartItems());
+        return Objects.hash(getUserId(), getRestaurantId(), getDiscountAmount(),
+                getOriginalTotal(), getTotal(), getTotalWeight(), getCartItems());
     }
 }

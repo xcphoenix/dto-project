@@ -1,0 +1,14 @@
+{
+  "_attr": {
+    "keywords": "$.multi_match.query"
+  },
+   "multi_match":{
+       "query":"test",
+       "minimum_should_match":"30%",
+       "fields":[
+           "restaurant_name^4",
+           "foods^2",
+           "tag"
+       ]
+   }
+}

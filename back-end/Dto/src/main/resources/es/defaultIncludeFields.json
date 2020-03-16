@@ -1,0 +1,16 @@
+{
+  "includes": [
+    "restaurant_id",
+    "restaurant_name",
+    "score",
+    "logo",
+    "month_sale",
+    "min_price",
+    "bh_start",
+    "bh_end",
+    "delivery_price",
+    "delivery_time",
+    "ave_consumption",
+    "delivery_range"
+  ]
+}
