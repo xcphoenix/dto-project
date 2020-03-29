@@ -17,6 +17,7 @@ import com.xcphoenix.dto.utils.ContextHolderUtils;
 import com.xcphoenix.dto.utils.SnowFlakeUtils;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -57,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order purchaseNewOrder(Order order) throws SchedulerException {
         Long userId = ContextHolderUtils.getLoginUserId();
         Long rstId = order.getRstId();
@@ -102,6 +104,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void cancelOrder(Long orderCode) throws ServiceLogicException {
         int status = getOrderStatus(orderCode);
         if (!NEED_PAY.match(status)) {
@@ -121,6 +124,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void delOrder(Long orderCode) throws ServiceLogicException {
         int orderStatus = getOrderStatus(orderCode);
         if (!OrderStatusEnum.TIMEOUT.match(orderStatus) || !OrderStatusEnum.CANCEL.match(orderStatus)) {
@@ -148,6 +152,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void dealOrderTimeout(Long orderCode, Long userId) {
         // 订单过期
         updateOrderStatus(orderCode, userId, OrderStatusEnum.TIMEOUT);
@@ -156,6 +161,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void dealOrderPaid(Long orderCode, int payType) {
         // 更新订单状态
         updateOrderStatus(orderCode, ContextHolderUtils.getLoginUserId(), OrderStatusEnum.WAIT_SHOPPER);
